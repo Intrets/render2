@@ -1,0 +1,27 @@
+cmake_minimum_required (VERSION 3.16)
+
+set(MODULE_NAME render)
+
+project(${MODULE_NAME} LANGUAGES CXX)
+
+make_module(
+	MODULE_NAME ${MODULE_NAME}
+	MODULE_FILES
+		DataType
+		RenderContext
+		Renderer
+		opengl/Wrappers
+		opengl/Program
+		opengl/OpenglContext
+		opengl/OpenglRenderer
+		opengl/OpenglVAO
+		opengl/OpenglVBO
+		opengl/BufferUsageHint
+		opengl/BufferTarget
+		opengl/Qualifier
+	CXX_STANDARD 23
+	REQUIRED_LIBS
+		tepp
+		wrangled_gl
+		misc
+)
