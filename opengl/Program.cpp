@@ -43,6 +43,10 @@ namespace render::opengl
 		return result;
 	}
 
+	std::unique_ptr<DataSource> FileSource::make(std::filesystem::path path) {
+		return std::make_unique<FileSource>(path);
+	}
+
 	std::optional<DataSourceType> StaticSource::data() const {
 		auto referenceData = std::make_unique<ReferenceData>();
 		referenceData->data = this->staticData.data;

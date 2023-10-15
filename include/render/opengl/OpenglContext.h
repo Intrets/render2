@@ -1,15 +1,20 @@
 #pragma once
 
+#include <format>
+#include <iostream>
+
 #include <wrangled_gl/wrangled_gl.h>
 
 #include <tepp/enum_array.h>
 
 #include "render/opengl/BufferTarget.h"
 #include "render/opengl/Qualifier.h"
+#include "render/opengl/TextureTarget.h"
 
 namespace render::opengl
 {
 	struct OpenglVAO;
+	struct Opengl2DTexture;
 	struct OpenglVBO;
 	struct Program;
 
@@ -86,6 +91,7 @@ namespace render::opengl
 		Qualified<GLuint> usedProgram{};
 
 		te::enum_array<BufferTarget::Type, Qualified<GLuint>> boundBuffers{};
+		te::enum_array<TextureTarget::Type, Qualified<GLuint>> boundTextures{};
 
 		Configuration configuration{};
 
@@ -99,6 +105,7 @@ namespace render::opengl
 		void bind(OpenglVAO& openglVAO);
 		void bind(OpenglVBO& openglVBO, BufferTarget target = {});
 		void use(Program& program);
+		void bind(Opengl2DTexture& opengl2DTexture);
 
 		void reset();
 
@@ -106,14 +113,17 @@ namespace render::opengl
 
 		template<class... Args>
 		void logInfo(std::string_view str, Args&&... args) {
+			std::cout << "Info: " << std::vformat(str, std::make_format_args(args...));
 		}
 
 		template<class... Args>
 		void logWarning(std::string_view str, Args&&... args) {
+			std::cout << "Warning: " << std::vformat(str, std::make_format_args(args...));
 		}
 
 		template<class... Args>
 		void logError(std::string_view str, Args&&... args) {
+			std::cout << "Error: " << std::vformat(str, std::make_format_args(args...));
 		}
 	};
 }

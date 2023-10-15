@@ -1,5 +1,6 @@
 #include "render/opengl/OpenglContext.h"
 
+#include "render/opengl/OpenglTexture.h"
 #include "render/opengl/OpenglVAO.h"
 #include "render/opengl/OpenglVBO.h"
 #include "render/opengl/Program.h"
@@ -152,6 +153,13 @@ namespace render::opengl
 		}
 	}
 
+	void OpenglContext::bind(Opengl2DTexture& opengl2DTexture) {
+		if (this->boundTextures[TextureTarget::Type::TEXTURE_2D] != opengl2DTexture.ID) {
+			glBindTexture(TextureTarget(TextureTarget::Type::TEXTURE_2D).get(), opengl2DTexture.ID.data);
+			this->boundTextures[TextureTarget::Type::TEXTURE_2D] = opengl2DTexture.ID;
+		}
+	}
+
 	void OpenglContext::reset() {
 		this->usedProgram = {};
 		this->boundVAO = {};
@@ -161,13 +169,4 @@ namespace render::opengl
 	int64_t OpenglContext::getQualifier() {
 		return this->qualifierCounter++;
 	}
-
-	BufferTarget::BufferTarget(BufferTarget::Type type_)
-	    : type(type_) {
-	}
-
-	BufferTarget::operator BufferTarget::Type() {
-		return this->type;
-	}
-
 }

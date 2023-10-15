@@ -1,5 +1,6 @@
 #pragma once
 
+#include <array>
 #include <limits>
 #include <utility>
 #include <vector>
@@ -33,6 +34,9 @@ namespace render::opengl
 		template<class T>
 		void set(std::vector<T> const& data, BufferUsageHint bufferUsageHint);
 
+		template<class T, size_t N>
+		void set(std::array<T, N> const& data, BufferUsageHint bufferUsageHint);
+
 		void bind(BufferTarget bufferTarget);
 
 		OpenglVBO(OpenglContext& openglContext);
@@ -41,6 +45,21 @@ namespace render::opengl
 
 	template<class T>
 	inline void OpenglVBO::set(std::vector<T> const& data, BufferUsageHint bufferUsageHint) {
+		misc::abortAssign(this->bufferSizeInformation.elementByteSize, sizeof(T));
+		misc::abortAssign(this->bufferSizeInformation.elementCount, data.size());
+
+		this->bind(BufferTarget::Type::ARRAY_BUFFER);
+
+		glBufferData(
+		    GL_ARRAY_BUFFER,
+		    this->bufferSizeInformation.getByteSize(),
+		    data.data(),
+		    bufferUsageHint.get()
+		);
+	}
+
+	template<class T, size_t N>
+	inline void OpenglVBO::set(std::array<T, N> const& data, BufferUsageHint bufferUsageHint) {
 		misc::abortAssign(this->bufferSizeInformation.elementByteSize, sizeof(T));
 		misc::abortAssign(this->bufferSizeInformation.elementCount, data.size());
 

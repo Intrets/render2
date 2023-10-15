@@ -24,4 +24,12 @@ namespace render::opengl
 
 		return lookup[this->type];
 	}
+
+	BufferTarget::BufferTarget(BufferTarget::Type type_)
+	    : type(type_) {
+	}
+
+	BufferTarget::operator BufferTarget::Type() {
+		return this->type;
+	}
 }

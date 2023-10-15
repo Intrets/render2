@@ -18,14 +18,6 @@ namespace render::opengl
 	{
 		DataType dataType{};
 
-		enum class Divisor
-		{
-			zero,
-			one
-		} divisor{};
-
-		GLuint getDivisor() const;
-
 		int32_t offset{};
 	};
 
@@ -36,10 +28,17 @@ namespace render::opengl
 		std::vector<VertexAttribute> attributes{};
 		GLsizei stride{};
 
+		enum class Divisor
+		{
+			zero,
+			one
+		} divisor{};
+
 		Descriptor& add(
-		    DataType dataType,
-		    VertexAttribute::Divisor divisor
+		    DataType dataType
 		);
+
+		GLuint getDivisor() const;
 
 		void finalize(OpenglVBO& VBO);
 	};
@@ -50,8 +49,9 @@ namespace render::opengl
 		Qualified<GLuint> ID{};
 
 		std::unordered_map<std::string, Descriptor> descriptors{};
+		int attributeCount = 0;
 
-		Descriptor& newDescriptor(std::string_view name);
+		Descriptor& newDescriptor(std::string_view name, Descriptor::Divisor divisor);
 
 		void bind();
 

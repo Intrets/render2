@@ -5,8 +5,6 @@
 #include <span>
 #include <vector>
 
-#include <tepp/box.h>
-
 #include <wrangled_gl/wrangled_gl.h>
 
 #include "render/opengl/Qualifier.h"
@@ -51,6 +49,7 @@ namespace render::opengl
 
 		std::optional<DataSourceType> data() const override;
 		std::unique_ptr<DataSource> copy() const override;
+		static std::unique_ptr<DataSource> make(std::filesystem::path path);
 	};
 
 	struct StaticSource : DataSource
