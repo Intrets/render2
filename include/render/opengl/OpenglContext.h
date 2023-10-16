@@ -92,6 +92,8 @@ namespace render::opengl
 
 		te::enum_array<BufferTarget::Type, Qualified<GLuint>> boundBuffers{};
 		te::enum_array<TextureTarget::Type, Qualified<GLuint>> boundTextures{};
+		std::vector<Qualified<GLuint>> boundSamplerUnits{};
+		int32_t activeUnit = 0;
 
 		Configuration configuration{};
 
@@ -106,10 +108,14 @@ namespace render::opengl
 		void bind(OpenglVBO& openglVBO, BufferTarget target = {});
 		void use(Program& program);
 		void bind(Opengl2DTexture& opengl2DTexture);
+		void bind(Opengl2DTexture& texture, int32_t unit);
 
 		void reset();
 
 		int64_t getQualifier();
+
+		OpenglContext();
+		~OpenglContext() = default;
 
 		template<class... Args>
 		void logInfo(std::string_view str, Args&&... args) {

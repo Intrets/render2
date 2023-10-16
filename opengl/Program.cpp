@@ -73,6 +73,10 @@ namespace render::opengl
 		return result;
 	}
 
+	int32_t Program::getNextSampler() {
+		return this->samplerCount++;
+	}
+
 	void Program::use() {
 		this->openglContext.use(*this);
 	}

@@ -76,6 +76,6 @@ namespace render::opengl
 		Opengl2DTexture() = delete;
 		~Opengl2DTexture();
 
-		std::optional<Opengl2DTexture> make(OpenglContext& openglContext, TextureFormat const& textureFormat, std::optional<std::span<std::byte>> data);
+		static std::optional<Opengl2DTexture> make(OpenglContext& openglContext, TextureFormat const& textureFormat, std::optional<std::span<std::byte>> data);
 	};
 }

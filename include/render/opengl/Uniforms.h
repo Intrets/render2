@@ -21,6 +21,8 @@ namespace render::opengl
 	template<class T>
 	struct SetUniform;
 
+	struct Opengl2DTexture;
+
 	template<>
 	struct SetUniform<vec::vec2>
 	{
@@ -107,5 +109,19 @@ namespace render::opengl
 
 			SetUniform<T>::apply(this->location, values);
 		}
+	};
+
+	struct OpenglSampler2D
+	{
+		int32_t unit{};
+		Program* program{};
+		GLuint location{};
+
+		OpenglSampler2D() = default;
+		void initialize(te::cstring_view name, Program& program);
+		NO_COPY_MOVE(OpenglSampler2D);
+		~OpenglSampler2D() = default;
+
+		void set(Opengl2DTexture& texture);
 	};
 }

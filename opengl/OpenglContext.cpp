@@ -156,7 +156,20 @@ namespace render::opengl
 	void OpenglContext::bind(Opengl2DTexture& opengl2DTexture) {
 		if (this->boundTextures[TextureTarget::Type::TEXTURE_2D] != opengl2DTexture.ID) {
 			glBindTexture(TextureTarget(TextureTarget::Type::TEXTURE_2D).get(), opengl2DTexture.ID.data);
+			this->boundSamplerUnits[this->activeUnit] = opengl2DTexture.ID;
 			this->boundTextures[TextureTarget::Type::TEXTURE_2D] = opengl2DTexture.ID;
+		}
+	}
+
+	void OpenglContext::bind(Opengl2DTexture& texture, int32_t unit) {
+		if (unit < 0 || unit >= this->boundSamplerUnits.size()) {
+			return;
+		}
+
+		if (this->boundSamplerUnits[unit] != texture.ID) {
+			glActiveTexture(GL_TEXTURE0 + unit);
+			this->activeUnit = unit;
+			this->bind(texture);
 		}
 	}
 
@@ -168,5 +181,12 @@ namespace render::opengl
 
 	int64_t OpenglContext::getQualifier() {
 		return this->qualifierCounter++;
+	}
+
+	OpenglContext::OpenglContext() {
+		int maximumTextureUnits = 0;
+		glGetIntegerv(GL_MAX_COMBINED_TEXTURE_IMAGE_UNITS, &maximumTextureUnits);
+
+		this->boundSamplerUnits.resize(maximumTextureUnits);
 	}
 }

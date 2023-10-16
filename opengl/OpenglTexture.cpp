@@ -92,12 +92,17 @@ namespace render::opengl
 	Opengl2DTexture::Opengl2DTexture(OpenglContext& openglContext_)
 	    : openglContext(openglContext_) {
 		this->ID.qualifier = this->openglContext.getQualifier();
+		glGenTextures(1, &this->ID.data);
 	}
 
 	Opengl2DTexture::Opengl2DTexture(OpenglContext& openglContext_, GLuint ID_)
 	    : openglContext(openglContext_) {
 		this->ID.qualifier = this->openglContext.getQualifier();
 		this->ID.data = ID_;
+	}
+
+	Opengl2DTexture::~Opengl2DTexture() {
+		glDeleteTextures(1, &this->ID.data);
 	}
 
 	std::optional<Opengl2DTexture> Opengl2DTexture::make(OpenglContext& openglContext, TextureFormat const& textureFormat, std::optional<std::span<std::byte>> data) {
@@ -110,21 +115,22 @@ namespace render::opengl
 		}
 
 		auto result = Opengl2DTexture(openglContext);
-		glGenTextures(1, &this->ID.data);
+		glGenTextures(1, &result.ID.data);
 
-		this->bind();
+		result.bind();
 
 		void* ptr = nullptr;
 
-		if (data.has_value() && !data->empty()) {
-			if (textureFormat.getByteSize() != data->size()) {
-				openglContext.logError("Mismatched byte size when trying to load texture. Wanted {}, have {}.\n", textureFormat.getByteSize(), data->size());
+		//if (data.has_value() && !data->empty()) {
+		//	if (textureFormat.getByteSize() != data->size()) {
+		//		openglContext.logError("Mismatched byte size when trying to load texture. Wanted {}, have {}.\n", textureFormat.getByteSize(), data->size());
 
-				return std::nullopt;
-			}
+		//		return std::nullopt;
+		//	}
 
-			ptr = data->data();
-		}
+		//	ptr = data->data();
+		//}
+		ptr = data->data();
 
 		glTexImage2D(
 		    GL_TEXTURE_2D,

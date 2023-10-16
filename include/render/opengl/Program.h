@@ -94,6 +94,10 @@ namespace render::opengl
 		OpenglContext& openglContext;
 		Qualified<GLuint> ID{};
 
+		int32_t samplerCount = 0;
+
+		int32_t getNextSampler();
+
 		void use();
 
 		Program(OpenglContext& openglContext);

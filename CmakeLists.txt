@@ -20,6 +20,7 @@ make_module(
 		opengl/BufferUsageHint
 		opengl/BufferTarget
 		opengl/TextureTarget
+		opengl/TextureLoader
 		opengl/Qualifier
 		opengl/Uniforms
 	CXX_STANDARD 23
@@ -28,4 +29,6 @@ make_module(
 		wrangled_gl
 		misc
 		vec
+		resources
+		gli
 )
