@@ -37,7 +37,7 @@ namespace render::opengl
 	}
 
 	GLenum TextureFormat::getMinFilter() const {
-		if (this->mipmapLimit.has_value()) {
+		if (this->mipmapLevels != 1) {
 			switch (this->mipmapFiltering) {
 				case MipmapFiltering::NEAREST:
 				{
@@ -117,7 +117,6 @@ namespace render::opengl
 	Opengl2DTexture::Opengl2DTexture(OpenglContext& openglContext_)
 	    : openglContext(openglContext_) {
 		this->ID.qualifier = this->openglContext.getQualifier();
-		glGenTextures(1, &this->ID.data);
 	}
 
 	Opengl2DTexture::Opengl2DTexture(OpenglContext& openglContext_, GLuint ID_)
@@ -140,6 +139,7 @@ namespace render::opengl
 		}
 
 		auto result = Opengl2DTexture(openglContext);
+		glGenTextures(1, &result.ID.data);
 		result.bind();
 
 		result.size = textureFormat.size;
@@ -177,19 +177,18 @@ namespace render::opengl
 	}
 
 	void Opengl2DArrayTexture::bind() {
-		this->openglContext.bind(*this);
+		this->openglContext.get().bind(*this);
 	}
 
 	Opengl2DArrayTexture::Opengl2DArrayTexture(OpenglContext& openglContext_)
 	    : openglContext(openglContext_) {
-		this->ID.qualifier = this->openglContext.getQualifier();
-		glGenTextures(1, &this->ID.data);
+		this->ID.qualifier = this->openglContext.get().getQualifier();
 	}
 
 	Opengl2DArrayTexture::Opengl2DArrayTexture(OpenglContext& openglContext_, GLuint ID)
 	    : openglContext(openglContext_) {
 		this->ID.data = ID;
-		this->ID.qualifier = this->openglContext.getQualifier();
+		this->ID.qualifier = this->openglContext.get().getQualifier();
 	}
 
 	Opengl2DArrayTexture::~Opengl2DArrayTexture() {
@@ -205,28 +204,34 @@ namespace render::opengl
 		}
 
 		auto result = Opengl2DArrayTexture(openglContext);
+		glGenTextures(1, &result.ID.data);
 		result.bind();
 
 		result.size = textureFormat.size;
 		result.layers = textureFormat.layers;
 
-		glTexImage3D(
-		    GL_TEXTURE_2D_ARRAY,
-		    0,
-		    textureFormat.getInternalFormat(),
-		    textureFormat.size.x(),
-		    textureFormat.size.y(),
-		    textureFormat.layers,
-		    0,
-		    textureFormat.getPixelDataFormat(),
-		    textureFormat.getPixelDataType(),
-		    nullptr
-		);
+		for (int i = 0; i < textureFormat.mipmapLevels; i++) {
+			glTexImage3D(
+			    GL_TEXTURE_2D_ARRAY,
+			    i,
+			    textureFormat.getInternalFormat(),
+			    textureFormat.size.x() >> i,
+			    textureFormat.size.y() >> i,
+			    textureFormat.layers,
+			    0,
+			    textureFormat.getPixelDataFormat(),
+			    textureFormat.getPixelDataType(),
+			    nullptr
+			);
 
-		glTexParameteri(GL_TEXTURE_2D_ARRAY, GL_TEXTURE_MAG_FILTER, textureFormat.getMagFilter());
-		glTexParameteri(GL_TEXTURE_2D_ARRAY, GL_TEXTURE_MIN_FILTER, textureFormat.getMinFilter());
-		glTexParameteri(GL_TEXTURE_2D_ARRAY, GL_TEXTURE_WRAP_S, textureFormat.getWrappingX());
-		glTexParameteri(GL_TEXTURE_2D_ARRAY, GL_TEXTURE_WRAP_T, textureFormat.getWrappingY());
+			glTexParameteri(GL_TEXTURE_2D_ARRAY, GL_TEXTURE_MAG_FILTER, textureFormat.getMagFilter());
+			glTexParameteri(GL_TEXTURE_2D_ARRAY, GL_TEXTURE_MIN_FILTER, textureFormat.getMinFilter());
+			glTexParameteri(GL_TEXTURE_2D_ARRAY, GL_TEXTURE_WRAP_S, textureFormat.getWrappingX());
+			glTexParameteri(GL_TEXTURE_2D_ARRAY, GL_TEXTURE_WRAP_T, textureFormat.getWrappingY());
+		}
+
+		glTexParameteri(GL_TEXTURE_2D_ARRAY, GL_TEXTURE_BASE_LEVEL, 0);
+		glTexParameteri(GL_TEXTURE_2D_ARRAY, GL_TEXTURE_MAX_LEVEL, textureFormat.mipmapLevels - 1);
 
 		return result;
 	}

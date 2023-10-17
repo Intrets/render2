@@ -50,5 +50,7 @@ namespace render::opengl
 		DEFAULT_MOVE(OpenglFramebuffer);
 
 		~OpenglFramebuffer();
+
+		static OpenglFramebuffer screenTarget(OpenglContext& openglContext);
 	};
 }

@@ -43,6 +43,10 @@ namespace render::opengl
 		glDeleteFramebuffers(1, &this->ID.data);
 	}
 
+	OpenglFramebuffer OpenglFramebuffer::screenTarget(OpenglContext& openglContext) {
+		return OpenglFramebuffer(openglContext, 0);
+	}
+
 	GLenum OpenglFramebuffer::Attachment::get() const {
 		te::enum_array<Type, GLenum> lookup{
 			{ Type::color0, GL_COLOR_ATTACHMENT0 },

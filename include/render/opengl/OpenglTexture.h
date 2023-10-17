@@ -38,7 +38,7 @@ namespace render::opengl
 		GLenum getMinFilter() const;
 		GLenum getMagFilter() const;
 
-		std::optional<vec::ivec2> mipmapLimit{};
+		int32_t mipmapLevels = 1;
 
 		enum class MipmapFiltering
 		{
@@ -74,6 +74,7 @@ namespace render::opengl
 		OpenglContext& openglContext;
 		Qualified<GLuint> ID{};
 		vec::ivec2 size{};
+		bool flippedUV = false;
 
 		void bind();
 
@@ -91,14 +92,14 @@ namespace render::opengl
 
 	struct Opengl2DArrayTexture
 	{
-		OpenglContext& openglContext;
+		std::reference_wrapper<OpenglContext> openglContext;
 		Qualified<GLuint> ID{};
 		vec::ivec2 size{};
 		int32_t layers{};
 
 		void bind();
 
-		Opengl2DArrayTexture(OpenglContext& openglContext);
+		explicit Opengl2DArrayTexture(OpenglContext& openglContext);
 		explicit Opengl2DArrayTexture(OpenglContext& openglContext, GLuint ID);
 
 		NO_COPY(Opengl2DArrayTexture);

@@ -19,6 +19,8 @@ namespace render::opengl
 		GLenum Target = GL.translate(Texture.target());
 
 		auto result = Opengl2DTexture(openglContext);
+		result.flippedUV = true;
+		glGenTextures(1, &result.ID.data);
 		if (Target != GL_TEXTURE_2D) {
 			return result;
 		}
