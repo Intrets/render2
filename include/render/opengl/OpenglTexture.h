@@ -23,6 +23,7 @@ namespace render::opengl
 		GLint getInternalFormat() const;
 
 		vec::ivec2 size{};
+		int32_t layers{};
 
 		GLenum getPixelDataFormat() const;
 		GLenum getPixelDataType() const;
@@ -36,6 +37,15 @@ namespace render::opengl
 
 		GLenum getMinFilter() const;
 		GLenum getMagFilter() const;
+
+		std::optional<vec::ivec2> mipmapLimit{};
+
+		enum class MipmapFiltering
+		{
+			NEAREST,
+			LINEAR,
+			MAX
+		} mipmapFiltering{};
 
 		enum class Wrapping
 		{
@@ -77,5 +87,26 @@ namespace render::opengl
 		~Opengl2DTexture();
 
 		static std::optional<Opengl2DTexture> make(OpenglContext& openglContext, TextureFormat const& textureFormat, std::optional<std::span<std::byte>> data);
+	};
+
+	struct Opengl2DArrayTexture
+	{
+		OpenglContext& openglContext;
+		Qualified<GLuint> ID{};
+		vec::ivec2 size{};
+		int32_t layers{};
+
+		void bind();
+
+		Opengl2DArrayTexture(OpenglContext& openglContext);
+		explicit Opengl2DArrayTexture(OpenglContext& openglContext, GLuint ID);
+
+		NO_COPY(Opengl2DArrayTexture);
+		DEFAULT_MOVE(Opengl2DArrayTexture);
+
+		Opengl2DArrayTexture() = delete;
+		~Opengl2DArrayTexture();
+
+		static std::optional<Opengl2DArrayTexture> make(OpenglContext& openglContext, TextureFormat const& textureFormat);
 	};
 }

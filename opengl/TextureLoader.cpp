@@ -1,5 +1,7 @@
 #include "render/opengl/TextureLoader.h"
 
+#include <wrangled_gl/wrangled_gl.h>
+
 #include <gli/gli.hpp>
 
 #include <resources/Resources.h>

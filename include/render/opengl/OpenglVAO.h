@@ -52,6 +52,7 @@ namespace render::opengl
 		int attributeCount = 0;
 
 		Descriptor& newDescriptor(std::string_view name, Descriptor::Divisor divisor);
+		void addQuadDescriptor(std::string_view name, OpenglVBO& VBO);
 
 		void bind();
 

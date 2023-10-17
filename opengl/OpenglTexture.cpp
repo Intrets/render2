@@ -37,12 +37,37 @@ namespace render::opengl
 	}
 
 	GLenum TextureFormat::getMinFilter() const {
-		constexpr te::enum_array<Filtering, GLenum> lookup{
-			{ Filtering::LINEAR, GL_LINEAR_MIPMAP_LINEAR },
-			{ Filtering::NEAREST, GL_NEAREST_MIPMAP_NEAREST },
-		};
+		if (this->mipmapLimit.has_value()) {
+			switch (this->mipmapFiltering) {
+				case MipmapFiltering::NEAREST:
+				{
+					constexpr te::enum_array<Filtering, GLenum> lookup{
+						{ Filtering::LINEAR, GL_LINEAR_MIPMAP_NEAREST },
+						{ Filtering::NEAREST, GL_NEAREST_MIPMAP_NEAREST },
+					};
 
-		return lookup[this->filtering];
+					return lookup[this->filtering];
+				}
+				case MipmapFiltering::LINEAR:
+				{
+					constexpr te::enum_array<Filtering, GLenum> lookup{
+						{ Filtering::LINEAR, GL_LINEAR_MIPMAP_LINEAR },
+						{ Filtering::NEAREST, GL_NEAREST_MIPMAP_LINEAR },
+					};
+
+					return lookup[this->filtering];
+				}
+				default:
+					return GL_LINEAR;
+			}
+		}
+		else {
+			constexpr te::enum_array<Filtering, GLenum> lookup{
+				{ Filtering::LINEAR, GL_LINEAR },
+				{ Filtering::NEAREST, GL_NEAREST },
+			};
+			return lookup[this->filtering];
+		}
 	}
 
 	GLenum TextureFormat::getMagFilter() const {
@@ -115,22 +140,21 @@ namespace render::opengl
 		}
 
 		auto result = Opengl2DTexture(openglContext);
-		glGenTextures(1, &result.ID.data);
-
 		result.bind();
+
+		result.size = textureFormat.size;
 
 		void* ptr = nullptr;
 
-		//if (data.has_value() && !data->empty()) {
-		//	if (textureFormat.getByteSize() != data->size()) {
-		//		openglContext.logError("Mismatched byte size when trying to load texture. Wanted {}, have {}.\n", textureFormat.getByteSize(), data->size());
+		if (data.has_value() && !data->empty()) {
+			if (textureFormat.getByteSize() != data->size()) {
+				openglContext.logError("Mismatched byte size when trying to load texture. Wanted {}, have {}.\n", textureFormat.getByteSize(), data->size());
 
-		//		return std::nullopt;
-		//	}
+				return std::nullopt;
+			}
 
-		//	ptr = data->data();
-		//}
-		ptr = data->data();
+			ptr = data->data();
+		}
 
 		glTexImage2D(
 		    GL_TEXTURE_2D,
@@ -148,6 +172,61 @@ namespace render::opengl
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, textureFormat.getMinFilter());
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, textureFormat.getWrappingX());
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, textureFormat.getWrappingY());
+
+		return result;
+	}
+
+	void Opengl2DArrayTexture::bind() {
+		this->openglContext.bind(*this);
+	}
+
+	Opengl2DArrayTexture::Opengl2DArrayTexture(OpenglContext& openglContext_)
+	    : openglContext(openglContext_) {
+		this->ID.qualifier = this->openglContext.getQualifier();
+		glGenTextures(1, &this->ID.data);
+	}
+
+	Opengl2DArrayTexture::Opengl2DArrayTexture(OpenglContext& openglContext_, GLuint ID)
+	    : openglContext(openglContext_) {
+		this->ID.data = ID;
+		this->ID.qualifier = this->openglContext.getQualifier();
+	}
+
+	Opengl2DArrayTexture::~Opengl2DArrayTexture() {
+	}
+
+	std::optional<Opengl2DArrayTexture> Opengl2DArrayTexture::make(OpenglContext& openglContext, TextureFormat const& textureFormat) {
+		int32_t maxSize = 0;
+		glGetIntegerv(GL_MAX_TEXTURE_SIZE, &maxSize);
+
+		if (textureFormat.size > maxSize) {
+			openglContext.logError("Tried to make texture with size {} {}, maximum size supported is {}.\n", textureFormat.size.x(), textureFormat.size.y(), maxSize);
+			return std::nullopt;
+		}
+
+		auto result = Opengl2DArrayTexture(openglContext);
+		result.bind();
+
+		result.size = textureFormat.size;
+		result.layers = textureFormat.layers;
+
+		glTexImage3D(
+		    GL_TEXTURE_2D_ARRAY,
+		    0,
+		    textureFormat.getInternalFormat(),
+		    textureFormat.size.x(),
+		    textureFormat.size.y(),
+		    textureFormat.layers,
+		    0,
+		    textureFormat.getPixelDataFormat(),
+		    textureFormat.getPixelDataType(),
+		    nullptr
+		);
+
+		glTexParameteri(GL_TEXTURE_2D_ARRAY, GL_TEXTURE_MAG_FILTER, textureFormat.getMagFilter());
+		glTexParameteri(GL_TEXTURE_2D_ARRAY, GL_TEXTURE_MIN_FILTER, textureFormat.getMinFilter());
+		glTexParameteri(GL_TEXTURE_2D_ARRAY, GL_TEXTURE_WRAP_S, textureFormat.getWrappingX());
+		glTexParameteri(GL_TEXTURE_2D_ARRAY, GL_TEXTURE_WRAP_T, textureFormat.getWrappingY());
 
 		return result;
 	}

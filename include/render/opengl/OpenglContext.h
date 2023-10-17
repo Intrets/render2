@@ -5,6 +5,8 @@
 
 #include <wrangled_gl/wrangled_gl.h>
 
+#include <vec/ivec4.h>
+
 #include <tepp/enum_array.h>
 
 #include "render/opengl/BufferTarget.h"
@@ -15,6 +17,8 @@ namespace render::opengl
 {
 	struct OpenglVAO;
 	struct Opengl2DTexture;
+	struct Opengl2DArrayTexture;
+	struct OpenglFramebuffer;
 	struct OpenglVBO;
 	struct Program;
 
@@ -89,11 +93,14 @@ namespace render::opengl
 
 		Qualified<GLuint> boundVAO{};
 		Qualified<GLuint> usedProgram{};
+		Qualified<GLuint> boundFramebuffer{};
 
 		te::enum_array<BufferTarget::Type, Qualified<GLuint>> boundBuffers{};
 		te::enum_array<TextureTarget::Type, Qualified<GLuint>> boundTextures{};
 		std::vector<Qualified<GLuint>> boundSamplerUnits{};
 		int32_t activeUnit = 0;
+
+		vec::ivec4 viewport{};
 
 		Configuration configuration{};
 
@@ -109,10 +116,16 @@ namespace render::opengl
 		void use(Program& program);
 		void bind(Opengl2DTexture& opengl2DTexture);
 		void bind(Opengl2DTexture& texture, int32_t unit);
+		void bind(Opengl2DArrayTexture& texture);
+		void bind(Opengl2DArrayTexture& texture, int32_t unit);
+		void bind(OpenglFramebuffer& framebuffer);
+
+		void setViewport(vec::ivec4 viewport);
 
 		void reset();
 
 		int64_t getQualifier();
+		int64_t getScreenFramebufferQualifier() const;
 
 		OpenglContext();
 		~OpenglContext() = default;

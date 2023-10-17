@@ -9,6 +9,13 @@
 
 #include "render/opengl/Qualifier.h"
 
+#include <resources/Resources.h>
+
+namespace resources
+{
+	struct Resource;
+}
+
 namespace render::opengl
 {
 	struct OpenglContext;
@@ -88,8 +95,8 @@ namespace render::opengl
 
 	struct Program
 	{
-		std::unique_ptr<DataSource> vertexSource{};
-		std::unique_ptr<DataSource> fragmentSource{};
+		std::optional<resources::Resource> vertexSource{};
+		std::optional<resources::Resource> fragmentSource{};
 
 		OpenglContext& openglContext;
 		Qualified<GLuint> ID{};
@@ -108,12 +115,24 @@ namespace render::opengl
 		Program(Program&& other);
 		Program& operator=(Program&& other);
 
+		~Program();
+
+		static std::optional<Program> load(
+		    OpenglContext& openglContext,
+		    std::span<char const> vertexSource,
+		    std::span<char const> fragmentSource
+		);
+
 		static std::optional<Program> load(
 		    OpenglContext& openglContext,
 		    std::unique_ptr<DataSource> vertexSource,
 		    std::unique_ptr<DataSource> fragmentSource
 		);
 
-		std::optional<Program> reload(OpenglContext& openglContext);
+		static std::optional<Program> load(
+		    OpenglContext& openglContext,
+		    resources::Resource vertexSource,
+		    resources::Resource fragmentSource
+		);
 	};
 }

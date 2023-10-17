@@ -4,6 +4,7 @@
 #include <limits>
 #include <utility>
 #include <vector>
+#include <span>
 
 #include <wrangled_gl/wrangled_gl.h>
 
@@ -32,6 +33,9 @@ namespace render::opengl
 		} bufferSizeInformation{};
 
 		template<class T>
+		void set(std::span<T const> data, BufferUsageHint bufferUsageHint);
+
+		template<class T>
 		void set(std::vector<T> const& data, BufferUsageHint bufferUsageHint);
 
 		template<class T, size_t N>
@@ -42,6 +46,21 @@ namespace render::opengl
 		OpenglVBO(OpenglContext& openglContext);
 		~OpenglVBO();
 	};
+
+	template<class T>
+	inline void OpenglVBO::set(std::span<T const> data, BufferUsageHint bufferUsageHint) {
+		misc::abortAssign(this->bufferSizeInformation.elementByteSize, sizeof(T));
+		misc::abortAssign(this->bufferSizeInformation.elementCount, data.size());
+
+		this->bind(BufferTarget::Type::ARRAY_BUFFER);
+
+		glBufferData(
+		    GL_ARRAY_BUFFER,
+		    this->bufferSizeInformation.getByteSize(),
+		    data.data(),
+		    bufferUsageHint.get()
+		);
+	}
 
 	template<class T>
 	inline void OpenglVBO::set(std::vector<T> const& data, BufferUsageHint bufferUsageHint) {

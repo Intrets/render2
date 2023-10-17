@@ -1,5 +1,6 @@
 #include "render/opengl/OpenglContext.h"
 
+#include "render/opengl/OpenglFramebuffer.h"
 #include "render/opengl/OpenglTexture.h"
 #include "render/opengl/OpenglVAO.h"
 #include "render/opengl/OpenglVBO.h"
@@ -173,6 +174,45 @@ namespace render::opengl
 		}
 	}
 
+	void OpenglContext::bind(Opengl2DArrayTexture& texture) {
+		if (this->boundTextures[TextureTarget::Type::TEXTURE_2D_ARRAY] != texture.ID) {
+			glBindTexture(TextureTarget(TextureTarget::Type::TEXTURE_2D_ARRAY).get(), texture.ID.data);
+			this->boundSamplerUnits[this->activeUnit] = texture.ID;
+			this->boundTextures[TextureTarget::Type::TEXTURE_2D_ARRAY] = texture.ID;
+		}
+	}
+
+	void OpenglContext::bind(Opengl2DArrayTexture& texture, int32_t unit) {
+		if (unit < 0 || unit >= this->boundSamplerUnits.size()) {
+			return;
+		}
+
+		if (this->boundSamplerUnits[unit] != texture.ID) {
+			glActiveTexture(GL_TEXTURE0 + unit);
+			this->activeUnit = unit;
+			this->bind(texture);
+		}
+	}
+
+	void OpenglContext::bind(OpenglFramebuffer& framebuffer) {
+		if (this->boundFramebuffer != framebuffer.ID) {
+			this->boundFramebuffer = framebuffer.ID;
+			glBindFramebuffer(GL_FRAMEBUFFER, framebuffer.ID.data);
+		}
+	}
+
+	void OpenglContext::setViewport(vec::ivec4 viewport_) {
+		if (this->viewport != viewport_) {
+			this->viewport = viewport_;
+			glViewport(
+			    this->viewport[0],
+			    this->viewport[1],
+			    this->viewport[2],
+			    this->viewport[3]
+			);
+		}
+	}
+
 	void OpenglContext::reset() {
 		this->usedProgram = {};
 		this->boundVAO = {};
@@ -181,6 +221,10 @@ namespace render::opengl
 
 	int64_t OpenglContext::getQualifier() {
 		return this->qualifierCounter++;
+	}
+
+	int64_t OpenglContext::getScreenFramebufferQualifier() const {
+		return -1;
 	}
 
 	OpenglContext::OpenglContext() {

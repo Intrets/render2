@@ -15,6 +15,26 @@ namespace render::opengl
 		return it->second;
 	}
 
+	void OpenglVAO::addQuadDescriptor(std::string_view name, OpenglVBO& VBO) {
+		this->newDescriptor(name, Descriptor::Divisor::zero)
+		    .add(render::DataType::vec2)
+		    .finalize(VBO);
+
+		// clang-format off
+		constexpr std::array<float, 12> quadVertices{ 
+			 0, 0,
+			 1, 0,
+			 1, 1,
+
+			 0, 0,
+			 1, 1,
+			 0, 1,
+		};
+		// clang-format on
+
+		VBO.set(quadVertices, BufferUsageHint::Type::STATIC_DRAW);
+	}
+
 	void OpenglVAO::bind() {
 		this->openglContext.bind(*this);
 	}

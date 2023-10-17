@@ -13,6 +13,7 @@ make_module(
 		opengl/Wrappers
 		opengl/Program
 		opengl/OpenglContext
+		opengl/OpenglFramebuffer
 		opengl/OpenglRenderer
 		opengl/OpenglVAO
 		opengl/OpenglVBO

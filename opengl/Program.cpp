@@ -102,34 +102,16 @@ namespace render::opengl
 		return *this;
 	}
 
-	std::optional<Program> Program::load(
-	    OpenglContext& openglContext,
-	    std::unique_ptr<DataSource> vertexSource,
-	    std::unique_ptr<DataSource> fragmentSource
-	) {
-		openglContext.logInfo("Compiling Shaders\n");
+	Program::~Program() {
+		glDeleteProgram(this->ID.data);
+	}
 
-		// Create the shaders
+	std::optional<Program> Program::load(OpenglContext& openglContext, std::span<char const> vertexDataSpan, std::span<char const> fragmentDataSpan) {
 		auto vertexShader = Shader::makeVertexShader();
 		auto fragmentShader = Shader::makeFragmentShader();
 
 		GLint Result = GL_FALSE;
 		int32_t InfoLogLength = 0;
-
-		auto vertexData = vertexSource->data();
-		auto fragmentData = fragmentSource->data();
-
-		if (!vertexData.has_value()) {
-			openglContext.logError("Failed to get vertex data source.\n");
-			return std::nullopt;
-		}
-
-		if (!fragmentData.has_value()) {
-			openglContext.logError("Failed to get fragment data source.\n");
-			return std::nullopt;
-		}
-
-		auto vertexDataSpan = vertexData.value()->get();
 
 		GLchar const* vertexPointer = &vertexDataSpan.front();
 
@@ -150,8 +132,6 @@ namespace render::opengl
 			glGetShaderInfoLog(vertexShader.ID, InfoLogLength, NULL, &VertexShaderErrorMessage[0]);
 			openglContext.logError("Vertex shader error: {}\n", &VertexShaderErrorMessage[0]);
 		}
-
-		auto fragmentDataSpan = fragmentData.value()->get();
 
 		GLchar const* fragmentPointer = &fragmentDataSpan.front();
 
@@ -198,14 +178,52 @@ namespace render::opengl
 
 		result.ID.data = ProgramID;
 		result.ID.qualifier = openglContext.getQualifier();
-		result.fragmentSource = std::move(fragmentSource);
-		result.vertexSource = std::move(vertexSource);
 
 		return result;
 	}
 
-	std::optional<Program> Program::reload(OpenglContext& openglContext) {
-		return Program::load(openglContext, this->vertexSource->copy(), this->fragmentSource->copy());
+	std::optional<Program> Program::load(
+	    OpenglContext& openglContext,
+	    std::unique_ptr<DataSource> vertexSource,
+	    std::unique_ptr<DataSource> fragmentSource
+	) {
+		openglContext.logInfo("Compiling Shaders\n");
+
+		auto vertexData = vertexSource->data();
+		auto fragmentData = fragmentSource->data();
+
+		if (!vertexData.has_value()) {
+			openglContext.logError("Failed to get vertex data source.\n");
+			return std::nullopt;
+		}
+
+		if (!fragmentData.has_value()) {
+			openglContext.logError("Failed to get fragment data source.\n");
+			return std::nullopt;
+		}
+
+		auto vertexDataSpan = vertexData.value()->get();
+		auto fragmentDataSpan = fragmentData.value()->get();
+
+		return Program::load(openglContext, vertexDataSpan, fragmentDataSpan);
+	}
+
+	std::optional<Program> Program::load(OpenglContext& openglContext, resources::Resource vertexSource, resources::Resource fragmentSource) {
+		auto vertexSourceBuffer = vertexSource.getBuffer();
+		auto fragmentSourceBuffer = fragmentSource.getBuffer();
+
+		if (!vertexSourceBuffer.has_value() || !fragmentSourceBuffer.has_value()) {
+			return std::nullopt;
+		}
+
+		auto result = Program::load(openglContext, vertexSourceBuffer->get()->data<char>(), fragmentSourceBuffer->get()->data<char>());
+
+		if (result.has_value()) {
+			result->fragmentSource.emplace(fragmentSource);
+			result->vertexSource.emplace(vertexSource);
+		}
+
+		return result;
 	}
 
 	Shader::Shader(Shader&& other) {
