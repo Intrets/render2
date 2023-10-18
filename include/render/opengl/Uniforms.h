@@ -6,6 +6,7 @@
 #include <vector>
 
 #include <vec/mat4.h>
+#include <vec/ivec2.h>
 #include <vec/vec2.h>
 #include <vec/vec3.h>
 #include <vec/vec4.h>
@@ -23,6 +24,15 @@ namespace render::opengl
 
 	struct Opengl2DTexture;
 	struct Opengl2DArrayTexture;
+	struct OpenglBufferTexture;
+
+	template<>
+	struct SetUniform<vec::ivec2>
+	{
+		static void apply(GLuint location, std::span<vec::ivec2 const> values) {
+			glUniform2iv(location, values.size(), &values[0][0]);
+		}
+	};
 
 	template<>
 	struct SetUniform<vec::vec2>
@@ -138,5 +148,19 @@ namespace render::opengl
 		~OpenglSampler3D() = default;
 
 		void set(Opengl2DArrayTexture& texture);
+	};
+
+	struct OpenglSamplerBufferTexture
+	{
+		int32_t unit{};
+		Program* program{};
+		GLuint location{};
+
+		OpenglSamplerBufferTexture() = default;
+		void initialize(te::cstring_view name, Program& program);
+		NO_COPY_MOVE(OpenglSamplerBufferTexture);
+		~OpenglSamplerBufferTexture() = default;
+
+		void set(OpenglBufferTexture& texture);
 	};
 }

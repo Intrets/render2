@@ -75,6 +75,18 @@ namespace render::opengl
 		glEnableVertexAttribArray(index);
 	}
 
+	void intVertex(GLint index, GLint size, GLsizei stride, void* offset, GLuint divisor) {
+		glVertexAttribIPointer(
+		    index,
+		    size,
+		    GL_INT,
+		    stride,
+		    offset
+		);
+		glVertexAttribDivisor(index, divisor);
+		glEnableVertexAttribArray(index);
+	}
+
 	void Descriptor::finalize(OpenglVBO& VBO) {
 		this->VAO.bind();
 		VBO.bind(BufferTarget::Type::ARRAY_BUFFER);
@@ -109,11 +121,19 @@ namespace render::opengl
 					floatVertex(index++, 4, this->stride, (void*)(attribute.offset + 8 * sizeof(float)), this->getDivisor());
 					floatVertex(index++, 4, this->stride, (void*)(attribute.offset + 12 * sizeof(float)), this->getDivisor());
 					break;
-				default:
 				case DataType::i32:
+					intVertex(index++, 1, this->stride, (void*)attribute.offset, this->getDivisor());
+					break;
 				case DataType::ivec2:
+					intVertex(index++, 2, this->stride, (void*)attribute.offset, this->getDivisor());
+					break;
 				case DataType::ivec3:
+					intVertex(index++, 3, this->stride, (void*)attribute.offset, this->getDivisor());
+					break;
 				case DataType::ivec4:
+					intVertex(index++, 4, this->stride, (void*)attribute.offset, this->getDivisor());
+					break;
+				default:
 				case DataType::u32:
 				case DataType::uvec2:
 				case DataType::uvec3:

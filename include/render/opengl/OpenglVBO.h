@@ -33,7 +33,7 @@ namespace render::opengl
 		} bufferSizeInformation{};
 
 		template<class T>
-		void set(std::span<T const> data, BufferUsageHint bufferUsageHint);
+		void set(std::span<T const> data, BufferUsageHint bufferUsageHint, BufferTarget bufferTarget = BufferTarget::Type::ARRAY_BUFFER);
 
 		template<class T>
 		void set(std::vector<T> const& data, BufferUsageHint bufferUsageHint);
@@ -48,14 +48,14 @@ namespace render::opengl
 	};
 
 	template<class T>
-	inline void OpenglVBO::set(std::span<T const> data, BufferUsageHint bufferUsageHint) {
+	inline void OpenglVBO::set(std::span<T const> data, BufferUsageHint bufferUsageHint, BufferTarget bufferTarget) {
 		misc::abortAssign(this->bufferSizeInformation.elementByteSize, sizeof(T));
 		misc::abortAssign(this->bufferSizeInformation.elementCount, data.size());
 
-		this->bind(BufferTarget::Type::ARRAY_BUFFER);
+		this->bind(bufferTarget);
 
 		glBufferData(
-		    GL_ARRAY_BUFFER,
+		    bufferTarget.get(),
 		    this->bufferSizeInformation.getByteSize(),
 		    data.data(),
 		    bufferUsageHint.get()

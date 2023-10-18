@@ -33,4 +33,19 @@ namespace render::opengl
 
 		this->program->openglContext.bind(texture, this->unit);
 	}
+
+	void OpenglSamplerBufferTexture::initialize(te::cstring_view name, Program& program) {
+		this->program = &program;
+		this->location = glGetUniformLocation(program.ID.data, name.getData());
+		this->unit = program.getNextSampler();
+
+		this->program->use();
+		glUniform1i(this->location, this->unit);
+	}
+
+	void OpenglSamplerBufferTexture::set(OpenglBufferTexture& texture) {
+		assert(this->program);
+
+		this->program->openglContext.bind(texture, this->unit);
+	}
 }

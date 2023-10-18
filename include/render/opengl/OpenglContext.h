@@ -17,6 +17,7 @@ namespace render::opengl
 {
 	struct OpenglVAO;
 	struct Opengl2DTexture;
+	struct OpenglBufferTexture;
 	struct Opengl2DArrayTexture;
 	struct OpenglFramebuffer;
 	struct OpenglVBO;
@@ -118,6 +119,8 @@ namespace render::opengl
 		void bind(Opengl2DTexture& texture, int32_t unit);
 		void bind(Opengl2DArrayTexture& texture);
 		void bind(Opengl2DArrayTexture& texture, int32_t unit);
+		void bind(OpenglBufferTexture& texture);
+		void bind(OpenglBufferTexture& texture, int32_t unit);
 		void bind(OpenglFramebuffer& framebuffer);
 
 		void setViewport(vec::ivec4 viewport);

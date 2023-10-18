@@ -1,5 +1,6 @@
 #include "render/opengl/OpenglContext.h"
 
+#include "render/opengl/OpenglBufferTexture.h"
 #include "render/opengl/OpenglFramebuffer.h"
 #include "render/opengl/OpenglTexture.h"
 #include "render/opengl/OpenglVAO.h"
@@ -183,6 +184,25 @@ namespace render::opengl
 	}
 
 	void OpenglContext::bind(Opengl2DArrayTexture& texture, int32_t unit) {
+		if (unit < 0 || unit >= this->boundSamplerUnits.size()) {
+			return;
+		}
+
+		if (this->boundSamplerUnits[unit] != texture.ID) {
+			glActiveTexture(GL_TEXTURE0 + unit);
+			this->activeUnit = unit;
+			this->bind(texture);
+		}
+	}
+
+	void OpenglContext::bind(OpenglBufferTexture& texture) {
+		if (this->boundTextures[TextureTarget::Type::TEXTURE_BUFFER] != texture.ID) {
+			this->boundTextures[TextureTarget::Type::TEXTURE_BUFFER] = texture.ID;
+			glBindTexture(TextureTarget(TextureTarget::Type::TEXTURE_BUFFER).get(), texture.ID.data);
+		}
+	}
+
+	void OpenglContext::bind(OpenglBufferTexture& texture, int32_t unit) {
 		if (unit < 0 || unit >= this->boundSamplerUnits.size()) {
 			return;
 		}
