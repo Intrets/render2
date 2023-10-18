@@ -13,7 +13,7 @@ namespace render::opengl
 		glUniform1i(this->location, this->unit);
 	}
 
-	void OpenglSampler2D::set(Opengl2DTexture& texture) {
+	void OpenglSampler2D::set(Opengl2DTexture const& texture) {
 		assert(this->program);
 
 		this->program->openglContext.bind(texture, this->unit);
@@ -28,7 +28,7 @@ namespace render::opengl
 		glUniform1i(this->location, this->unit);
 	}
 
-	void OpenglSampler3D::set(Opengl2DArrayTexture& texture) {
+	void OpenglSampler3D::set(Opengl2DArrayTexture const& texture) {
 		assert(this->program);
 
 		this->program->openglContext.bind(texture, this->unit);
@@ -43,7 +43,7 @@ namespace render::opengl
 		glUniform1i(this->location, this->unit);
 	}
 
-	void OpenglSamplerBufferTexture::set(OpenglBufferTexture& texture) {
+	void OpenglSamplerBufferTexture::set(OpenglBufferTexture const& texture) {
 		assert(this->program);
 
 		this->program->openglContext.bind(texture, this->unit);

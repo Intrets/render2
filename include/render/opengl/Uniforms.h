@@ -133,7 +133,7 @@ namespace render::opengl
 		NO_COPY_MOVE(OpenglSampler2D);
 		~OpenglSampler2D() = default;
 
-		void set(Opengl2DTexture& texture);
+		void set(Opengl2DTexture const& texture);
 	};
 
 	struct OpenglSampler3D
@@ -147,7 +147,7 @@ namespace render::opengl
 		NO_COPY_MOVE(OpenglSampler3D);
 		~OpenglSampler3D() = default;
 
-		void set(Opengl2DArrayTexture& texture);
+		void set(Opengl2DArrayTexture const& texture);
 	};
 
 	struct OpenglSamplerBufferTexture
@@ -161,6 +161,6 @@ namespace render::opengl
 		NO_COPY_MOVE(OpenglSamplerBufferTexture);
 		~OpenglSamplerBufferTexture() = default;
 
-		void set(OpenglBufferTexture& texture);
+		void set(OpenglBufferTexture const& texture);
 	};
 }

@@ -115,12 +115,12 @@ namespace render::opengl
 		void bind(OpenglVAO& openglVAO);
 		void bind(OpenglVBO& openglVBO, BufferTarget target = {});
 		void use(Program& program);
-		void bind(Opengl2DTexture& opengl2DTexture);
-		void bind(Opengl2DTexture& texture, int32_t unit);
-		void bind(Opengl2DArrayTexture& texture);
-		void bind(Opengl2DArrayTexture& texture, int32_t unit);
-		void bind(OpenglBufferTexture& texture);
-		void bind(OpenglBufferTexture& texture, int32_t unit);
+		void bind(Opengl2DTexture const& texture);
+		void bind(Opengl2DTexture const& texture, int32_t unit);
+		void bind(Opengl2DArrayTexture const& texture);
+		void bind(Opengl2DArrayTexture const& texture, int32_t unit);
+		void bind(OpenglBufferTexture const& texture);
+		void bind(OpenglBufferTexture const& texture, int32_t unit);
 		void bind(OpenglFramebuffer& framebuffer);
 
 		void setViewport(vec::ivec4 viewport);

@@ -155,7 +155,7 @@ namespace render::opengl
 		}
 	}
 
-	void OpenglContext::bind(Opengl2DTexture& opengl2DTexture) {
+	void OpenglContext::bind(Opengl2DTexture const& opengl2DTexture) {
 		if (this->boundTextures[TextureTarget::Type::TEXTURE_2D] != opengl2DTexture.ID) {
 			glBindTexture(TextureTarget(TextureTarget::Type::TEXTURE_2D).get(), opengl2DTexture.ID.data);
 			this->boundSamplerUnits[this->activeUnit] = opengl2DTexture.ID;
@@ -163,7 +163,7 @@ namespace render::opengl
 		}
 	}
 
-	void OpenglContext::bind(Opengl2DTexture& texture, int32_t unit) {
+	void OpenglContext::bind(Opengl2DTexture const& texture, int32_t unit) {
 		if (unit < 0 || unit >= this->boundSamplerUnits.size()) {
 			return;
 		}
@@ -175,7 +175,7 @@ namespace render::opengl
 		}
 	}
 
-	void OpenglContext::bind(Opengl2DArrayTexture& texture) {
+	void OpenglContext::bind(Opengl2DArrayTexture const& texture) {
 		if (this->boundTextures[TextureTarget::Type::TEXTURE_2D_ARRAY] != texture.ID) {
 			glBindTexture(TextureTarget(TextureTarget::Type::TEXTURE_2D_ARRAY).get(), texture.ID.data);
 			this->boundSamplerUnits[this->activeUnit] = texture.ID;
@@ -183,7 +183,7 @@ namespace render::opengl
 		}
 	}
 
-	void OpenglContext::bind(Opengl2DArrayTexture& texture, int32_t unit) {
+	void OpenglContext::bind(Opengl2DArrayTexture const& texture, int32_t unit) {
 		if (unit < 0 || unit >= this->boundSamplerUnits.size()) {
 			return;
 		}
@@ -195,14 +195,14 @@ namespace render::opengl
 		}
 	}
 
-	void OpenglContext::bind(OpenglBufferTexture& texture) {
+	void OpenglContext::bind(OpenglBufferTexture const& texture) {
 		if (this->boundTextures[TextureTarget::Type::TEXTURE_BUFFER] != texture.ID) {
 			this->boundTextures[TextureTarget::Type::TEXTURE_BUFFER] = texture.ID;
 			glBindTexture(TextureTarget(TextureTarget::Type::TEXTURE_BUFFER).get(), texture.ID.data);
 		}
 	}
 
-	void OpenglContext::bind(OpenglBufferTexture& texture, int32_t unit) {
+	void OpenglContext::bind(OpenglBufferTexture const& texture, int32_t unit) {
 		if (unit < 0 || unit >= this->boundSamplerUnits.size()) {
 			return;
 		}
