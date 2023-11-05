@@ -35,6 +35,10 @@ namespace render::opengl
 		VBO.set(quadVertices, BufferUsageHint::Type::STATIC_DRAW);
 	}
 
+	void OpenglVAO::addIndicesBuffer(OpenglVBO& VBO) {
+		this->indicesBuffer = VBO;
+	}
+
 	void OpenglVAO::bind() {
 		this->openglContext.bind(*this);
 	}

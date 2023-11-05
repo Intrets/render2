@@ -4,6 +4,8 @@
 #include <unordered_map>
 #include <vector>
 
+#include <tepp/optional_ref.h>
+
 #include <wrangled_gl/wrangled_gl.h>
 
 #include "render/DataType.h"
@@ -51,8 +53,11 @@ namespace render::opengl
 		std::unordered_map<std::string, Descriptor> descriptors{};
 		int attributeCount = 0;
 
+		te::optional_ref<OpenglVBO> indicesBuffer{};
+
 		Descriptor& newDescriptor(std::string_view name, Descriptor::Divisor divisor);
 		void addQuadDescriptor(std::string_view name, OpenglVBO& VBO);
+		void addIndicesBuffer(OpenglVBO& VBO);
 
 		void bind();
 
