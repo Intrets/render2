@@ -61,6 +61,10 @@ namespace render::opengl
 
 		void bind();
 
+		NO_COPY_MOVE(OpenglVAO);
+
+		void clear();
+
 		OpenglVAO(OpenglContext& openglContext);
 		~OpenglVAO();
 	};

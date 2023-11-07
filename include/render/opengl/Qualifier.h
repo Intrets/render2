@@ -9,6 +9,8 @@ namespace render::opengl
 	{
 		T data{};
 		int64_t qualifier{};
+		
+		void clear();
 
 		DEFAULT_COPY_MOVE(Qualified);
 
@@ -19,4 +21,10 @@ namespace render::opengl
 			return this->qualifier == other.qualifier && this->data == other.data;
 		};
 	};
+
+	template<class T>
+	inline void Qualified<T>::clear() {
+		this->data = {};
+		this->qualifier = {};
+	}
 }

@@ -100,4 +100,14 @@ namespace render::opengl
 
 		return result;
 	}
+
+	Opengl2DTexture load2DTexture(OpenglContext& openglContext, resources::Resource resource) {
+		auto buffer = resource.getBuffer();
+
+		if (buffer.has_value()) {
+			return load2DTexture(openglContext, *buffer.value());
+		}
+
+		return Opengl2DTexture(openglContext);
+	}
 }

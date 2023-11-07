@@ -3,6 +3,7 @@
 namespace resources
 {
 	struct Buffer;
+	struct Resource;
 }
 
 namespace render::opengl
@@ -11,4 +12,5 @@ namespace render::opengl
 	struct OpenglContext;
 
 	Opengl2DTexture load2DTexture(OpenglContext& openglContext, resources::Buffer const& buffer);
+	Opengl2DTexture load2DTexture(OpenglContext& openglContext, resources::Resource resource);
 }

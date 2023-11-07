@@ -82,7 +82,8 @@ namespace render::opengl
 		explicit Opengl2DTexture(OpenglContext& openglContext, GLuint ID);
 
 		NO_COPY(Opengl2DTexture);
-		DEFAULT_MOVE(Opengl2DTexture);
+		Opengl2DTexture(Opengl2DTexture&&) = default;
+		Opengl2DTexture& operator=(Opengl2DTexture&& other);
 
 		Opengl2DTexture() = delete;
 		~Opengl2DTexture();

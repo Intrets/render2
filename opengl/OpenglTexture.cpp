@@ -125,6 +125,20 @@ namespace render::opengl
 		this->ID.data = ID_;
 	}
 
+	Opengl2DTexture& Opengl2DTexture::operator=(Opengl2DTexture&& other) {
+		assert(&this->openglContext == &other.openglContext);
+
+		glDeleteTextures(1, &this->ID.data);
+
+		this->ID = other.ID;
+		other.ID.clear();
+
+		this->size = other.size;
+		this->flippedUV = other.flippedUV;
+
+		return *this;
+	}
+
 	Opengl2DTexture::~Opengl2DTexture() {
 		glDeleteTextures(1, &this->ID.data);
 	}
