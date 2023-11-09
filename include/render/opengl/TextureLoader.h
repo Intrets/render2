@@ -13,4 +13,6 @@ namespace render::opengl
 
 	Opengl2DTexture load2DTexture(OpenglContext& openglContext, resources::Buffer const& buffer);
 	Opengl2DTexture load2DTexture(OpenglContext& openglContext, resources::Resource resource);
+
+	Opengl2DTexture load2DTextureMipmaps(OpenglContext& openglContext, std::vector<resources::Resource*> resources);
 }

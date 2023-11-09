@@ -27,6 +27,14 @@ namespace render::opengl
 	struct OpenglBufferTexture;
 
 	template<>
+	struct SetUniform<float>
+	{
+		static void apply(GLuint location, std::span<float const> values) {
+			glUniform1fv(location, values.size(), values.data());
+		}
+	};
+
+	template<>
 	struct SetUniform<vec::ivec2>
 	{
 		static void apply(GLuint location, std::span<vec::ivec2 const> values) {

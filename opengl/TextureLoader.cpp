@@ -4,6 +4,8 @@
 
 #include <gli/gli.hpp>
 
+#include <ranges>
+
 #include <resources/Resources.h>
 
 #include "render/opengl/OpenglTexture.h"
@@ -33,9 +35,10 @@ namespace render::opengl
 		glTexParameteri(Target, GL_TEXTURE_SWIZZLE_B, Format.Swizzles[2]);
 		glTexParameteri(Target, GL_TEXTURE_SWIZZLE_A, Format.Swizzles[3]);
 		glTexParameteri(Target, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-		glTexParameteri(Target, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+		glTexParameteri(Target, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
 		glTexParameteri(Target, GL_TEXTURE_WRAP_S, GL_REPEAT);
 		glTexParameteri(Target, GL_TEXTURE_WRAP_T, GL_REPEAT);
+		glTexParameterf(Target, GL_TEXTURE_MAX_ANISOTROPY_EXT, 8.0f);
 
 		glm::tvec3<GLsizei> const Extent1(Texture.extent());
 		GLsizei const FaceTotal = static_cast<GLsizei>(Texture.layers() * Texture.faces());
@@ -109,5 +112,100 @@ namespace render::opengl
 		}
 
 		return Opengl2DTexture(openglContext);
+	}
+
+	Opengl2DTexture load2DTextureMipmaps(OpenglContext& openglContext, std::vector<resources::Resource*> resources) {
+		auto firstBuffer = resources.front()->getBuffer();
+		auto firstSpan = firstBuffer.value()->data<char>();
+		gli::texture Texture = gli::load_dds(firstSpan.data(), firstSpan.size());
+
+		gli::gl GL(gli::gl::PROFILE_GL33);
+		gli::gl::format const Format = GL.translate(Texture.format(), Texture.swizzles());
+		GLenum Target = GL.translate(Texture.target());
+
+		auto result = Opengl2DTexture(openglContext);
+		result.flippedUV = true;
+		glGenTextures(1, &result.ID.data);
+
+		result.bind();
+		glTexParameteri(Target, GL_TEXTURE_BASE_LEVEL, 0);
+		glTexParameteri(Target, GL_TEXTURE_MAX_LEVEL, resources.size());
+		glTexParameteri(Target, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+		glTexParameteri(Target, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
+		glTexParameteri(Target, GL_TEXTURE_WRAP_S, GL_REPEAT);
+		glTexParameteri(Target, GL_TEXTURE_WRAP_T, GL_REPEAT);
+		glTexParameterf(Target, GL_TEXTURE_MAX_ANISOTROPY_EXT, 8.0f);
+
+		glm::ivec2 size;
+
+		size.x = Texture.extent().x;
+		size.y = Texture.extent().y;
+
+		glTexStorage2D(
+		    Target,
+		    resources.size(),
+		    GL_SRGB8_ALPHA8,
+		    size.x, size.y
+		);
+
+		if (gli::is_compressed(Texture.format())) {
+			glCompressedTexSubImage2D(
+			    Target, static_cast<GLint>(0),
+			    0, 0,
+			    size.x,
+			    size.y,
+			    Format.Internal, static_cast<GLsizei>(Texture.size(0)),
+			    Texture.data(0, 0, 0)
+			);
+		}
+		else {
+			glTexSubImage2D(
+			    Target, static_cast<GLint>(0),
+			    0, 0,
+			    size.x,
+			    size.y,
+			    Format.External, Format.Type,
+			    Texture.data(0, 0, 0)
+			);
+		}
+
+		int i = 1;
+		for (auto& resource : resources | std::views::drop(1)) {
+			auto buffer = resource->getBuffer();
+			auto span = buffer.value()->data<char>();
+			gli::texture Texture2 = gli::load_dds(span.data(), span.size());
+
+			auto Format2 = GL.translate(Texture2.format(), Texture2.swizzles());
+
+			size.x = Texture2.extent().x;
+			size.y = Texture2.extent().y;
+
+			if (gli::is_compressed(Texture2.format())) {
+				glCompressedTexSubImage2D(
+				    Target, static_cast<GLint>(i),
+				    0, 0,
+				    size.x,
+				    size.y,
+				    Format2.Internal, static_cast<GLsizei>(Texture2.size(0)),
+				    Texture2.data(0, 0, 0)
+				);
+			}
+			else {
+				glTexSubImage2D(
+				    Target, static_cast<GLint>(i),
+				    0, 0,
+				    size.x,
+				    size.y,
+				    Format2.External, Format2.Type,
+				    Texture2.data(0, 0, 0)
+				);
+			}
+
+			i++;
+		}
+
+		result.size = { size.x, size.y };
+
+		return result;
 	}
 }
