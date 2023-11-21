@@ -19,8 +19,8 @@ namespace render::opengl
 	struct VertexAttribute
 	{
 		DataType dataType{};
-
 		int32_t offset{};
+		int divisor{};
 	};
 
 	struct Descriptor
@@ -30,14 +30,11 @@ namespace render::opengl
 		std::vector<VertexAttribute> attributes{};
 		GLsizei stride{};
 
-		enum class Divisor
-		{
-			zero,
-			one
-		} divisor{};
+		int divisor = 0;
 
 		Descriptor& add(
-		    DataType dataType
+		    DataType dataType,
+		    std::optional<int> divisor = std::nullopt
 		);
 
 		GLuint getDivisor() const;
@@ -55,7 +52,7 @@ namespace render::opengl
 
 		te::optional_ref<OpenglVBO> indicesBuffer{};
 
-		Descriptor& newDescriptor(std::string_view name, Descriptor::Divisor divisor);
+		Descriptor& newDescriptor(std::string_view name, int divisor);
 		void addQuadDescriptor(std::string_view name, OpenglVBO& VBO);
 		void addIndicesBuffer(OpenglVBO& VBO);
 

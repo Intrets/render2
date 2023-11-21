@@ -4,7 +4,7 @@
 
 namespace render::opengl
 {
-	Descriptor& OpenglVAO::newDescriptor(std::string_view name_, Descriptor::Divisor divisor) {
+	Descriptor& OpenglVAO::newDescriptor(std::string_view name_, int divisor) {
 		auto name = std::string(name_);
 		if (this->descriptors.contains(name)) {
 			assert(0);
@@ -16,7 +16,7 @@ namespace render::opengl
 	}
 
 	void OpenglVAO::addQuadDescriptor(std::string_view name, OpenglVBO& VBO) {
-		this->newDescriptor(name, Descriptor::Divisor::zero)
+		this->newDescriptor(name, 0)
 		    .add(render::DataType::vec2)
 		    .finalize(VBO);
 
@@ -53,15 +53,23 @@ namespace render::opengl
 		glDeleteVertexArrays(1, &this->ID.data);
 	}
 
-	Descriptor& Descriptor::add(DataType dataType) {
+	Descriptor& Descriptor::add(DataType dataType, std::optional<int> divisor_) {
+		int strideMultiplier = 1;
+		if (divisor_.has_value()) {
+			if (this->divisor > divisor_.value()) {
+				strideMultiplier = this->divisor / divisor_.value();
+			}
+		}
+
 		this->attributes.push_back(
 		    VertexAttribute{
 		        .dataType = dataType,
 		        .offset = this->stride,
+		        .divisor = divisor_.value_or(this->divisor),
 		    }
 		);
 
-		this->stride += dataTypeByteSize[dataType];
+		this->stride += dataTypeByteSize[dataType] * strideMultiplier;
 
 		return *this;
 	}
@@ -99,43 +107,43 @@ namespace render::opengl
 		for (auto const& attribute : this->attributes) {
 			switch (attribute.dataType) {
 				case DataType::f32:
-					floatVertex(index++, 1, this->stride, (void*)attribute.offset, this->getDivisor());
+					floatVertex(index++, 1, this->stride, (void*)attribute.offset, attribute.divisor);
 					break;
 				case DataType::vec2:
-					floatVertex(index++, 2, this->stride, (void*)attribute.offset, this->getDivisor());
+					floatVertex(index++, 2, this->stride, (void*)attribute.offset, attribute.divisor);
 					break;
 				case DataType::vec3:
-					floatVertex(index++, 3, this->stride, (void*)attribute.offset, this->getDivisor());
+					floatVertex(index++, 3, this->stride, (void*)attribute.offset, attribute.divisor);
 					break;
 				case DataType::vec4:
-					floatVertex(index++, 4, this->stride, (void*)attribute.offset, this->getDivisor());
+					floatVertex(index++, 4, this->stride, (void*)attribute.offset, attribute.divisor);
 					break;
 				case DataType::mat2:
-					floatVertex(index++, 2, this->stride, (void*)attribute.offset, this->getDivisor());
-					floatVertex(index++, 2, this->stride, (void*)(attribute.offset + 2 * sizeof(float)), this->getDivisor());
+					floatVertex(index++, 2, this->stride, (void*)attribute.offset, attribute.divisor);
+					floatVertex(index++, 2, this->stride, (void*)(attribute.offset + 2 * sizeof(float)), attribute.divisor);
 					break;
 				case DataType::mat3:
-					floatVertex(index++, 3, this->stride, (void*)attribute.offset, this->getDivisor());
-					floatVertex(index++, 3, this->stride, (void*)(attribute.offset + 3 * sizeof(float)), this->getDivisor());
-					floatVertex(index++, 3, this->stride, (void*)(attribute.offset + 9 * sizeof(float)), this->getDivisor());
+					floatVertex(index++, 3, this->stride, (void*)attribute.offset, attribute.divisor);
+					floatVertex(index++, 3, this->stride, (void*)(attribute.offset + 3 * sizeof(float)), attribute.divisor);
+					floatVertex(index++, 3, this->stride, (void*)(attribute.offset + 9 * sizeof(float)), attribute.divisor);
 					break;
 				case DataType::mat4:
-					floatVertex(index++, 4, this->stride, (void*)attribute.offset, this->getDivisor());
-					floatVertex(index++, 4, this->stride, (void*)(attribute.offset + 4 * sizeof(float)), this->getDivisor());
-					floatVertex(index++, 4, this->stride, (void*)(attribute.offset + 8 * sizeof(float)), this->getDivisor());
-					floatVertex(index++, 4, this->stride, (void*)(attribute.offset + 12 * sizeof(float)), this->getDivisor());
+					floatVertex(index++, 4, this->stride, (void*)attribute.offset, attribute.divisor);
+					floatVertex(index++, 4, this->stride, (void*)(attribute.offset + 4 * sizeof(float)), attribute.divisor);
+					floatVertex(index++, 4, this->stride, (void*)(attribute.offset + 8 * sizeof(float)), attribute.divisor);
+					floatVertex(index++, 4, this->stride, (void*)(attribute.offset + 12 * sizeof(float)), attribute.divisor);
 					break;
 				case DataType::i32:
-					intVertex(index++, 1, this->stride, (void*)attribute.offset, this->getDivisor());
+					intVertex(index++, 1, this->stride, (void*)attribute.offset, attribute.divisor);
 					break;
 				case DataType::ivec2:
-					intVertex(index++, 2, this->stride, (void*)attribute.offset, this->getDivisor());
+					intVertex(index++, 2, this->stride, (void*)attribute.offset, attribute.divisor);
 					break;
 				case DataType::ivec3:
-					intVertex(index++, 3, this->stride, (void*)attribute.offset, this->getDivisor());
+					intVertex(index++, 3, this->stride, (void*)attribute.offset, attribute.divisor);
 					break;
 				case DataType::ivec4:
-					intVertex(index++, 4, this->stride, (void*)attribute.offset, this->getDivisor());
+					intVertex(index++, 4, this->stride, (void*)attribute.offset, attribute.divisor);
 					break;
 				default:
 				case DataType::u32:
@@ -155,14 +163,6 @@ namespace render::opengl
 	}
 
 	GLuint Descriptor::getDivisor() const {
-		switch (this->divisor) {
-			case Divisor::zero:
-				return 0;
-			case Divisor::one:
-				return 1;
-			default:
-				assert(0);
-				return 0;
-		}
+		return this->divisor;
 	}
 }

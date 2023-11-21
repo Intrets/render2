@@ -2,9 +2,9 @@
 
 #include <array>
 #include <limits>
+#include <span>
 #include <utility>
 #include <vector>
-#include <span>
 
 #include <wrangled_gl/wrangled_gl.h>
 
@@ -33,13 +33,13 @@ namespace render::opengl
 		} bufferSizeInformation{};
 
 		template<class T>
-		void set(std::span<T const> data, BufferUsageHint bufferUsageHint, BufferTarget bufferTarget = BufferTarget::Type::ARRAY_BUFFER);
+		void set(std::span<T const> data, BufferUsageHint bufferUsageHint = BufferUsageHint::Type::STATIC_DRAW, BufferTarget bufferTarget = BufferTarget::Type::ARRAY_BUFFER);
 
 		template<class T>
-		void set(std::vector<T> const& data, BufferUsageHint bufferUsageHint);
+		void set(std::vector<T> const& data, BufferUsageHint bufferUsageHint = BufferUsageHint::Type::STATIC_DRAW);
 
 		template<class T, size_t N>
-		void set(std::array<T, N> const& data, BufferUsageHint bufferUsageHint);
+		void set(std::array<T, N> const& data, BufferUsageHint bufferUsageHint = BufferUsageHint::Type::STATIC_DRAW);
 
 		void bind(BufferTarget bufferTarget);
 
