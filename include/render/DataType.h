@@ -27,6 +27,7 @@ namespace render
 		mat4x2,
 		mat3x4,
 		mat4x3,
+		coloru32,
 		MAX
 	};
 
@@ -51,6 +52,7 @@ namespace render
 		{ DataType::mat2x4, 32 },
 		{ DataType::mat4x2, 32 },
 		{ DataType::mat3x4, 48 },
-		{ DataType::mat4x3, 48 }
+		{ DataType::mat4x3, 48 },
+		{ DataType::coloru32, 4 },
 	};
 }

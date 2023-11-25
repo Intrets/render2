@@ -145,6 +145,20 @@ namespace render::opengl
 				case DataType::ivec4:
 					intVertex(index++, 4, this->stride, (void*)attribute.offset, attribute.divisor);
 					break;
+				case DataType::coloru32:
+				{
+					auto i = index++;
+					glVertexAttribPointer(
+					    i,
+					    static_cast<GLint>(4),
+					    GL_UNSIGNED_BYTE,
+					    GL_TRUE,
+					    this->stride,
+					    (void*)attribute.offset
+					);
+					glVertexAttribDivisor(i, attribute.divisor);
+					glEnableVertexAttribArray(i);
+				} break;
 				default:
 				case DataType::u32:
 				case DataType::uvec2:
