@@ -43,7 +43,8 @@ namespace render::opengl
 
 		void bind(BufferTarget bufferTarget);
 
-		NO_COPY_MOVE(OpenglVBO);
+		NO_COPY(OpenglVBO);
+		DEFAULT_MOVE(OpenglVBO);
 
 		OpenglVBO(OpenglContext& openglContext);
 		~OpenglVBO();

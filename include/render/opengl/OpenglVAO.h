@@ -44,7 +44,7 @@ namespace render::opengl
 
 	struct OpenglVAO
 	{
-		OpenglContext& openglContext;
+		OpenglContext* openglContext;
 		Qualified<GLuint> ID{};
 
 		std::unordered_map<std::string, Descriptor> descriptors{};
@@ -58,9 +58,8 @@ namespace render::opengl
 
 		void bind();
 
-		NO_COPY_MOVE(OpenglVAO);
-
-		void clear();
+		NO_COPY(OpenglVAO);
+		DEFAULT_MOVE(OpenglVAO);
 
 		OpenglVAO(OpenglContext& openglContext);
 		~OpenglVAO();

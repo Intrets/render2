@@ -40,17 +40,19 @@ namespace render::opengl
 	}
 
 	void OpenglVAO::bind() {
-		this->openglContext.bind(*this);
+		this->openglContext->bind(*this);
 	}
 
 	OpenglVAO::OpenglVAO(OpenglContext& openglContext_)
-	    : openglContext(openglContext_) {
-		this->ID.qualifier = this->openglContext.getQualifier();
+	    : openglContext(&openglContext_) {
+		this->ID.qualifier = this->openglContext->getQualifier();
 		glCreateVertexArrays(1, &this->ID.data);
 	}
 
 	OpenglVAO::~OpenglVAO() {
-		glDeleteVertexArrays(1, &this->ID.data);
+		if (this->ID && this->ID.data != 0) {
+			glDeleteVertexArrays(1, &this->ID.data);
+		}
 	}
 
 	Descriptor& Descriptor::add(DataType dataType, std::optional<int> divisor_) {

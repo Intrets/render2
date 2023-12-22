@@ -1,7 +1,7 @@
 #include "render/opengl/OpenglVBO.h"
 
-#include "render/opengl/OpenglContext.h"
 #include "render/opengl/BufferTarget.h"
+#include "render/opengl/OpenglContext.h"
 
 namespace render::opengl
 {
@@ -16,7 +16,9 @@ namespace render::opengl
 	}
 
 	OpenglVBO::~OpenglVBO() {
-		glDeleteBuffers(1, &this->ID.data);
+		if (this->ID && this->ID.data != 0) {
+			glDeleteBuffers(1, &this->ID.data);
+		}
 	}
 
 	int OpenglVBO::BufferSizeInformation::getByteSize() const {
