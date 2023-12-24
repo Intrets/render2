@@ -23,6 +23,9 @@ namespace render::opengl
 	struct Data
 	{
 		virtual std::span<char const> get() const = 0;
+
+		Data() = default;
+		virtual ~Data() = default;
 	};
 
 	struct ReferenceData : Data
@@ -45,6 +48,9 @@ namespace render::opengl
 	{
 		virtual std::optional<DataSourceType> data() const = 0;
 		virtual std::unique_ptr<DataSource> copy() const = 0;
+
+		DataSource() = default;
+		virtual ~DataSource() = default;
 	};
 
 	struct FileSource : DataSource

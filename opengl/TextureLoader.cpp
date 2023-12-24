@@ -2,7 +2,24 @@
 
 #include <wrangled_gl/wrangled_gl.h>
 
+#if defined(COMPILER_CLANGCL) || defined(COMPILER_CLANG)
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wignored-qualifiers"
+#pragma clang diagnostic ignored "-Wdeprecated-anon-enum-enum-conversion"
+#pragma clang diagnostic ignored "-Wdeprecated-declarations"
+#pragma clang diagnostic ignored "-Wunused-variable"
+#elif defined(COMPILER_MSVC)
+#pragma warning(push, 0)
+#pragma warning(disable : 4201; disable : 4324; disable : 4310)
+#endif
+
 #include <gli/gli.hpp>
+
+#if defined(COMPILER_CLANGCL) || defined(COMPILER_CLANG)
+#pragma clang diagnostic pop
+#elif defined(COMPILER_MSVC)
+#pragma warning(pop)
+#endif
 
 #include <ranges>
 
@@ -129,7 +146,7 @@ namespace render::opengl
 
 		result.bind();
 		glTexParameteri(Target, GL_TEXTURE_BASE_LEVEL, 0);
-		glTexParameteri(Target, GL_TEXTURE_MAX_LEVEL, resources.size());
+		glTexParameteri(Target, GL_TEXTURE_MAX_LEVEL, static_cast<GLint>(resources.size()));
 		glTexParameteri(Target, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 		glTexParameteri(Target, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
 		glTexParameteri(Target, GL_TEXTURE_WRAP_S, GL_REPEAT);
@@ -143,7 +160,7 @@ namespace render::opengl
 
 		glTexStorage2D(
 		    Target,
-		    resources.size(),
+		    static_cast<GLsizei>(resources.size()),
 		    GL_SRGB8_ALPHA8,
 		    size.x, size.y
 		);

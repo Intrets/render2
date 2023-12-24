@@ -19,7 +19,7 @@ namespace render::opengl
 	struct VertexAttribute
 	{
 		DataType dataType{};
-		int32_t offset{};
+		int64_t offset{};
 		int divisor{};
 	};
 

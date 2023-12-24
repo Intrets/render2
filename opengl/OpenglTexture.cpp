@@ -161,7 +161,7 @@ namespace render::opengl
 		void* ptr = nullptr;
 
 		if (data.has_value() && !data->empty()) {
-			if (textureFormat.getByteSize() != data->size()) {
+			if (std::cmp_not_equal(textureFormat.getByteSize(), data->size())) {
 				openglContext.logError("Mismatched byte size when trying to load texture. Wanted {}, have {}.\n", textureFormat.getByteSize(), data->size());
 
 				return std::nullopt;

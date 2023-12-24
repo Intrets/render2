@@ -5,8 +5,8 @@
 #include <variant>
 #include <vector>
 
-#include <vec/mat4.h>
 #include <vec/ivec2.h>
+#include <vec/mat4.h>
 #include <vec/vec2.h>
 #include <vec/vec3.h>
 #include <vec/vec4.h>
@@ -16,6 +16,8 @@
 #include <tepp/cstring_view.h>
 
 #include <wrangled_gl/wrangled_gl.h>
+
+#include <game/misc/Convert.h>
 
 namespace render::opengl
 {
@@ -30,7 +32,7 @@ namespace render::opengl
 	struct SetUniform<float>
 	{
 		static void apply(GLuint location, std::span<float const> values) {
-			glUniform1fv(location, values.size(), values.data());
+			glUniform1fv(location, game::auto_safety(values.size()), values.data());
 		}
 	};
 
@@ -38,7 +40,7 @@ namespace render::opengl
 	struct SetUniform<vec::ivec2>
 	{
 		static void apply(GLuint location, std::span<vec::ivec2 const> values) {
-			glUniform2iv(location, values.size(), &values[0][0]);
+			glUniform2iv(location, game::auto_safety(values.size()), &values[0][0]);
 		}
 	};
 
@@ -46,7 +48,7 @@ namespace render::opengl
 	struct SetUniform<vec::vec2>
 	{
 		static void apply(GLuint location, std::span<vec::vec2 const> values) {
-			glUniform2fv(location, values.size(), &values[0][0]);
+			glUniform2fv(location, game::auto_safety(values.size()), &values[0][0]);
 		}
 	};
 
@@ -54,7 +56,7 @@ namespace render::opengl
 	struct SetUniform<vec::vec3>
 	{
 		static void apply(GLuint location, std::span<vec::vec3 const> values) {
-			glUniform3fv(location, values.size(), &values[0][0]);
+			glUniform3fv(location, game::auto_safety(values.size()), &values[0][0]);
 		}
 	};
 
@@ -62,7 +64,7 @@ namespace render::opengl
 	struct SetUniform<vec::vec4>
 	{
 		static void apply(GLuint location, std::span<vec::vec4 const> values) {
-			glUniform4fv(location, values.size(), &values[0][0]);
+			glUniform4fv(location, game::auto_safety(values.size()), &values[0][0]);
 		}
 	};
 
@@ -70,7 +72,7 @@ namespace render::opengl
 	struct SetUniform<vec::mat4>
 	{
 		static void apply(GLuint location, std::span<vec::mat4 const> values) {
-			glUniformMatrix4fv(location, values.size(), GL_FALSE, values[0].data());
+			glUniformMatrix4fv(location, game::auto_safety(values.size()), GL_FALSE, values[0].data());
 		}
 	};
 
@@ -82,9 +84,9 @@ namespace render::opengl
 		GLuint location{};
 
 		Uniform() = default;
-		void initialize(te::cstring_view name, Program& program) {
-			this->program = &program;
-			this->location = glGetUniformLocation(program.ID.data, name.getData());
+		void initialize(te::cstring_view name, Program& program_) {
+			this->program = &program_;
+			this->location = glGetUniformLocation(this->program->ID.data, name.getData());
 		}
 		DEFAULT_COPY_MOVE(Uniform);
 		~Uniform() = default;
