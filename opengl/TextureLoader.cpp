@@ -35,6 +35,49 @@ namespace render::opengl
 
 		gli::gl GL(gli::gl::PROFILE_GL33);
 		gli::gl::format const Format = GL.translate(Texture.format(), Texture.swizzles());
+
+		auto compressedFormat = [&]() -> GLenum {
+			switch (Texture.format()) {
+				case gli::format::FORMAT_RGB_DXT1_UNORM_BLOCK8:
+					return GL_COMPRESSED_SRGB_S3TC_DXT1_EXT;
+				case gli::format::FORMAT_RGBA_DXT1_UNORM_BLOCK8:
+					return GL_COMPRESSED_SRGB_ALPHA_S3TC_DXT1_EXT;
+				case gli::format::FORMAT_RGBA_DXT3_UNORM_BLOCK16:
+					return GL_COMPRESSED_SRGB_ALPHA_S3TC_DXT3_EXT;
+				case gli::format::FORMAT_RGBA_DXT5_UNORM_BLOCK16:
+					return GL_COMPRESSED_SRGB_ALPHA_S3TC_DXT5_EXT;
+
+				case gli::format::FORMAT_RGB_DXT1_SRGB_BLOCK8:
+				case gli::format::FORMAT_RGBA_DXT1_SRGB_BLOCK8:
+				case gli::format::FORMAT_RGBA_DXT3_SRGB_BLOCK16:
+				case gli::format::FORMAT_RGBA_DXT5_SRGB_BLOCK16:
+					assert(0);
+				default:
+					return static_cast<GLenum>(Format.Internal);
+			}
+		}();
+
+		auto internalFormat = [&]() -> GLenum {
+			switch (Texture.format()) {
+				case gli::format::FORMAT_RGB_DXT1_UNORM_BLOCK8:
+					return GL_RGB;
+				case gli::format::FORMAT_RGBA_DXT1_UNORM_BLOCK8:
+				case gli::format::FORMAT_RGBA_DXT3_UNORM_BLOCK16:
+				case gli::format::FORMAT_RGBA_DXT5_UNORM_BLOCK16:
+					return GL_RGBA;
+				case gli::format::FORMAT_BGR8_UNORM_PACK8:
+					return GL_SRGB8_ALPHA8;
+
+				case gli::format::FORMAT_RGB_DXT1_SRGB_BLOCK8:
+				case gli::format::FORMAT_RGBA_DXT1_SRGB_BLOCK8:
+				case gli::format::FORMAT_RGBA_DXT3_SRGB_BLOCK16:
+				case gli::format::FORMAT_RGBA_DXT5_SRGB_BLOCK16:
+					assert(0);
+				default:
+					return static_cast<GLenum>(Format.Internal);
+			}
+		}();
+
 		GLenum Target = GL.translate(Texture.target());
 
 		auto result = Opengl2DTexture(openglContext);
@@ -65,7 +108,7 @@ namespace render::opengl
 			case gli::TARGET_2D:
 			case gli::TARGET_CUBE:
 				glTexStorage2D(
-				    Target, static_cast<GLint>(Texture.levels()), GL_SRGB8_ALPHA8,
+				    Target, static_cast<GLint>(Texture.levels()), internalFormat,
 				    Extent1.x, Texture.target() == gli::TARGET_2D ? Extent1.y : FaceTotal
 				);
 				break;
@@ -93,12 +136,11 @@ namespace render::opengl
 					             : Target;
 
 					if (gli::is_compressed(Texture.format())) {
-						glCompressedTexSubImage2D(
+						glCompressedTexImage2D(
 						    Target, static_cast<GLint>(Level),
-						    0, 0,
-						    Extent.x,
-						    Texture.target() == gli::TARGET_1D_ARRAY ? LayerGL : Extent.y,
-						    Format.Internal, static_cast<GLsizei>(Texture.size(Level)),
+						    compressedFormat,
+						    Extent.x, Extent.y,
+						    0, static_cast<GLsizei>(Texture.size(Level)),
 						    Texture.data(Layer, Face, Level)
 						);
 					}
