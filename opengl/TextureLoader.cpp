@@ -29,7 +29,7 @@
 
 namespace render::opengl
 {
-	Opengl2DTexture load2DTexture(OpenglContext& openglContext, resources::Buffer const& buffer) {
+	Opengl3DTexture load2DTexture(OpenglContext& openglContext, resources::Buffer const& buffer, bool SRGB) {
 		auto span = buffer.data<char>();
 		gli::texture Texture = gli::load_dds(span.data(), span.size());
 
@@ -53,7 +53,7 @@ namespace render::opengl
 				case gli::format::FORMAT_RGBA_DXT5_SRGB_BLOCK16:
 					assert(0);
 				default:
-					return static_cast<GLenum>(Format.Internal);
+					return static_cast<GLenum>(Format.External);
 			}
 		}();
 
@@ -66,13 +66,13 @@ namespace render::opengl
 				case gli::format::FORMAT_RGBA_DXT5_UNORM_BLOCK16:
 					return GL_RGBA;
 				case gli::format::FORMAT_BGR8_UNORM_PACK8:
-					return GL_SRGB8_ALPHA8;
-
+					if (SRGB) {
+						return GL_SRGB8;
+					}
 				case gli::format::FORMAT_RGB_DXT1_SRGB_BLOCK8:
 				case gli::format::FORMAT_RGBA_DXT1_SRGB_BLOCK8:
 				case gli::format::FORMAT_RGBA_DXT3_SRGB_BLOCK16:
 				case gli::format::FORMAT_RGBA_DXT5_SRGB_BLOCK16:
-					assert(0);
 				default:
 					return static_cast<GLenum>(Format.Internal);
 			}
@@ -163,11 +163,11 @@ namespace render::opengl
 		return result;
 	}
 
-	Opengl2DTexture load2DTexture(OpenglContext& openglContext, resources::Resource resource) {
+	Opengl2DTexture load2DTexture(OpenglContext& openglContext, resources::Resource resource, bool SRGB) {
 		auto buffer = resource.getBuffer();
 
 		if (buffer.has_value()) {
-			return load2DTexture(openglContext, *buffer.value());
+			return load2DTexture(openglContext, *buffer.value(), SRGB);
 		}
 
 		return Opengl2DTexture(openglContext);

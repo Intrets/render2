@@ -14,6 +14,7 @@
 #include <render/opengl/Program.h>
 
 #include <tepp/cstring_view.h>
+#include <tepp/variant.h>
 
 #include <wrangled_gl/wrangled_gl.h>
 
@@ -117,14 +118,26 @@ namespace render::opengl
 			if (this->current.has_value()) {
 				assert(std::holds_alternative<std::vector<T>>(this->current.value()));
 
-				if (auto currentValue = std::get_if<T>(&this->current.value())) {
-					if (std::ranges::equal(*currentValue, values)) {
-						return;
-					}
+				auto done = te::visit(
+				    this->current.value(),
+				    [&](std::vector<T>& vec) {
+					    if (std::ranges::equal(values, vec)) {
+						    return true;
+					    }
+
+					    // std::ranges::copy(values, vec);
+
+					    return false;
+				    },
+				    [](auto&) {
+					    return false;
+				    }
+				);
+
+				if (done) {
+					return;
 				}
 			}
-
-			std::ranges::copy(values, this->current);
 
 			this->program->use();
 
