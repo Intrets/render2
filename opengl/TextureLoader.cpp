@@ -36,45 +36,28 @@ namespace render::opengl
 		gli::gl GL(gli::gl::PROFILE_GL33);
 		gli::gl::format const Format = GL.translate(Texture.format(), Texture.swizzles());
 
-		auto compressedFormat = [&]() -> GLenum {
+		auto [internalFormat, externalFormat] = [&]() -> std::pair<GLenum, GLenum> {
 			switch (Texture.format()) {
 				case gli::format::FORMAT_RGB_DXT1_UNORM_BLOCK8:
-					return GL_COMPRESSED_SRGB_S3TC_DXT1_EXT;
+					return { GL_COMPRESSED_SRGB_S3TC_DXT1_EXT, 0 };
 				case gli::format::FORMAT_RGBA_DXT1_UNORM_BLOCK8:
-					return GL_COMPRESSED_SRGB_ALPHA_S3TC_DXT1_EXT;
+					return { GL_COMPRESSED_SRGB_ALPHA_S3TC_DXT1_EXT, 0 };
 				case gli::format::FORMAT_RGBA_DXT3_UNORM_BLOCK16:
-					return GL_COMPRESSED_SRGB_ALPHA_S3TC_DXT3_EXT;
+					return { GL_COMPRESSED_SRGB_ALPHA_S3TC_DXT3_EXT, 0 };
 				case gli::format::FORMAT_RGBA_DXT5_UNORM_BLOCK16:
-					return GL_COMPRESSED_SRGB_ALPHA_S3TC_DXT5_EXT;
+					return { GL_COMPRESSED_SRGB_ALPHA_S3TC_DXT5_EXT, 0 };
 
 				case gli::format::FORMAT_RGB_DXT1_SRGB_BLOCK8:
 				case gli::format::FORMAT_RGBA_DXT1_SRGB_BLOCK8:
 				case gli::format::FORMAT_RGBA_DXT3_SRGB_BLOCK16:
 				case gli::format::FORMAT_RGBA_DXT5_SRGB_BLOCK16:
 					assert(0);
-				default:
-					return static_cast<GLenum>(Format.External);
-			}
-		}();
-
-		auto internalFormat = [&]() -> GLenum {
-			switch (Texture.format()) {
-				case gli::format::FORMAT_RGB_DXT1_UNORM_BLOCK8:
-					return GL_RGB;
-				case gli::format::FORMAT_RGBA_DXT1_UNORM_BLOCK8:
-				case gli::format::FORMAT_RGBA_DXT3_UNORM_BLOCK16:
-				case gli::format::FORMAT_RGBA_DXT5_UNORM_BLOCK16:
-					return GL_RGBA;
 				case gli::format::FORMAT_BGR8_UNORM_PACK8:
 					if (SRGB) {
-						return GL_SRGB8;
+						return { GL_SRGB8, Format.External };
 					}
-				case gli::format::FORMAT_RGB_DXT1_SRGB_BLOCK8:
-				case gli::format::FORMAT_RGBA_DXT1_SRGB_BLOCK8:
-				case gli::format::FORMAT_RGBA_DXT3_SRGB_BLOCK16:
-				case gli::format::FORMAT_RGBA_DXT5_SRGB_BLOCK16:
 				default:
-					return static_cast<GLenum>(Format.Internal);
+					return { static_cast<GLenum>(Format.Internal), Format.External };
 			}
 		}();
 
@@ -136,11 +119,12 @@ namespace render::opengl
 					             : Target;
 
 					if (gli::is_compressed(Texture.format())) {
-						glCompressedTexImage2D(
+						glCompressedTexSubImage2D(
 						    Target, static_cast<GLint>(Level),
-						    compressedFormat,
+						    0, 0,
 						    Extent.x, Extent.y,
-						    0, static_cast<GLsizei>(Texture.size(Level)),
+						    internalFormat,
+						    static_cast<GLsizei>(Texture.size(Level)),
 						    Texture.data(Layer, Face, Level)
 						);
 					}
@@ -150,7 +134,7 @@ namespace render::opengl
 						    0, 0,
 						    Extent.x,
 						    Texture.target() == gli::TARGET_1D_ARRAY ? LayerGL : Extent.y,
-						    Format.External, Format.Type,
+						    externalFormat, Format.Type,
 						    Texture.data(Layer, Face, Level)
 						);
 					}
