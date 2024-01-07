@@ -32,4 +32,5 @@ make_module(
 		vec
 		resources
 		gli
+		game
 )

@@ -9,6 +9,17 @@
 
 namespace render::opengl
 {
+	void OpenglContext::setConfiguration(Configuration const& configuration_) {
+		setBlend(configuration_.blend);
+		setBlendFunc(configuration_.blendFunc);
+		setDepthTest(configuration_.depthTest);
+		setDepthFunc(configuration_.depthFunc);
+		setPolygonMode(configuration_.polygonMode);
+		setDepthMask(configuration_.depthMask);
+
+		this->configuration = configuration_;
+	}
+
 	void OpenglContext::setBlend(Blend b) {
 		if (this->configuration.blend != b) {
 			this->configuration.blend = b;
@@ -252,5 +263,17 @@ namespace render::opengl
 		glGetIntegerv(GL_MAX_COMBINED_TEXTURE_IMAGE_UNITS, &maximumTextureUnits);
 
 		this->boundSamplerUnits.resize(maximumTextureUnits);
+	}
+
+	Configuration Configuration::getDefault() {
+		return Configuration{
+			.blend = Blend::ENABLED,
+			.blendFunc = BlendFunc::SRC_ALPHA__ONE_MINUS_SRC_ALPHA,
+			.depthTest = DepthTest::ENABLED,
+			.depthFunc = DepthFunc::LESS,
+			.polygonMode = PolygonMode::FILL,
+			.pointSize = 1.0f,
+			.depthMask = DepthMask::TRUE,
+		};
 	}
 }

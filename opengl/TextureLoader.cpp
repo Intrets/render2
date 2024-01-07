@@ -29,7 +29,7 @@
 
 namespace render::opengl
 {
-	Opengl3DTexture load2DTexture(OpenglContext& openglContext, resources::Buffer const& buffer, bool SRGB) {
+	Opengl2DTexture load2DTexture(OpenglContext& openglContext, resources::Buffer const& buffer, bool SRGB) {
 		auto span = buffer.data<char>();
 		gli::texture Texture = gli::load_dds(span.data(), span.size());
 

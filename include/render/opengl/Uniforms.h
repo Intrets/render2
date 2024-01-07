@@ -125,7 +125,7 @@ namespace render::opengl
 						    return true;
 					    }
 
-					    // std::ranges::copy(values, vec);
+					    std::ranges::copy(values, vec.begin());
 
 					    return false;
 				    },
@@ -153,7 +153,8 @@ namespace render::opengl
 
 		OpenglSampler2D() = default;
 		void initialize(te::cstring_view name, Program& program);
-		NO_COPY_MOVE(OpenglSampler2D);
+		DEFAULT_MOVE(OpenglSampler2D);
+		NO_COPY(OpenglSampler2D);
 		~OpenglSampler2D() = default;
 
 		void set(Opengl2DTexture const& texture);
@@ -167,7 +168,8 @@ namespace render::opengl
 
 		OpenglSampler3D() = default;
 		void initialize(te::cstring_view name, Program& program);
-		NO_COPY_MOVE(OpenglSampler3D);
+		DEFAULT_MOVE(OpenglSampler3D);
+		NO_COPY(OpenglSampler3D);
 		~OpenglSampler3D() = default;
 
 		void set(Opengl2DArrayTexture const& texture);
@@ -181,7 +183,8 @@ namespace render::opengl
 
 		OpenglSamplerBufferTexture() = default;
 		void initialize(te::cstring_view name, Program& program);
-		NO_COPY_MOVE(OpenglSamplerBufferTexture);
+		DEFAULT_MOVE(OpenglSamplerBufferTexture);
+		NO_COPY(OpenglSamplerBufferTexture);
 		~OpenglSamplerBufferTexture() = default;
 
 		void set(OpenglBufferTexture const& texture);

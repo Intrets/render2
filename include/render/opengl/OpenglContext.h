@@ -86,6 +86,8 @@ namespace render::opengl
 		PolygonMode polygonMode = PolygonMode::UNSET;
 		float pointSize = 0.0f;
 		DepthMask depthMask = DepthMask::UNSET;
+
+		static Configuration getDefault();
 	};
 
 	struct OpenglContext
@@ -104,6 +106,8 @@ namespace render::opengl
 		vec::ivec4 viewport{};
 
 		Configuration configuration{};
+
+		void setConfiguration(Configuration const& configuration);
 
 		void setBlend(Blend b);
 		void setBlendFunc(BlendFunc func);
