@@ -57,7 +57,7 @@ namespace render::opengl
 						return { GL_SRGB8, Format.External };
 					}
 				default:
-					return { static_cast<GLenum>(Format.Internal), Format.External };
+					return { Format.Internal, Format.External };
 			}
 		}();
 
