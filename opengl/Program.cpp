@@ -43,7 +43,7 @@ namespace render::opengl
 		return result;
 	}
 
-	std::unique_ptr<DataSource> FileSource::make(std::filesystem::path path) {
+	std::unique_ptr<DataSource> FileSource::make(std::filesystem::path const& path) {
 		return std::make_unique<FileSource>(path);
 	}
 

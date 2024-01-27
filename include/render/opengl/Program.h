@@ -62,7 +62,7 @@ namespace render::opengl
 
 		std::optional<DataSourceType> data() const override;
 		std::unique_ptr<DataSource> copy() const override;
-		static std::unique_ptr<DataSource> make(std::filesystem::path path);
+		static std::unique_ptr<DataSource> make(std::filesystem::path const& path);
 	};
 
 	struct StaticSource : DataSource
