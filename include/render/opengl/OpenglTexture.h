@@ -8,6 +8,8 @@
 
 #include <render/opengl/Qualifier.h>
 
+#include <span>
+
 namespace render::opengl
 {
 	struct TextureFormat
