@@ -9,6 +9,7 @@
 #include <render/opengl/Qualifier.h>
 
 #include <span>
+#include <filesystem>
 
 namespace render::opengl
 {
@@ -77,6 +78,7 @@ namespace render::opengl
 		Qualified<GLuint> ID{};
 		vec::ivec2 size{};
 		bool flippedUV = false;
+		std::filesystem::path source{};
 
 		void bind();
 
