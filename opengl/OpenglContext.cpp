@@ -270,7 +270,7 @@ namespace render::opengl
 		return Configuration{
 			.blend = Blend::ENABLED,
 			.blendFunc = BlendFunc::SRC_ALPHA__ONE_MINUS_SRC_ALPHA,
-			.depthTest = DepthTest::ENABLED,
+			.depthTest = DepthTest::DISABLED,
 			.depthFunc = DepthFunc::LESS,
 			.polygonMode = PolygonMode::FILL,
 			.pointSize = 1.0f,

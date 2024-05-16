@@ -86,6 +86,7 @@ namespace render::opengl
 		Uniform() = default;
 		void initialize(te::cstring_view name, Program& program_) {
 			this->program = &program_;
+			this->program->use();
 			this->location = glGetUniformLocation(this->program->ID.data, name.getData());
 		}
 		DEFAULT_COPY_MOVE(Uniform);

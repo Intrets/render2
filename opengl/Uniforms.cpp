@@ -16,6 +16,7 @@ namespace render::opengl
 	void OpenglSampler2D::set(Opengl2DTexture const& texture) {
 		assert(this->program);
 
+		this->program->use();
 		this->program->openglContext.bind(texture, this->unit);
 	}
 
@@ -31,6 +32,7 @@ namespace render::opengl
 	void OpenglSampler3D::set(Opengl2DArrayTexture const& texture) {
 		assert(this->program);
 
+		this->program->use();
 		this->program->openglContext.bind(texture, this->unit);
 	}
 
@@ -46,6 +48,7 @@ namespace render::opengl
 	void OpenglSamplerBufferTexture::set(OpenglBufferTexture const& texture) {
 		assert(this->program);
 
+		this->program->use();
 		this->program->openglContext.bind(texture, this->unit);
 	}
 }

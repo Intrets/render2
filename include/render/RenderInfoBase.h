@@ -14,7 +14,7 @@ namespace render
 		}
 
 		void append(RenderInfoBase<T> const& other) {
-			this->data.insert(this->data.begin(), other.data.begin(), other.data.end());
+			this->data.insert(this->data.end(), other.data.begin(), other.data.end());
 		}
 
 		int64_t getSize() const {
