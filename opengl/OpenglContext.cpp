@@ -232,7 +232,7 @@ namespace render::opengl
 		}
 	}
 
-	void OpenglContext::setViewport(vec::ivec4 viewport_) {
+	void OpenglContext::setViewport(glm::ivec4 viewport_) {
 		if (this->viewport != viewport_) {
 			this->viewport = viewport_;
 			glViewport(
@@ -248,6 +248,7 @@ namespace render::opengl
 		this->usedProgram = {};
 		this->boundVAO = {};
 		this->boundBuffers = {};
+		this->configuration = {};
 	}
 
 	int64_t OpenglContext::getQualifier() {

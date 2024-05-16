@@ -5,11 +5,10 @@
 #include <variant>
 #include <vector>
 
-#include <vec/ivec2.h>
-#include <vec/mat4.h>
-#include <vec/vec2.h>
-#include <vec/vec3.h>
-#include <vec/vec4.h>
+#include <wglm/mat4x4.hpp>
+#include <wglm/vec2.hpp>
+#include <wglm/vec3.hpp>
+#include <wglm/vec4.hpp>
 
 #include <render/opengl/Program.h>
 
@@ -18,7 +17,7 @@
 
 #include <wrangled_gl/wrangled_gl.h>
 
-#include <game/misc/Convert.h>
+#include "render/Convert.h"
 
 namespace render::opengl
 {
@@ -33,47 +32,47 @@ namespace render::opengl
 	struct SetUniform<float>
 	{
 		static void apply(GLuint location, std::span<float const> values) {
-			glUniform1fv(location, game::auto_safety(values.size()), values.data());
+			glUniform1fv(location, auto_safety(values.size()), values.data());
 		}
 	};
 
 	template<>
-	struct SetUniform<vec::ivec2>
+	struct SetUniform<glm::ivec2>
 	{
-		static void apply(GLuint location, std::span<vec::ivec2 const> values) {
-			glUniform2iv(location, game::auto_safety(values.size()), &values[0][0]);
+		static void apply(GLuint location, std::span<glm::ivec2 const> values) {
+			glUniform2iv(location, auto_safety(values.size()), &values[0][0]);
 		}
 	};
 
 	template<>
-	struct SetUniform<vec::vec2>
+	struct SetUniform<glm::vec2>
 	{
-		static void apply(GLuint location, std::span<vec::vec2 const> values) {
-			glUniform2fv(location, game::auto_safety(values.size()), &values[0][0]);
+		static void apply(GLuint location, std::span<glm::vec2 const> values) {
+			glUniform2fv(location, auto_safety(values.size()), &values[0][0]);
 		}
 	};
 
 	template<>
-	struct SetUniform<vec::vec3>
+	struct SetUniform<glm::vec3>
 	{
-		static void apply(GLuint location, std::span<vec::vec3 const> values) {
-			glUniform3fv(location, game::auto_safety(values.size()), &values[0][0]);
+		static void apply(GLuint location, std::span<glm::vec3 const> values) {
+			glUniform3fv(location, auto_safety(values.size()), &values[0][0]);
 		}
 	};
 
 	template<>
-	struct SetUniform<vec::vec4>
+	struct SetUniform<glm::vec4>
 	{
-		static void apply(GLuint location, std::span<vec::vec4 const> values) {
-			glUniform4fv(location, game::auto_safety(values.size()), &values[0][0]);
+		static void apply(GLuint location, std::span<glm::vec4 const> values) {
+			glUniform4fv(location, auto_safety(values.size()), &values[0][0]);
 		}
 	};
 
 	template<>
-	struct SetUniform<vec::mat4>
+	struct SetUniform<glm::mat4>
 	{
-		static void apply(GLuint location, std::span<vec::mat4 const> values) {
-			glUniformMatrix4fv(location, game::auto_safety(values.size()), GL_FALSE, values[0].data());
+		static void apply(GLuint location, std::span<glm::mat4 const> values) {
+			glUniformMatrix4fv(location, auto_safety(values.size()), GL_FALSE, &values[0][0][0]);
 		}
 	};
 

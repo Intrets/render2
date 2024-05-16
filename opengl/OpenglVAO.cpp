@@ -101,6 +101,18 @@ namespace render::opengl
 		glEnableVertexAttribArray(index);
 	}
 
+	void int16Vertex(GLint index, GLint size, GLsizei stride, void* offset, GLuint divisor) {
+		glVertexAttribIPointer(
+		    index,
+		    size,
+		    GL_SHORT,
+		    stride,
+		    offset
+		);
+		glVertexAttribDivisor(index, divisor);
+		glEnableVertexAttribArray(index);
+	}
+
 	void Descriptor::finalize(OpenglVBO& VBO) {
 		this->VAO.bind();
 		VBO.bind(BufferTarget::Type::ARRAY_BUFFER);
@@ -137,6 +149,9 @@ namespace render::opengl
 					break;
 				case DataType::i32:
 					intVertex(index++, 1, this->stride, (void*)attribute.offset, attribute.divisor);
+					break;
+				case DataType::i16vec2:
+					int16Vertex(index++, 2, this->stride, (void*)attribute.offset, attribute.divisor);
 					break;
 				case DataType::ivec2:
 					intVertex(index++, 2, this->stride, (void*)attribute.offset, attribute.divisor);

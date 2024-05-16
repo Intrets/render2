@@ -99,7 +99,7 @@ namespace render::opengl
 	}
 
 	int64_t TextureFormat::getByteSize() const {
-		int64_t pixelCount = static_cast<int64_t>(this->size.x()) * this->size.y();
+		int64_t pixelCount = static_cast<int64_t>(this->size.x) * this->size.y;
 
 		constexpr te::enum_array<PixelFormat, int64_t> lookup{
 			{ PixelFormat::RGBA, 4 * 4 },
@@ -147,8 +147,8 @@ namespace render::opengl
 		int32_t maxSize = 0;
 		glGetIntegerv(GL_MAX_TEXTURE_SIZE, &maxSize);
 
-		if (textureFormat.size > maxSize) {
-			openglContext.logError("Tried to make texture with size {} {}, maximum size supported is {}.\n", textureFormat.size.x(), textureFormat.size.y(), maxSize);
+		if (textureFormat.size.x > maxSize || textureFormat.size.y > maxSize) {
+			openglContext.logError("Tried to make texture with size {} {}, maximum size supported is {}.\n", textureFormat.size.x, textureFormat.size.y, maxSize);
 			return std::nullopt;
 		}
 
@@ -174,8 +174,8 @@ namespace render::opengl
 		    GL_TEXTURE_2D,
 		    0,
 		    textureFormat.getInternalFormat(),
-		    textureFormat.size.x(),
-		    textureFormat.size.y(),
+		    textureFormat.size.x,
+		    textureFormat.size.y,
 		    0,
 		    textureFormat.getPixelDataFormat(),
 		    textureFormat.getPixelDataType(),
@@ -212,8 +212,8 @@ namespace render::opengl
 		int32_t maxSize = 0;
 		glGetIntegerv(GL_MAX_TEXTURE_SIZE, &maxSize);
 
-		if (textureFormat.size > maxSize) {
-			openglContext.logError("Tried to make texture with size {} {}, maximum size supported is {}.\n", textureFormat.size.x(), textureFormat.size.y(), maxSize);
+		if (textureFormat.size.x > maxSize || textureFormat.size.y > maxSize) {
+			openglContext.logError("Tried to make texture with size {} {}, maximum size supported is {}.\n", textureFormat.size.x, textureFormat.size.y, maxSize);
 			return std::nullopt;
 		}
 
@@ -229,8 +229,8 @@ namespace render::opengl
 			    GL_TEXTURE_2D_ARRAY,
 			    i,
 			    textureFormat.getInternalFormat(),
-			    textureFormat.size.x() >> i,
-			    textureFormat.size.y() >> i,
+			    textureFormat.size.x >> i,
+			    textureFormat.size.y >> i,
 			    textureFormat.layers,
 			    0,
 			    textureFormat.getPixelDataFormat(),

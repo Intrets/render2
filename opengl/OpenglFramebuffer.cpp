@@ -21,6 +21,18 @@ namespace render::opengl
 		glFramebufferTextureLayer(GL_FRAMEBUFFER, attachment.get(), texture.ID.data, mipmap, layer);
 	}
 
+	void OpenglFramebuffer::clear(glm::vec4 color, bool depth) {
+		this->bind();
+		glClearColor(color.r, color.g, color.b, color.a);
+
+		if (depth) {
+			glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+		}
+		else {
+			glClear(GL_COLOR_BUFFER_BIT);
+		}
+	}
+
 	OpenglFramebuffer::OpenglFramebuffer(OpenglContext& openglContext_)
 	    : openglContext(openglContext_) {
 		this->ID.qualifier = this->openglContext.getQualifier();

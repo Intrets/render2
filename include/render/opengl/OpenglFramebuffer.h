@@ -42,6 +42,8 @@ namespace render::opengl
 		void attach(Attachment attachment, Opengl2DTexture const& texture, GLint mipmap);
 		void attach(Attachment attachment, Opengl2DArrayTexture const& texture, int32_t layer, GLint mipmap);
 
+		void clear(glm::vec4 color, bool depth);
+
 		OpenglFramebuffer() = delete;
 		OpenglFramebuffer(OpenglContext& openglContext);
 		explicit OpenglFramebuffer(OpenglContext& openglContext, GLuint ID);

@@ -5,13 +5,13 @@
 
 #include <wrangled_gl/wrangled_gl.h>
 
-#include <vec/ivec4.h>
-
 #include <tepp/enum_array.h>
 
 #include "render/opengl/BufferTarget.h"
 #include "render/opengl/Qualifier.h"
 #include "render/opengl/TextureTarget.h"
+
+#include <wglm/vec4.hpp>
 
 namespace render::opengl
 {
@@ -103,7 +103,7 @@ namespace render::opengl
 		std::vector<Qualified<GLuint>> boundSamplerUnits{};
 		int32_t activeUnit = 0;
 
-		vec::ivec4 viewport{};
+		glm::ivec4 viewport{};
 
 		Configuration configuration{};
 
@@ -127,7 +127,7 @@ namespace render::opengl
 		void bind(OpenglBufferTexture const& texture, int32_t unit);
 		void bind(OpenglFramebuffer& framebuffer);
 
-		void setViewport(vec::ivec4 viewport);
+		void setViewport(glm::ivec4 viewport);
 
 		void reset();
 

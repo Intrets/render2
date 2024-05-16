@@ -208,24 +208,6 @@ namespace render::opengl
 		return Program::load(openglContext, vertexDataSpan, fragmentDataSpan);
 	}
 
-	std::optional<Program> Program::load(OpenglContext& openglContext, resources::Resource vertexSource, resources::Resource fragmentSource) {
-		auto vertexSourceBuffer = vertexSource.getBuffer();
-		auto fragmentSourceBuffer = fragmentSource.getBuffer();
-
-		if (!vertexSourceBuffer.has_value() || !fragmentSourceBuffer.has_value()) {
-			return std::nullopt;
-		}
-
-		auto result = Program::load(openglContext, vertexSourceBuffer->get()->data<char>(), fragmentSourceBuffer->get()->data<char>());
-
-		if (result.has_value()) {
-			result->fragmentSource.emplace(fragmentSource);
-			result->vertexSource.emplace(vertexSource);
-		}
-
-		return result;
-	}
-
 	Shader::Shader(Shader&& other) {
 		this->ID = other.ID;
 		other.ID = 0;

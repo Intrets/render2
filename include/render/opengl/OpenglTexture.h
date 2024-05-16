@@ -2,7 +2,7 @@
 
 #include <wrangled_gl/wrangled_gl.h>
 
-#include <vec/ivec2.h>
+#include <wglm/vec2.hpp>
 
 #include <misc/Misc.h>
 
@@ -25,7 +25,7 @@ namespace render::opengl
 
 		GLint getInternalFormat() const;
 
-		vec::ivec2 size{};
+		glm::ivec2 size{};
 		int32_t layers{};
 
 		GLenum getPixelDataFormat() const;
@@ -76,7 +76,7 @@ namespace render::opengl
 	{
 		OpenglContext& openglContext;
 		Qualified<GLuint> ID{};
-		vec::ivec2 size{};
+		glm::ivec2 size{};
 		bool flippedUV = false;
 		std::filesystem::path source{};
 
@@ -99,7 +99,7 @@ namespace render::opengl
 	{
 		std::reference_wrapper<OpenglContext> openglContext;
 		Qualified<GLuint> ID{};
-		vec::ivec2 size{};
+		glm::ivec2 size{};
 		int32_t layers{};
 
 		void bind();
