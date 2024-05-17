@@ -11,7 +11,7 @@ namespace render::opengl
 		int64_t qualifier{};
 
 		void clear();
-		operator bool() const;
+		explicit operator bool() const;
 
 		DEFAULT_COPY(Qualified);
 		Qualified(Qualified&& other);
