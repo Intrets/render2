@@ -5,6 +5,19 @@
 
 namespace render::opengl
 {
+	void OpenglVBO::set(TypeErasedBuffer data, BufferUsageHint bufferUsageHint, BufferTarget bufferTarget) {
+		this->bufferSizeInformation = data.bufferSizeInformation;
+
+		this->bind(BufferTarget::Type::ARRAY_BUFFER);
+
+		glBufferData(
+		    GL_ARRAY_BUFFER,
+			data.data.size_bytes(),
+		    data.data.data(),
+		    bufferUsageHint.get()
+		);
+	}
+
 	void OpenglVBO::bind(BufferTarget bufferTarget) {
 		this->openglContext.bind(*this, bufferTarget);
 	}

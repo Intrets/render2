@@ -20,17 +20,15 @@ namespace render::opengl
 		    .add(render::DataType::vec2)
 		    .finalize(VBO);
 
-		// clang-format off
-		constexpr std::array<float, 12> quadVertices{ 
-			 0, 0,
-			 1, 0,
-			 1, 1,
+		constexpr std::array<glm::vec2, 6> quadVertices{ {
+			{ 0, 0 },
+			{ 1, 0 },
+			{ 1, 1 },
 
-			 0, 0,
-			 1, 1,
-			 0, 1,
-		};
-		// clang-format on
+			{ 0, 0 },
+			{ 1, 1 },
+			{ 0, 1 },
+		} };
 
 		VBO.set(quadVertices, BufferUsageHint::Type::STATIC_DRAW);
 	}
