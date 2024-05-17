@@ -10,6 +10,7 @@
 #include "render/opengl/BufferTarget.h"
 #include "render/opengl/Qualifier.h"
 #include "render/opengl/TextureTarget.h"
+#include "render/opengl/ProgramRegistry.h"
 
 #include <wglm/vec4.hpp>
 
@@ -107,6 +108,8 @@ namespace render::opengl
 
 		Configuration configuration{};
 
+		ProgramRegistry programRegistry{};
+
 		void setConfiguration(Configuration const& configuration);
 
 		void setBlend(Blend b);
@@ -130,6 +133,10 @@ namespace render::opengl
 		void setViewport(glm::ivec4 viewport);
 
 		void reset();
+
+		void registerProgram(Program& program);
+		void unRegisterProgram(Program& program);
+		void moveProgram(Program& from, Program& to);
 
 		int64_t getQualifier();
 		int64_t getScreenFramebufferQualifier() const;

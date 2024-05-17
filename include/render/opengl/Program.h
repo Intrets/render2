@@ -9,6 +9,8 @@
 
 #include "render/opengl/Qualifier.h"
 
+#include <tepp/cstring_view.h>
+
 namespace render::opengl
 {
 	struct OpenglContext;
@@ -94,6 +96,7 @@ namespace render::opengl
 
 	struct Program
 	{
+		te::cstring_view name{};
 		OpenglContext& openglContext;
 		Qualified<GLuint> ID{};
 
@@ -104,6 +107,7 @@ namespace render::opengl
 		void use();
 
 		Program(OpenglContext& openglContext);
+		Program(OpenglContext& openglContext, GLuint ID_);
 
 		Program(Program const&) = delete;
 		Program& operator=(Program const&) = delete;

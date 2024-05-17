@@ -85,24 +85,41 @@ namespace render::opengl
 	    : openglContext(openglContext_) {
 	}
 
+	Program::Program(OpenglContext& openglContext_, GLuint ID_)
+	    : openglContext(openglContext_) {
+		this->ID.data = ID_;
+		this->ID.qualifier = this->openglContext.getQualifier();
+		this->openglContext.registerProgram(*this);
+	}
+
 	Program::Program(Program&& other)
 	    : openglContext(other.openglContext) {
 		this->ID = other.ID;
 		other.ID = {};
+		this->name = other.name;
+		other.name = {};
+
+		this->openglContext.moveProgram(other, *this);
 	}
 
 	Program& Program::operator=(Program&& other) {
-		if (this->ID.data == 0) {
+		if (this->ID.data != 0) {
+			this->openglContext.unRegisterProgram(*this);
 			glDeleteProgram(this->ID.data);
 		}
 
 		this->ID = other.ID;
 		other.ID = {};
+		this->name = other.name;
+		other.name = {};
+
+		this->openglContext.moveProgram(other, *this);
 
 		return *this;
 	}
 
 	Program::~Program() {
+		this->openglContext.unRegisterProgram(*this);
 		glDeleteProgram(this->ID.data);
 	}
 
@@ -174,12 +191,7 @@ namespace render::opengl
 
 		openglContext.logInfo("Program ID: {}\n", ProgramID);
 
-		auto result = Program(openglContext);
-
-		result.ID.data = ProgramID;
-		result.ID.qualifier = openglContext.getQualifier();
-
-		return result;
+		return Program(openglContext, ProgramID);
 	}
 
 	std::optional<Program> Program::load(

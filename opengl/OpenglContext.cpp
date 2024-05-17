@@ -251,6 +251,18 @@ namespace render::opengl
 		this->configuration = {};
 	}
 
+	void OpenglContext::registerProgram(Program& program) {
+		this->programRegistry.registerProgram(program);
+	}
+
+	void OpenglContext::unRegisterProgram(Program& program) {
+		this->programRegistry.unRegisterProgram(program);
+	}
+
+	void OpenglContext::moveProgram(Program& from, Program& to) {
+		this->programRegistry.moveProgram(from, to);
+	}
+
 	int64_t OpenglContext::getQualifier() {
 		return this->qualifierCounter++;
 	}
