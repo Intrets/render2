@@ -26,6 +26,10 @@ namespace render
 			return ((this->c >> 16) & 0xFF) / 255.0f;
 		}
 
+		constexpr float alphaNormalized() const {
+			return ((this->c >> 24) & 0xFF) / 255.0f;
+		}
+
 		void setAlpha(float v) {
 			this->c &= 0xFFFFFF;
 			this->c |= (static_cast<uint8_t>(v * 255) << 24);
@@ -37,6 +41,21 @@ namespace render
 
 		bool operator!=(Color other) {
 			return this->c != other.c;
+		}
+
+		glm::vec4 toVec4() const {
+			return {
+				this->redNormalized(),
+				this->greenNormalized(),
+				this->blueNormalized(),
+				this->alphaNormalized(),
+			};
+		}
+
+		static Color fromVec4(glm::vec4 vec);
+
+		Color mix(Color other, float factor) const {
+			return fromVec4(glm::mix(this->toVec4(), other.toVec4(), factor));
 		}
 	};
 
