@@ -20,5 +20,9 @@ namespace render
 		int64_t getSize() const {
 			return static_cast<int64_t>(this->data.size());
 		}
+
+		void clear() {
+			this->data.clear();
+		}
 	};
 }
