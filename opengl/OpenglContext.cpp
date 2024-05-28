@@ -247,7 +247,7 @@ namespace render::opengl
 	void OpenglContext::reset() {
 		this->usedProgram = {};
 		this->boundVAO = {};
-		this->boundBuffers = {};
+		this->boundBuffers.fill({});
 		this->configuration = {};
 	}
 
