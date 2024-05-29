@@ -110,6 +110,10 @@ namespace render
 
 			this->value = s;
 		}
+
+		void clear() {
+			this->valid = &detail::dummyValue;
+		}
 	};
 
 	template<auto ptr, class StorageType = typename detail::template AccessesValue<ptr>::type, class I = typename detail::template AccessesValue<ptr>::base>
