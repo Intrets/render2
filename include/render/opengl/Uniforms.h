@@ -88,6 +88,7 @@ namespace render::opengl
 			this->program = &program_;
 			this->program->use();
 			this->location = glGetUniformLocation(this->program->ID.data, name.getData());
+			this->current.reset();
 		}
 		DEFAULT_COPY_MOVE(Uniform);
 		~Uniform() = default;

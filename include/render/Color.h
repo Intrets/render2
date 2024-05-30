@@ -103,6 +103,7 @@ namespace render
 	}
 
 	static constexpr Color nothing = { 0x0 };
+	static constexpr Color black = converter({ 0xFF000000 });
 	static constexpr Color red = converter({ 0xFF0000FF });
 	static constexpr Color green = converter({ 0xFF00FF00 });
 	static constexpr Color blue = converter({ 0xFFFF0000 });

@@ -78,6 +78,14 @@ namespace render::opengl
 		MAX,
 	};
 
+	enum class SRGBMode
+	{
+		UNSET,
+		ON,
+		OFF,
+		MAX
+	};
+
 	struct Configuration
 	{
 		Blend blend = Blend::UNSET;
@@ -87,6 +95,7 @@ namespace render::opengl
 		PolygonMode polygonMode = PolygonMode::UNSET;
 		float pointSize = 0.0f;
 		DepthMask depthMask = DepthMask::UNSET;
+		SRGBMode srgbMode = SRGBMode::UNSET;
 
 		static Configuration getDefault();
 	};
@@ -118,6 +127,7 @@ namespace render::opengl
 		void setDepthFunc(DepthFunc func);
 		void setPolygonMode(PolygonMode mode);
 		void setDepthMask(DepthMask b);
+		void setSRGBMode(SRGBMode mode);
 
 		void bind(OpenglVAO& openglVAO);
 		void bind(OpenglVBO& openglVBO, BufferTarget target = {});
@@ -142,7 +152,7 @@ namespace render::opengl
 		int64_t getScreenFramebufferQualifier() const;
 
 		OpenglContext();
-		~OpenglContext() = default;
+		~OpenglContext();
 
 		template<class... Args>
 		void logInfo(std::string_view str, Args&&... args) {

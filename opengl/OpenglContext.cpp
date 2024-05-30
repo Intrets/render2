@@ -145,6 +145,23 @@ namespace render::opengl
 		}
 	}
 
+	void OpenglContext::setSRGBMode(SRGBMode mode) {
+		if (this->configuration.srgbMode != mode) {
+			this->configuration.srgbMode = mode;
+			switch (mode) {
+				case SRGBMode::ON:
+					glEnable(GL_FRAMEBUFFER_SRGB);
+					break;
+				case SRGBMode::OFF:
+					glDisable(GL_FRAMEBUFFER_SRGB);
+					break;
+				default:
+					assert(0);
+					break;
+			}
+		}
+	}
+
 	void OpenglContext::bind(OpenglVAO& openglVAO) {
 		if (this->boundVAO != openglVAO.ID) {
 			glBindVertexArray(openglVAO.ID.data);
@@ -278,6 +295,9 @@ namespace render::opengl
 		this->boundSamplerUnits.resize(maximumTextureUnits);
 	}
 
+	OpenglContext::~OpenglContext() {
+	}
+
 	Configuration Configuration::getDefault() {
 		return Configuration{
 			.blend = Blend::ENABLED,
@@ -287,6 +307,7 @@ namespace render::opengl
 			.polygonMode = PolygonMode::FILL,
 			.pointSize = 1.0f,
 			.depthMask = DepthMask::TRUE,
+			.srgbMode = SRGBMode::ON,
 		};
 	}
 }
