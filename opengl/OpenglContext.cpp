@@ -16,6 +16,7 @@ namespace render::opengl
 		setDepthFunc(configuration_.depthFunc);
 		setPolygonMode(configuration_.polygonMode);
 		setDepthMask(configuration_.depthMask);
+		setSRGBMode(configuration_.srgbMode);
 
 		this->configuration = configuration_;
 	}
