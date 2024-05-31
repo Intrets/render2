@@ -8,9 +8,9 @@
 #include <tepp/enum_array.h>
 
 #include "render/opengl/BufferTarget.h"
+#include "render/opengl/ProgramRegistry.h"
 #include "render/opengl/Qualifier.h"
 #include "render/opengl/TextureTarget.h"
-#include "render/opengl/ProgramRegistry.h"
 
 #include <wglm/vec4.hpp>
 
@@ -115,6 +115,8 @@ namespace render::opengl
 
 		glm::ivec4 viewport{};
 
+		std::ostream* out = &std::cout;
+
 		Configuration configuration{};
 
 		ProgramRegistry programRegistry{};
@@ -156,17 +158,17 @@ namespace render::opengl
 
 		template<class... Args>
 		void logInfo(std::string_view str, Args&&... args) {
-			std::cout << "Info: " << std::vformat(str, std::make_format_args(args...));
+			*this->out << "Info: " << std::vformat(str, std::make_format_args(args...));
 		}
 
 		template<class... Args>
 		void logWarning(std::string_view str, Args&&... args) {
-			std::cout << "Warning: " << std::vformat(str, std::make_format_args(args...));
+			*this->out << "Warning: " << std::vformat(str, std::make_format_args(args...));
 		}
 
 		template<class... Args>
 		void logError(std::string_view str, Args&&... args) {
-			std::cout << "Error: " << std::vformat(str, std::make_format_args(args...));
+			*this->out << "Error: " << std::vformat(str, std::make_format_args(args...));
 		}
 	};
 }

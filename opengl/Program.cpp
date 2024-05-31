@@ -147,7 +147,8 @@ namespace render::opengl
 		if (InfoLogLength > 0) {
 			std::vector<char> VertexShaderErrorMessage(InfoLogLength + 1);
 			glGetShaderInfoLog(vertexShader.ID, InfoLogLength, NULL, &VertexShaderErrorMessage[0]);
-			openglContext.logError("Vertex shader error: {}\n", &VertexShaderErrorMessage[0]);
+			openglContext.logError("Vertex shader error:\n{}\n", &VertexShaderErrorMessage[0]);
+			return std::nullopt;
 		}
 
 		GLchar const* fragmentPointer = &fragmentDataSpan.front();
@@ -167,7 +168,8 @@ namespace render::opengl
 		if (InfoLogLength > 0) {
 			std::vector<char> FragmentShaderErrorMessage(InfoLogLength + 1);
 			glGetShaderInfoLog(fragmentShader.ID, InfoLogLength, NULL, &FragmentShaderErrorMessage[0]);
-			openglContext.logError("Fragment shader error: {}\n", &FragmentShaderErrorMessage[0]);
+			openglContext.logError("Fragment shader error:\n{}\n", &FragmentShaderErrorMessage[0]);
+			return std::nullopt;
 		}
 
 		// Link the program
@@ -183,7 +185,8 @@ namespace render::opengl
 		if (InfoLogLength > 0) {
 			std::vector<char> ProgramErrorMessage(InfoLogLength + 1);
 			glGetProgramInfoLog(ProgramID, InfoLogLength, NULL, &ProgramErrorMessage[0]);
-			openglContext.logError("Program error: {}\n", &ProgramErrorMessage[0]);
+			openglContext.logError("Program error:\n{}\n", &ProgramErrorMessage[0]);
+			return std::nullopt;
 		}
 
 		glDetachShader(ProgramID, vertexShader.ID);
