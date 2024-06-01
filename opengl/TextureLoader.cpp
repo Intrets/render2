@@ -133,7 +133,6 @@ namespace render::opengl
 		glTexParameteri(Target, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
 		glTexParameteri(Target, GL_TEXTURE_WRAP_S, GL_REPEAT);
 		glTexParameteri(Target, GL_TEXTURE_WRAP_T, GL_REPEAT);
-		glTexParameterf(Target, GL_TEXTURE_MAX_ANISOTROPY_EXT, 8.0f);
 
 		switch (Texture.target()) {
 			case gli::TARGET_1D_ARRAY:

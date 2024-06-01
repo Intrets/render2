@@ -13,11 +13,36 @@ namespace render::opengl
 		glUniform1i(this->location, this->unit);
 	}
 
+	void OpenglSampler2D::initialize(te::cstring_view name, int64_t count_, Program& program_) {
+		assert(count_ > 0);
+
+		this->program = &program_;
+		this->location = glGetUniformLocation(this->program->ID.data, name.getData());
+		this->count = count_;
+
+		this->program->use();
+		std::vector<GLint> units{};
+		for (int i = 0; i < count; i++) {
+			units.push_back(this->program->getNextSampler());
+		}
+
+		this->unit = units.front();
+		glUniform1iv(this->location, static_cast<GLsizei>(count), units.data());
+	}
+
 	void OpenglSampler2D::set(Opengl2DTexture const& texture) {
 		assert(this->program);
 
 		this->program->use();
 		this->program->openglContext.bind(texture, this->unit);
+	}
+
+	void OpenglSampler2D::set(Opengl2DTexture const& texture, int64_t index) {
+		assert(index < this->count);
+		assert(this->program);
+
+		this->program->use();
+		this->program->openglContext.bind(texture, this->unit + static_cast<GLint>(index));
 	}
 
 	void OpenglSampler3D::initialize(te::cstring_view name, Program& program_) {
