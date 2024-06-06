@@ -110,6 +110,7 @@ namespace render::opengl
 
 			this->program->use();
 
+			this->program->openglContext.tallyUniformBytesTransferred(sizeof(T));
 			SetUniform<T>::apply(this->location, std::span<T const>(&value, 1));
 		}
 
@@ -142,6 +143,7 @@ namespace render::opengl
 
 			this->program->use();
 
+			this->program->openglContext.tallyUniformBytesTransferred(values.size_bytes());
 			SetUniform<T>::apply(this->location, values);
 		}
 	};

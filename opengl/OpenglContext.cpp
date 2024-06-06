@@ -165,6 +165,7 @@ namespace render::opengl
 
 	void OpenglContext::bind(OpenglVAO& openglVAO) {
 		if (this->boundVAO != openglVAO.ID) {
+			this->tallySwitchVAO();
 			glBindVertexArray(openglVAO.ID.data);
 			this->boundVAO = openglVAO.ID;
 		}
@@ -179,6 +180,7 @@ namespace render::opengl
 
 	void OpenglContext::use(Program& program) {
 		if (this->usedProgram != program.ID) {
+			this->tallySwitchProgram();
 			glUseProgram(program.ID.data);
 			this->usedProgram = program.ID;
 		}
@@ -287,6 +289,31 @@ namespace render::opengl
 
 	int64_t OpenglContext::getScreenFramebufferQualifier() const {
 		return -1;
+	}
+
+	void OpenglContext::tallySwitchProgram() {
+		this->bytesTransferredThisFrame.programSwitches++;
+	}
+
+	void OpenglContext::tallySwitchVAO() {
+		this->bytesTransferredThisFrame.VAOSwitches++;
+	}
+
+	void OpenglContext::tallyDrawCall() {
+		this->bytesTransferredThisFrame.drawCalls++;
+	}
+
+	void OpenglContext::tallyBytesTransferred(int64_t bytes) {
+		this->bytesTransferredThisFrame.buffers += bytes;
+	}
+
+	void OpenglContext::tallyUniformBytesTransferred(int64_t bytes) {
+		this->bytesTransferredThisFrame.uniforms += bytes;
+	}
+
+	void OpenglContext::cycle() {
+		this->bytesTransferredLastFrame = this->bytesTransferredThisFrame;
+		this->bytesTransferredThisFrame = {};
 	}
 
 	OpenglContext::OpenglContext() {

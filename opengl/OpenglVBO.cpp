@@ -5,14 +5,20 @@
 
 namespace render::opengl
 {
+	void OpenglVBO::tallyBytesTransferred(OpenglContext& openglContext, int64_t bytes) {
+		openglContext.tallyBytesTransferred(bytes);
+	}
+
 	void OpenglVBO::set(TypeErasedBuffer data, BufferUsageHint bufferUsageHint, BufferTarget bufferTarget) {
 		this->bufferSizeInformation = data.bufferSizeInformation;
 
 		this->bind(BufferTarget::Type::ARRAY_BUFFER);
 
+		tallyBytesTransferred(this->openglContext, this->bufferSizeInformation.getByteSize());
+
 		glBufferData(
 		    GL_ARRAY_BUFFER,
-			data.data.size_bytes(),
+		    data.data.size_bytes(),
 		    data.data.data(),
 		    bufferUsageHint.get()
 		);

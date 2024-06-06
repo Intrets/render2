@@ -121,6 +121,17 @@ namespace render::opengl
 
 		ProgramRegistry programRegistry{};
 
+		struct BytesTransferredInfo
+		{
+			int64_t buffers{};
+			int64_t uniforms{};
+			int64_t programSwitches{};
+			int64_t VAOSwitches{};
+			int64_t drawCalls{};
+		};
+		BytesTransferredInfo bytesTransferredThisFrame{};
+		BytesTransferredInfo bytesTransferredLastFrame{};
+
 		void setConfiguration(Configuration const& configuration);
 
 		void setBlend(Blend b);
@@ -152,6 +163,14 @@ namespace render::opengl
 
 		int64_t getQualifier();
 		int64_t getScreenFramebufferQualifier() const;
+
+		void tallySwitchProgram();
+		void tallySwitchVAO();
+		void tallyDrawCall();
+
+		void tallyBytesTransferred(int64_t bytes);
+		void tallyUniformBytesTransferred(int64_t bytes);
+		void cycle();
 
 		OpenglContext();
 		~OpenglContext();

@@ -52,6 +52,10 @@ namespace render::opengl
 			}
 		};
 
+	private:
+		static void tallyBytesTransferred(OpenglContext& openglContext, int64_t bytes);
+
+	public:
 		template<class T>
 		void set(std::span<T const> data, BufferUsageHint bufferUsageHint = BufferUsageHint::Type::STATIC_DRAW, BufferTarget bufferTarget = BufferTarget::Type::ARRAY_BUFFER);
 
@@ -79,6 +83,8 @@ namespace render::opengl
 
 		this->bind(bufferTarget);
 
+		tallyBytesTransferred(this->openglContext, this->bufferSizeInformation.getByteSize());
+
 		glBufferData(
 		    bufferTarget.get(),
 		    this->bufferSizeInformation.getByteSize(),
@@ -94,6 +100,8 @@ namespace render::opengl
 
 		this->bind(BufferTarget::Type::ARRAY_BUFFER);
 
+		tallyBytesTransferred(this->openglContext, this->bufferSizeInformation.getByteSize());
+
 		glBufferData(
 		    GL_ARRAY_BUFFER,
 		    this->bufferSizeInformation.getByteSize(),
@@ -108,6 +116,8 @@ namespace render::opengl
 		misc::abortAssign(this->bufferSizeInformation.elementCount, data.size());
 
 		this->bind(BufferTarget::Type::ARRAY_BUFFER);
+
+		tallyBytesTransferred(this->openglContext, this->bufferSizeInformation.getByteSize());
 
 		glBufferData(
 		    GL_ARRAY_BUFFER,

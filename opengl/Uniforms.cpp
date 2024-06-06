@@ -10,6 +10,8 @@ namespace render::opengl
 		this->unit = this->program->getNextSampler();
 
 		this->program->use();
+
+		this->program->openglContext.tallyUniformBytesTransferred(sizeof(this->unit));
 		glUniform1i(this->location, this->unit);
 	}
 
@@ -51,6 +53,8 @@ namespace render::opengl
 		this->unit = this->program->getNextSampler();
 
 		this->program->use();
+
+		this->program->openglContext.tallyUniformBytesTransferred(sizeof(this->unit));
 		glUniform1i(this->location, this->unit);
 	}
 
@@ -67,6 +71,8 @@ namespace render::opengl
 		this->unit = this->program->getNextSampler();
 
 		this->program->use();
+
+		this->program->openglContext.tallyUniformBytesTransferred(sizeof(this->unit));
 		glUniform1i(this->location, this->unit);
 	}
 
