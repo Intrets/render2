@@ -103,6 +103,7 @@ namespace render::opengl
 	}
 
 	Program& Program::operator=(Program&& other) {
+		assert(this->ID != other.ID);
 		if (this->ID.data != 0) {
 			this->openglContext.unRegisterProgram(*this);
 			glDeleteProgram(this->ID.data);
@@ -121,6 +122,7 @@ namespace render::opengl
 	Program::~Program() {
 		this->openglContext.unRegisterProgram(*this);
 		glDeleteProgram(this->ID.data);
+		this->ID = {};
 	}
 
 	std::optional<Program> Program::load(OpenglContext& openglContext, std::span<char const> vertexDataSpan, std::span<char const> fragmentDataSpan) {
