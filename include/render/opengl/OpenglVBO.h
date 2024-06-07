@@ -62,7 +62,7 @@ namespace render::opengl
 		template<class T>
 		void set(std::vector<T> const& data, BufferUsageHint bufferUsageHint = BufferUsageHint::Type::STATIC_DRAW);
 
-		template<class T, size_t N>
+		template<class T, int64_t N>
 		void set(std::array<T, N> const& data, BufferUsageHint bufferUsageHint = BufferUsageHint::Type::STATIC_DRAW);
 
 		void set(TypeErasedBuffer data, BufferUsageHint bufferUsageHint = BufferUsageHint::Type::STATIC_DRAW, BufferTarget bufferTarget = BufferTarget::Type::ARRAY_BUFFER);
@@ -110,7 +110,7 @@ namespace render::opengl
 		);
 	}
 
-	template<class T, size_t N>
+	template<class T, int64_t N>
 	inline void OpenglVBO::set(std::array<T, N> const& data, BufferUsageHint bufferUsageHint) {
 		misc::abortAssign(this->bufferSizeInformation.elementByteSize, sizeof(T));
 		misc::abortAssign(this->bufferSizeInformation.elementCount, data.size());

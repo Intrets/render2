@@ -8,6 +8,8 @@
 
 #include "SRGBConversion.h"
 
+#include <misc/Misc.h>
+
 namespace render
 {
 	struct Color
@@ -222,14 +224,14 @@ namespace render
 			return { 16 };
 		}
 
-		size_t index = 0;
+		int64_t index = 0;
 
-		twocolor operator+(int i) {
-			return { (this->index + i) % twocolors.size() };
+		twocolor operator+(int64_t i) {
+			return { (this->index + i) % isize(twocolors) };
 		}
 
-		twocolor operator-(int i) {
-			return { (this->index - i) % twocolors.size() };
+		twocolor operator-(int64_t i) {
+			return { (this->index - i) % isize(twocolors) };
 		}
 
 		operator Color() {
