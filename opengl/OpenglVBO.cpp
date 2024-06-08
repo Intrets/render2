@@ -40,7 +40,22 @@ namespace render::opengl
 		}
 	}
 
-	int OpenglVBO::BufferSizeInformation::getByteSize() const {
+	int64_t OpenglVBO::BufferSizeInformation::getByteSize() const {
 		return this->elementCount * this->elementByteSize;
+	}
+
+	GLsizei OpenglVBO::BufferSizeInformation::getGLElementCount() const {
+		auto max = std::numeric_limits<GLsizei>::max();
+		if (std::cmp_greater(this->elementCount, max)) {
+			assert(0);
+			return max;
+		}
+		else {
+			return static_cast<GLsizei>(this->elementCount);
+		}
+	}
+
+	bool OpenglVBO::BufferSizeInformation::empty() const {
+		return this->elementCount == 0;
 	}
 }

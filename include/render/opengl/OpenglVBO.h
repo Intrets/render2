@@ -26,10 +26,13 @@ namespace render::opengl
 
 		struct BufferSizeInformation
 		{
-			int elementByteSize{};
-			int elementCount{};
+			int64_t elementByteSize{};
+			int64_t elementCount{};
 
-			int getByteSize() const;
+			int64_t getByteSize() const;
+
+			GLsizei getGLElementCount() const;
+			bool empty() const;
 		} bufferSizeInformation{};
 
 		struct TypeErasedBuffer
@@ -41,14 +44,14 @@ namespace render::opengl
 			TypeErasedBuffer(std::span<T> data) {
 				this->data = std::as_bytes(data);
 				this->bufferSizeInformation.elementByteSize = sizeof(T);
-				this->bufferSizeInformation.elementCount = static_cast<int>(data.size());
+				this->bufferSizeInformation.elementCount = isize(data);
 			}
 
 			template<class T>
 			TypeErasedBuffer(std::vector<T> const& data) {
 				this->data = std::as_bytes(std::span(data));
 				this->bufferSizeInformation.elementByteSize = sizeof(T);
-				this->bufferSizeInformation.elementCount = static_cast<int>(data.size());
+				this->bufferSizeInformation.elementCount = isize(data);
 			}
 		};
 
@@ -79,7 +82,7 @@ namespace render::opengl
 	template<class T>
 	inline void OpenglVBO::set(std::span<T const> data, BufferUsageHint bufferUsageHint, BufferTarget bufferTarget) {
 		misc::abortAssign(this->bufferSizeInformation.elementByteSize, sizeof(T));
-		misc::abortAssign(this->bufferSizeInformation.elementCount, data.size());
+		misc::abortAssign(this->bufferSizeInformation.elementCount, isize(data));
 
 		this->bind(bufferTarget);
 
@@ -96,7 +99,7 @@ namespace render::opengl
 	template<class T>
 	inline void OpenglVBO::set(std::vector<T> const& data, BufferUsageHint bufferUsageHint) {
 		misc::abortAssign(this->bufferSizeInformation.elementByteSize, sizeof(T));
-		misc::abortAssign(this->bufferSizeInformation.elementCount, data.size());
+		misc::abortAssign(this->bufferSizeInformation.elementCount, isize(data));
 
 		this->bind(BufferTarget::Type::ARRAY_BUFFER);
 
@@ -113,7 +116,7 @@ namespace render::opengl
 	template<class T, int64_t N>
 	inline void OpenglVBO::set(std::array<T, N> const& data, BufferUsageHint bufferUsageHint) {
 		misc::abortAssign(this->bufferSizeInformation.elementByteSize, sizeof(T));
-		misc::abortAssign(this->bufferSizeInformation.elementCount, data.size());
+		misc::abortAssign(this->bufferSizeInformation.elementCount, isize(data));
 
 		this->bind(BufferTarget::Type::ARRAY_BUFFER);
 
