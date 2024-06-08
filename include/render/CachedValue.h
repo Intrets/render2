@@ -35,7 +35,7 @@ namespace render
 		bool const* valid = &detail::dummyValue;
 		render::RenderInfoBase<Info>* info = nullptr;
 
-		int index = 0;
+		int64_t index = 0;
 
 		StorageType& get() {
 			return this->value;
@@ -127,7 +127,7 @@ namespace render
 		bool const* valid = &detail::dummyValue;
 		render::RenderInfoBase<Info>* info = nullptr;
 
-		std::vector<int> indices{};
+		std::vector<int64_t> indices{};
 
 		StorageType& get() {
 			return this->value;
@@ -224,7 +224,7 @@ namespace render
 	{
 		render::RenderInfoBase<Info>& info;
 		bool* valid;
-		int index;
+		int64_t index;
 
 		template<auto ptr, class T>
 		CachedValueInitializer<Info>& init(CachedValue<ptr, T>& value) {

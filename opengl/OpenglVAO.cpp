@@ -4,7 +4,7 @@
 
 namespace render::opengl
 {
-	Descriptor& OpenglVAO::newDescriptor(std::string_view name_, int divisor) {
+	Descriptor& OpenglVAO::newDescriptor(std::string_view name_, int64_t divisor) {
 		auto name = std::string(name_);
 		if (this->descriptors.contains(name)) {
 			assert(0);
@@ -53,8 +53,8 @@ namespace render::opengl
 		}
 	}
 
-	Descriptor& Descriptor::add(DataType dataType, std::optional<int> divisor_) {
-		int strideMultiplier = 1;
+	Descriptor& Descriptor::add(DataType dataType, std::optional<GLuint> divisor_) {
+		int64_t strideMultiplier = 1;
 		if (divisor_.has_value()) {
 			if (this->divisor > divisor_.value()) {
 				strideMultiplier = this->divisor / divisor_.value();
@@ -69,7 +69,7 @@ namespace render::opengl
 		    }
 		);
 
-		this->stride += dataTypeByteSize[dataType] * strideMultiplier;
+		this->stride += static_cast<GLsizei>(dataTypeByteSize[dataType] * strideMultiplier);
 
 		return *this;
 	}
@@ -115,7 +115,7 @@ namespace render::opengl
 		this->VAO.bind();
 		VBO.bind(BufferTarget::Type::ARRAY_BUFFER);
 
-		int& index = this->VAO.attributeCount;
+		GLint& index = this->VAO.attributeCount;
 		for (auto const& attribute : this->attributes) {
 			switch (attribute.dataType) {
 				case DataType::f32:
@@ -192,6 +192,6 @@ namespace render::opengl
 	}
 
 	GLuint Descriptor::getDivisor() const {
-		return this->divisor;
+		return static_cast<GLuint>(this->divisor);
 	}
 }

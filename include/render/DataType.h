@@ -32,7 +32,7 @@ namespace render
 		MAX
 	};
 
-	static constexpr te::enum_array<DataType, uint32_t> dataTypeByteSize = {
+	static constexpr te::enum_array<DataType, int64_t> dataTypeByteSize = {
 		{ DataType::f32, 4 },
 		{ DataType::vec2, 8 },
 		{ DataType::vec3, 12 },

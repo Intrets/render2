@@ -20,7 +20,7 @@ namespace render::opengl
 	{
 		DataType dataType{};
 		int64_t offset{};
-		int divisor{};
+		GLuint divisor{};
 	};
 
 	struct Descriptor
@@ -30,11 +30,11 @@ namespace render::opengl
 		std::vector<VertexAttribute> attributes{};
 		GLsizei stride{};
 
-		int divisor = 0;
+		int64_t divisor = 0;
 
 		Descriptor& add(
 		    DataType dataType,
-		    std::optional<int> divisor = std::nullopt
+		    std::optional<GLuint> divisor = std::nullopt
 		);
 
 		GLuint getDivisor() const;
@@ -48,11 +48,11 @@ namespace render::opengl
 		Qualified<GLuint> ID{};
 
 		std::unordered_map<std::string, Descriptor> descriptors{};
-		int attributeCount = 0;
+		GLint attributeCount = 0;
 
 		te::optional_ref<OpenglVBO> indicesBuffer{};
 
-		Descriptor& newDescriptor(std::string_view name, int divisor);
+		Descriptor& newDescriptor(std::string_view name, int64_t divisor);
 		void addQuadDescriptor(std::string_view name, OpenglVBO& VBO);
 		void addIndicesBuffer(OpenglVBO& VBO);
 
