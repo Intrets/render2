@@ -30,7 +30,7 @@ namespace render::opengl
 			{ 0, 1 },
 		} };
 
-		VBO.set(quadVertices, BufferUsageHint::Type::STATIC_DRAW);
+		VBO.set(std::span(quadVertices.begin(), 6), BufferUsageHint::Type::STATIC_DRAW);
 	}
 
 	void OpenglVAO::addIndicesBuffer(OpenglVBO& VBO) {
