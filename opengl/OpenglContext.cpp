@@ -14,7 +14,6 @@ namespace render::opengl
 		setBlendFunc(configuration_.blendFunc);
 		setDepthTest(configuration_.depthTest);
 		setDepthFunc(configuration_.depthFunc);
-		setPolygonMode(configuration_.polygonMode);
 		setDepthMask(configuration_.depthMask);
 		setSRGBMode(configuration_.srgbMode);
 
@@ -104,31 +103,6 @@ namespace render::opengl
 		}
 	}
 
-	void OpenglContext::setPolygonMode(PolygonMode mode) {
-		if (this->configuration.polygonMode != mode) {
-			if (this->configuration.polygonMode == PolygonMode::POINT) {
-				glDisable(GL_PROGRAM_POINT_SIZE);
-			}
-
-			this->configuration.polygonMode = mode;
-			switch (mode) {
-				case PolygonMode::FILL:
-					glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
-					break;
-				case PolygonMode::LINE:
-					glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
-					break;
-				case PolygonMode::POINT:
-					glPolygonMode(GL_FRONT_AND_BACK, GL_POINT);
-					glEnable(GL_PROGRAM_POINT_SIZE);
-					break;
-				default:
-					assert(0);
-					break;
-			}
-		}
-	}
-
 	void OpenglContext::setDepthMask(DepthMask b) {
 		if (this->configuration.depthMask != b) {
 			this->configuration.depthMask = b;
@@ -147,6 +121,7 @@ namespace render::opengl
 	}
 
 	void OpenglContext::setSRGBMode(SRGBMode mode) {
+#ifndef WRANGLE_GLESv3
 		if (this->configuration.srgbMode != mode) {
 			this->configuration.srgbMode = mode;
 			switch (mode) {
@@ -161,6 +136,7 @@ namespace render::opengl
 					break;
 			}
 		}
+#endif
 	}
 
 	void OpenglContext::bind(OpenglVAO& openglVAO) {
@@ -332,7 +308,6 @@ namespace render::opengl
 			.blendFunc = BlendFunc::SRC_ALPHA__ONE_MINUS_SRC_ALPHA,
 			.depthTest = DepthTest::DISABLED,
 			.depthFunc = DepthFunc::LESS,
-			.polygonMode = PolygonMode::FILL,
 			.pointSize = 1.0f,
 			.depthMask = DepthMask::TRUE,
 			.srgbMode = SRGBMode::ON,

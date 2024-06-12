@@ -1,5 +1,7 @@
 #pragma once
 
+#include <wglm/glm.hpp>
+
 #include <wrangled_gl/wrangled_gl.h>
 
 #include "render/opengl/Qualifier.h"

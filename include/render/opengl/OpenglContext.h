@@ -92,7 +92,6 @@ namespace render::opengl
 		BlendFunc blendFunc = BlendFunc::UNSET;
 		DepthTest depthTest = DepthTest::UNSET;
 		DepthFunc depthFunc = DepthFunc::UNSET;
-		PolygonMode polygonMode = PolygonMode::UNSET;
 		float pointSize = 0.0f;
 		DepthMask depthMask = DepthMask::UNSET;
 		SRGBMode srgbMode = SRGBMode::UNSET;
@@ -138,7 +137,6 @@ namespace render::opengl
 		void setBlendFunc(BlendFunc func);
 		void setDepthTest(DepthTest test);
 		void setDepthFunc(DepthFunc func);
-		void setPolygonMode(PolygonMode mode);
 		void setDepthMask(DepthMask b);
 		void setSRGBMode(SRGBMode mode);
 

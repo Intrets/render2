@@ -2,6 +2,10 @@
 
 #include "render/opengl/OpenglVBO.h"
 
+#include <wglm/glm.hpp>
+
+#include <wrangled_gl/wrangled_gl.h>
+
 namespace render::opengl
 {
 	Descriptor& OpenglVAO::newDescriptor(std::string_view name_, int64_t divisor) {
@@ -44,7 +48,11 @@ namespace render::opengl
 	OpenglVAO::OpenglVAO(OpenglContext& openglContext_)
 	    : openglContext(&openglContext_) {
 		this->ID.qualifier = this->openglContext->getQualifier();
+#ifdef WRANGLE_GLESv3
+        glGenVertexArrays(1, &this->ID.data);
+#else
 		glCreateVertexArrays(1, &this->ID.data);
+#endif
 	}
 
 	OpenglVAO::~OpenglVAO() {

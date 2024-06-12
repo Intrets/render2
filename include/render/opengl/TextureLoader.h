@@ -1,6 +1,10 @@
 #pragma once
 
-#include <gl/glew.h>
+#include <wrangled_gl/wrangled_gl.h>
+
+#include <span>
+#include <variant>
+#include <optional>
 
 namespace gli
 {

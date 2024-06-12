@@ -9,7 +9,7 @@ namespace render::opengl
 	GLint TextureFormat::getInternalFormat() const {
 		constexpr te::enum_array<PixelFormat, GLint> lookup{
 			{ PixelFormat::RGBA, GL_RGBA },
-			{ PixelFormat::RGBA16, GL_RGBA16 },
+			{ PixelFormat::RGBA16, GL_RGBA16F },
 			{ PixelFormat::RGBA32, GL_RGBA32F },
 		};
 

@@ -6,12 +6,12 @@ namespace render::opengl
 {
 	GLenum TextureTarget::get() const {
 		static constexpr te::enum_array<Type, GLenum> lookup{
-			GL_TEXTURE_1D,
+//			GL_TEXTURE_1D,
 			GL_TEXTURE_2D,
 			GL_TEXTURE_3D,
-			GL_TEXTURE_1D_ARRAY,
+//			GL_TEXTURE_1D_ARRAY,
 			GL_TEXTURE_2D_ARRAY,
-			GL_TEXTURE_RECTANGLE,
+//			GL_TEXTURE_RECTANGLE,
 			GL_TEXTURE_CUBE_MAP,
 			GL_TEXTURE_CUBE_MAP_ARRAY,
 			GL_TEXTURE_BUFFER,

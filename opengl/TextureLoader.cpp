@@ -65,6 +65,7 @@ namespace render::opengl
 
 		auto [internalFormat, externalFormat] = [&]() -> std::pair<GLenum, GLenum> {
 			switch (Texture.format()) {
+#ifndef WRANGLE_GLESv3
 				case gli::format::FORMAT_RGB_DXT1_UNORM_BLOCK8:
 					return { GL_COMPRESSED_SRGB_S3TC_DXT1_EXT, 0 };
 				case gli::format::FORMAT_RGBA_DXT1_UNORM_BLOCK8:
@@ -73,6 +74,7 @@ namespace render::opengl
 					return { GL_COMPRESSED_SRGB_ALPHA_S3TC_DXT3_EXT, 0 };
 				case gli::format::FORMAT_RGBA_DXT5_UNORM_BLOCK16:
 					return { GL_COMPRESSED_SRGB_ALPHA_S3TC_DXT5_EXT, 0 };
+#endif
 
 				case gli::format::FORMAT_RGB_DXT1_SRGB_BLOCK8:
 				case gli::format::FORMAT_RGBA_DXT1_SRGB_BLOCK8:

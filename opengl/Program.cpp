@@ -2,6 +2,8 @@
 
 #include "render/opengl/OpenglContext.h"
 
+#include <fstream>
+
 namespace render::opengl
 {
 	std::span<char const> DynamicData::get() const {
