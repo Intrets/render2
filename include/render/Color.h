@@ -10,6 +10,8 @@
 
 #include <misc/Misc.h>
 
+#include <wglm/glm.hpp>
+
 namespace render
 {
 	struct Color
