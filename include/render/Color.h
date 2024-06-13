@@ -88,7 +88,11 @@ namespace render
 	}
 
 	using converterFunctionType = Color (*)(Color);
+#ifdef ANDROID
 	constexpr converterFunctionType converter = toLinear;
+#else
+	constexpr converterFunctionType converter = toLinear;
+#endif
 
 	constexpr Color rgb(uint32_t r, uint32_t g, uint32_t b) {
 		return { r | (g << 8) | (b << 16) | 0xFF000000 };
