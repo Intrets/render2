@@ -134,15 +134,12 @@ namespace render::opengl
 		GLint Result = GL_FALSE;
 		int32_t InfoLogLength = 0;
 
-		GLchar const* vertexPointer = &vertexDataSpan.front();
-
 		if (vertexDataSpan.size() > std::numeric_limits<GLint>::max()) {
 			return std::nullopt;
 		}
-		GLint vertexSize = static_cast<GLint>(vertexDataSpan.size());
 
 		// Compile Vertex Shader
-		glShaderSource(vertexShader.ID, 1, &vertexPointer, &vertexSize);
+		openglContext.setShaderSource(vertexShader.ID, std::string_view(vertexDataSpan.data(), vertexDataSpan.size()));
 		glCompileShader(vertexShader.ID);
 
 		// Check Vertex Shader
@@ -163,7 +160,7 @@ namespace render::opengl
 		GLint fragmentSize = static_cast<GLint>(fragmentDataSpan.size());
 
 		// Compile Fragment Shader
-		glShaderSource(fragmentShader.ID, 1, &fragmentPointer, &fragmentSize);
+		openglContext.setShaderSource(fragmentShader.ID, std::string_view(fragmentDataSpan.data(), fragmentDataSpan.size()));
 		glCompileShader(fragmentShader.ID);
 
 		// Check Fragment Shader

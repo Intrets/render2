@@ -9,6 +9,46 @@
 
 namespace render::opengl
 {
+	te::cstring_view OpenglContext::getShaderPrefix() const {
+		return shaderPrefixes[this->shaderVersion];
+	}
+	std::string_view OpenglContext::trimShaderPrefix(std::string_view shaderSource) {
+		auto i = shaderSource.find('#');
+		shaderSource = shaderSource.substr(i);
+
+		i = shaderSource.find('\n');
+		shaderSource = shaderSource.substr(i + 1);
+
+		i = shaderSource.find("precision");
+		shaderSource = shaderSource.substr(i);
+
+		i = shaderSource.find(';');
+		shaderSource = shaderSource.substr(i + 1);
+
+		return shaderSource;
+	}
+
+	void OpenglContext::setShaderSource(GLint ID, std::string_view source) {
+		auto trimmedSource = this->trimShaderPrefix(source);
+
+		std::array<std::string_view, 2> shaderSource = {
+			this->getShaderPrefix().getData(),
+			trimmedSource
+		};
+
+		std::array<char const*, 2> pointers{
+			shaderSource[0].data(),
+			shaderSource[1].data(),
+		};
+
+		std::array<GLint, 2> sizes{
+			static_cast<GLint>(shaderSource[0].size()),
+			static_cast<GLint>(shaderSource[1].size()),
+		};
+
+		glShaderSource(ID, static_cast<GLsizei>(shaderSource.size()), pointers.data(), sizes.data());
+	}
+
 	void OpenglContext::setConfiguration(Configuration const& configuration_) {
 		setBlend(configuration_.blend);
 		setBlendFunc(configuration_.blendFunc);

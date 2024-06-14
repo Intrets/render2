@@ -5,6 +5,7 @@
 
 #include <wrangled_gl/wrangled_gl.h>
 
+#include <tepp/cstring_view.h>
 #include <tepp/enum_array.h>
 
 #include "render/opengl/BufferTarget.h"
@@ -130,6 +131,23 @@ namespace render::opengl
 		};
 		BytesTransferredInfo bytesTransferredThisFrame{};
 		BytesTransferredInfo bytesTransferredLastFrame{};
+
+		enum class ShaderVersion
+		{
+			version_330,
+			version_320_es,
+			MAX
+		} shaderVersion = ShaderVersion::version_330;
+
+		te::enum_array<ShaderVersion, te::cstring_view> shaderPrefixes{
+			{ ShaderVersion::version_330, "#version 330\n" },
+			{ ShaderVersion::version_320_es, "#version 320 es\nprecision mediump float;\n" },
+		};
+
+		te::cstring_view getShaderPrefix() const;
+
+		std::string_view trimShaderPrefix(std::string_view shaderSource);
+		void setShaderSource(GLint ID, std::string_view source);
 
 		void setConfiguration(Configuration const& configuration);
 
