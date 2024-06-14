@@ -89,7 +89,7 @@ namespace render
 
 	using converterFunctionType = Color (*)(Color);
 #ifdef ANDROID
-	constexpr converterFunctionType converter = toLinear;
+	constexpr converterFunctionType converter = id;
 #else
 	constexpr converterFunctionType converter = toLinear;
 #endif
