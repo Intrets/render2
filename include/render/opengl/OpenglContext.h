@@ -188,7 +188,7 @@ namespace render::opengl
 		void tallyUniformBytesTransferred(int64_t bytes);
 		void cycle();
 
-		OpenglContext();
+		OpenglContext(ShaderVersion shaderVersion_);
 		~OpenglContext();
 
 		template<class... Args>

@@ -12,6 +12,7 @@ namespace render::opengl
 	te::cstring_view OpenglContext::getShaderPrefix() const {
 		return shaderPrefixes[this->shaderVersion];
 	}
+
 	std::string_view OpenglContext::trimShaderPrefix(std::string_view shaderSource) {
 		auto i = shaderSource.find('#');
 		shaderSource = shaderSource.substr(i);
@@ -332,7 +333,8 @@ namespace render::opengl
 		this->bytesTransferredThisFrame = {};
 	}
 
-	OpenglContext::OpenglContext() {
+	OpenglContext::OpenglContext(ShaderVersion shaderVersion_)
+	    : shaderVersion(shaderVersion_) {
 		int maximumTextureUnits = 0;
 		glGetIntegerv(GL_MAX_COMBINED_TEXTURE_IMAGE_UNITS, &maximumTextureUnits);
 
