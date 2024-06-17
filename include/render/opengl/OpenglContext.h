@@ -123,7 +123,9 @@ namespace render::opengl
 
 		struct BytesTransferredInfo
 		{
+			int64_t bufferDataCalls{};
 			int64_t buffers{};
+			int64_t setUniformCalls{};
 			int64_t uniforms{};
 			int64_t programSwitches{};
 			int64_t VAOSwitches{};

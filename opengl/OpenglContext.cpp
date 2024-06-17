@@ -321,10 +321,12 @@ namespace render::opengl
 	}
 
 	void OpenglContext::tallyBytesTransferred(int64_t bytes) {
+		this->bytesTransferredThisFrame.bufferDataCalls++;
 		this->bytesTransferredThisFrame.buffers += bytes;
 	}
 
 	void OpenglContext::tallyUniformBytesTransferred(int64_t bytes) {
+		this->bytesTransferredThisFrame.setUniformCalls++;
 		this->bytesTransferredThisFrame.uniforms += bytes;
 	}
 
