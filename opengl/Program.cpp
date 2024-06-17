@@ -152,12 +152,9 @@ namespace render::opengl
 			return std::nullopt;
 		}
 
-		GLchar const* fragmentPointer = &fragmentDataSpan.front();
-
 		if (fragmentDataSpan.size() > std::numeric_limits<GLint>::max()) {
 			return std::nullopt;
 		}
-		GLint fragmentSize = static_cast<GLint>(fragmentDataSpan.size());
 
 		// Compile Fragment Shader
 		openglContext.setShaderSource(fragmentShader.ID, std::string_view(fragmentDataSpan.data(), fragmentDataSpan.size()));
