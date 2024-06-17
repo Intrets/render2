@@ -1,5 +1,7 @@
 #pragma once
 
+#include <tepp/integers.h>
+
 #include <misc/Misc.h>
 
 namespace render::opengl
@@ -8,7 +10,7 @@ namespace render::opengl
 	struct Qualified
 	{
 		T data{};
-		int64_t qualifier{};
+		qualifier_t qualifier{};
 
 		void clear();
 		explicit operator bool() const;

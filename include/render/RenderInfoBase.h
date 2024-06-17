@@ -13,7 +13,7 @@ namespace render
 	{
 		std::vector<T> data{};
 
-		std::span<T const> getSubSpan(int64_t begin, int64_t end) const {
+		std::span<T const> getSubSpan(integer_t begin, integer_t end) const {
 			assert(begin >= 0);
 			assert(end >= 0);
 			assert(begin <= isize(this->data));
@@ -36,8 +36,8 @@ namespace render
 			this->data.insert(this->data.end(), other.data.begin(), other.data.end());
 		}
 
-		int64_t getSize() const {
-			return static_cast<int64_t>(this->data.size());
+		integer_t getSize() const {
+			return isize(this->data);
 		}
 
 		void clear() {

@@ -300,11 +300,11 @@ namespace render::opengl
 		this->programRegistry.moveProgram(from, to);
 	}
 
-	int64_t OpenglContext::getQualifier() {
+	qualifier_t OpenglContext::getQualifier() {
 		return this->qualifierCounter++;
 	}
 
-	int64_t OpenglContext::getScreenFramebufferQualifier() const {
+	qualifier_t OpenglContext::getScreenFramebufferQualifier() const {
 		return -1;
 	}
 
@@ -320,12 +320,12 @@ namespace render::opengl
 		this->bytesTransferredThisFrame.drawCalls++;
 	}
 
-	void OpenglContext::tallyBytesTransferred(int64_t bytes) {
+	void OpenglContext::tallyBytesTransferred(integer_t bytes) {
 		this->bytesTransferredThisFrame.bufferDataCalls++;
 		this->bytesTransferredThisFrame.buffers += bytes;
 	}
 
-	void OpenglContext::tallyUniformBytesTransferred(int64_t bytes) {
+	void OpenglContext::tallyUniformBytesTransferred(integer_t bytes) {
 		this->bytesTransferredThisFrame.setUniformCalls++;
 		this->bytesTransferredThisFrame.uniforms += bytes;
 	}

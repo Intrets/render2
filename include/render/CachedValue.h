@@ -1,7 +1,9 @@
 #pragma once
 
 #include <concepts>
+
 #include <tepp/angle.h>
+#include <tepp/integers.h>
 
 #include "render/RenderInfoBase.h"
 
@@ -35,7 +37,7 @@ namespace render
 		bool const* valid = &detail::dummyValue;
 		render::RenderInfoBase<Info>* info = nullptr;
 
-		int64_t index = 0;
+		integer_t index = 0;
 
 		StorageType& get() {
 			return this->value;
@@ -127,7 +129,7 @@ namespace render
 		bool const* valid = &detail::dummyValue;
 		render::RenderInfoBase<Info>* info = nullptr;
 
-		std::vector<int64_t> indices{};
+		std::vector<integer_t> indices{};
 
 		StorageType& get() {
 			return this->value;
@@ -153,7 +155,7 @@ namespace render
 			return &this->value;
 		}
 
-		void clear(StorageType const& v){
+		void clear(StorageType const& v) {
 			this->indices.clear();
 			this->valid = &detail::dummyValue;
 			this->info = nullptr;
@@ -224,7 +226,7 @@ namespace render
 	{
 		render::RenderInfoBase<Info>& info;
 		bool* valid;
-		int64_t index;
+		integer_t index;
 
 		template<auto ptr, class T>
 		CachedValueInitializer<Info>& init(CachedValue<ptr, T>& value) {

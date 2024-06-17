@@ -8,7 +8,7 @@
 
 namespace render::opengl
 {
-	Descriptor& OpenglVAO::newDescriptor(std::string_view name_, int64_t divisor) {
+	Descriptor& OpenglVAO::newDescriptor(std::string_view name_, integer_t divisor) {
 		auto name = std::string(name_);
 		if (this->descriptors.contains(name)) {
 			assert(0);
@@ -62,7 +62,7 @@ namespace render::opengl
 	}
 
 	Descriptor& Descriptor::add(DataType dataType, std::optional<GLuint> divisor_) {
-		int64_t strideMultiplier = 1;
+		integer_t strideMultiplier = 1;
 		if (divisor_.has_value()) {
 			if (this->divisor > divisor_.value()) {
 				strideMultiplier = this->divisor / divisor_.value();

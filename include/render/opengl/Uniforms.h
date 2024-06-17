@@ -150,20 +150,20 @@ namespace render::opengl
 
 	struct OpenglSampler2D
 	{
-		int32_t unit{};
-		int64_t count = 1;
+		GLint unit{};
+		integer_t count = 1;
 		Program* program{};
 		GLuint location{};
 
 		OpenglSampler2D() = default;
 		void initialize(te::cstring_view name, Program& program);
-		void initialize(te::cstring_view name, int64_t count, Program& program);
+		void initialize(te::cstring_view name, integer_t count, Program& program);
 		DEFAULT_MOVE(OpenglSampler2D);
 		NO_COPY(OpenglSampler2D);
 		~OpenglSampler2D() = default;
 
 		void set(Opengl2DTexture const& texture);
-		void set(Opengl2DTexture const& texture, int64_t index);
+		void set(Opengl2DTexture const& texture, integer_t index);
 	};
 
 	struct OpenglSampler3D

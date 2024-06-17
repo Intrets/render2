@@ -5,7 +5,7 @@
 
 namespace render::opengl
 {
-	void OpenglVBO::tallyBytesTransferred(OpenglContext& openglContext, int64_t bytes) {
+	void OpenglVBO::tallyBytesTransferred(OpenglContext& openglContext, integer_t bytes) {
 		openglContext.tallyBytesTransferred(bytes);
 	}
 
@@ -40,7 +40,7 @@ namespace render::opengl
 		}
 	}
 
-	int64_t OpenglVBO::BufferSizeInformation::getByteSize() const {
+	integer_t OpenglVBO::BufferSizeInformation::getByteSize() const {
 		return this->elementCount * this->elementByteSize;
 	}
 

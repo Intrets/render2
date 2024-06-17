@@ -67,7 +67,7 @@ namespace render::opengl
 		GLenum getWrappingX() const;
 		GLenum getWrappingY() const;
 
-		int64_t getByteSize() const;
+		integer_t getByteSize() const;
 	};
 
 	struct OpenglContext;

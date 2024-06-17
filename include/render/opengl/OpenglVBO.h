@@ -26,10 +26,10 @@ namespace render::opengl
 
 		struct BufferSizeInformation
 		{
-			int64_t elementByteSize{};
-			int64_t elementCount{};
+			integer_t elementByteSize{};
+			integer_t elementCount{};
 
-			int64_t getByteSize() const;
+			integer_t getByteSize() const;
 
 			GLsizei getGLElementCount() const;
 			bool empty() const;
@@ -56,7 +56,7 @@ namespace render::opengl
 		};
 
 	private:
-		static void tallyBytesTransferred(OpenglContext& openglContext, int64_t bytes);
+		static void tallyBytesTransferred(OpenglContext& openglContext, integer_t bytes);
 
 	public:
 		template<class T>
@@ -65,7 +65,7 @@ namespace render::opengl
 		template<class T>
 		void set(std::vector<T> const& data, BufferUsageHint bufferUsageHint = BufferUsageHint::Type::STATIC_DRAW);
 
-		template<class T, int64_t N>
+		template<class T, integer_t N>
 		void set(std::array<T, N> const& data, BufferUsageHint bufferUsageHint = BufferUsageHint::Type::STATIC_DRAW);
 
 		void set(TypeErasedBuffer data, BufferUsageHint bufferUsageHint = BufferUsageHint::Type::STATIC_DRAW, BufferTarget bufferTarget = BufferTarget::Type::ARRAY_BUFFER);
@@ -113,7 +113,7 @@ namespace render::opengl
 		);
 	}
 
-	template<class T, int64_t N>
+	template<class T, integer_t N>
 	inline void OpenglVBO::set(std::array<T, N> const& data, BufferUsageHint bufferUsageHint) {
 		misc::abortAssign(this->bufferSizeInformation.elementByteSize, sizeof(T));
 		misc::abortAssign(this->bufferSizeInformation.elementCount, isize(data));

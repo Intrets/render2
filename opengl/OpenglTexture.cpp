@@ -98,10 +98,10 @@ namespace render::opengl
 		return getWrapping(this->wrappingY);
 	}
 
-	int64_t TextureFormat::getByteSize() const {
-		int64_t pixelCount = static_cast<int64_t>(this->size.x) * this->size.y;
+	integer_t TextureFormat::getByteSize() const {
+		integer_t pixelCount = static_cast<integer_t>(this->size.x) * this->size.y;
 
-		constexpr te::enum_array<PixelFormat, int64_t> lookup{
+		constexpr te::enum_array<PixelFormat, integer_t> lookup{
 			{ PixelFormat::RGBA, 4 * 4 },
 			{ PixelFormat::RGBA16, 16 * 4 },
 			{ PixelFormat::RGBA32, 32 * 4 },

@@ -102,7 +102,7 @@ namespace render::opengl
 
 	struct OpenglContext
 	{
-		int64_t qualifierCounter{};
+		qualifier_t qualifierCounter{};
 
 		Qualified<GLuint> boundVAO{};
 		Qualified<GLuint> usedProgram{};
@@ -123,13 +123,13 @@ namespace render::opengl
 
 		struct BytesTransferredInfo
 		{
-			int64_t bufferDataCalls{};
-			int64_t buffers{};
-			int64_t setUniformCalls{};
-			int64_t uniforms{};
-			int64_t programSwitches{};
-			int64_t VAOSwitches{};
-			int64_t drawCalls{};
+			integer_t bufferDataCalls{};
+			integer_t buffers{};
+			integer_t setUniformCalls{};
+			integer_t uniforms{};
+			integer_t programSwitches{};
+			integer_t VAOSwitches{};
+			integer_t drawCalls{};
 		};
 		BytesTransferredInfo bytesTransferredThisFrame{};
 		BytesTransferredInfo bytesTransferredLastFrame{};
@@ -179,15 +179,15 @@ namespace render::opengl
 		void unRegisterProgram(Program& program);
 		void moveProgram(Program& from, Program& to);
 
-		int64_t getQualifier();
-		int64_t getScreenFramebufferQualifier() const;
+		qualifier_t getQualifier();
+		qualifier_t getScreenFramebufferQualifier() const;
 
 		void tallySwitchProgram();
 		void tallySwitchVAO();
 		void tallyDrawCall();
 
-		void tallyBytesTransferred(int64_t bytes);
-		void tallyUniformBytesTransferred(int64_t bytes);
+		void tallyBytesTransferred(integer_t bytes);
+		void tallyUniformBytesTransferred(integer_t bytes);
 		void cycle();
 
 		OpenglContext(ShaderVersion shaderVersion_);

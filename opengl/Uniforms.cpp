@@ -15,7 +15,7 @@ namespace render::opengl
 		glUniform1i(this->location, this->unit);
 	}
 
-	void OpenglSampler2D::initialize(te::cstring_view name, int64_t count_, Program& program_) {
+	void OpenglSampler2D::initialize(te::cstring_view name, integer_t count_, Program& program_) {
 		assert(count_ > 0);
 
 		this->program = &program_;
@@ -39,7 +39,7 @@ namespace render::opengl
 		this->program->openglContext.bind(texture, this->unit);
 	}
 
-	void OpenglSampler2D::set(Opengl2DTexture const& texture, int64_t index) {
+	void OpenglSampler2D::set(Opengl2DTexture const& texture, integer_t index) {
 		assert(index < this->count);
 		assert(this->program);
 

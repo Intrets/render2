@@ -12,6 +12,8 @@
 
 #include <wglm/glm.hpp>
 
+#include <tepp/integers.h>
+
 namespace render
 {
 	struct Color
@@ -230,13 +232,13 @@ namespace render
 			return { 16 };
 		}
 
-		int64_t index = 0;
+		integer_t index = 0;
 
-		twocolor operator+(int64_t i) {
+		twocolor operator+(integer_t i) {
 			return { (this->index + i) % isize(twocolors) };
 		}
 
-		twocolor operator-(int64_t i) {
+		twocolor operator-(integer_t i) {
 			return { (this->index - i) % isize(twocolors) };
 		}
 

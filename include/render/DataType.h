@@ -1,6 +1,7 @@
 #pragma once
 
 #include <tepp/enum_array.h>
+#include <tepp/integers.h>
 
 namespace render
 {
@@ -32,7 +33,7 @@ namespace render
 		MAX
 	};
 
-	static constexpr te::enum_array<DataType, int64_t> dataTypeByteSize = {
+	static constexpr te::enum_array<DataType, integer_t> dataTypeByteSize = {
 		{ DataType::f32, 4 },
 		{ DataType::vec2, 8 },
 		{ DataType::vec3, 12 },
