@@ -22,7 +22,7 @@ namespace render
 
 			begin = std::min(isize(this->data), begin);
 			end = std::min(isize(this->data), end);
-			auto d = std::max(0_i64, end - begin);
+			auto d = std::max(0_i, end - begin);
 			auto everything = std::span(this->data);
 
 			return everything.subspan(begin, d);
