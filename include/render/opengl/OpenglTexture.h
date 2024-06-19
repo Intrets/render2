@@ -18,8 +18,8 @@ namespace render::opengl
 		enum class PixelFormat
 		{
 			RGBA,
-			RGBA16,
-			RGBA32,
+			R,
+			R16F,
 			MAX
 		} pixelFormat{};
 
@@ -76,7 +76,7 @@ namespace render::opengl
 	{
 		OpenglContext& openglContext;
 		Qualified<GLuint> ID{};
-		glm::ivec2 size{};
+		TextureFormat textureFormat{};
 		bool flippedUV = false;
 		std::filesystem::path source{};
 

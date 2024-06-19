@@ -8,9 +8,9 @@ namespace render::opengl
 {
 	GLint TextureFormat::getInternalFormat() const {
 		constexpr te::enum_array<PixelFormat, GLint> lookup{
-			{ PixelFormat::RGBA, GL_RGBA },
-			{ PixelFormat::RGBA16, GL_RGBA16F },
-			{ PixelFormat::RGBA32, GL_RGBA32F },
+			{ PixelFormat::R, GL_R8 },
+			{ PixelFormat::R16F, GL_R16F },
+			{ PixelFormat::RGBA, GL_RGBA8 },
 		};
 
 		return lookup[this->pixelFormat];
@@ -18,9 +18,9 @@ namespace render::opengl
 
 	GLenum TextureFormat::getPixelDataFormat() const {
 		constexpr te::enum_array<PixelFormat, GLenum> lookup{
+			{ PixelFormat::R, GL_RED },
+			{ PixelFormat::R16F, GL_RED },
 			{ PixelFormat::RGBA, GL_RGBA },
-			{ PixelFormat::RGBA16, GL_RGBA },
-			{ PixelFormat::RGBA32, GL_RGBA },
 		};
 
 		return lookup[this->pixelFormat];
@@ -28,9 +28,9 @@ namespace render::opengl
 
 	GLenum TextureFormat::getPixelDataType() const {
 		constexpr te::enum_array<PixelFormat, GLenum> lookup{
+			{ PixelFormat::R, GL_UNSIGNED_BYTE },
+			{ PixelFormat::R16F, GL_HALF_FLOAT },
 			{ PixelFormat::RGBA, GL_UNSIGNED_BYTE },
-			{ PixelFormat::RGBA16, GL_HALF_FLOAT },
-			{ PixelFormat::RGBA32, GL_FLOAT },
 		};
 
 		return lookup[this->pixelFormat];
@@ -102,9 +102,8 @@ namespace render::opengl
 		integer_t pixelCount = static_cast<integer_t>(this->size.x) * this->size.y;
 
 		constexpr te::enum_array<PixelFormat, integer_t> lookup{
+			{ PixelFormat::R, 4 * 1 },
 			{ PixelFormat::RGBA, 4 * 4 },
-			{ PixelFormat::RGBA16, 16 * 4 },
-			{ PixelFormat::RGBA32, 32 * 4 },
 		};
 
 		return pixelCount * lookup[this->pixelFormat];
@@ -133,7 +132,7 @@ namespace render::opengl
 		this->ID = other.ID;
 		other.ID.clear();
 
-		this->size = other.size;
+		this->textureFormat = other.textureFormat;
 		this->flippedUV = other.flippedUV;
 
 		return *this;
@@ -156,7 +155,7 @@ namespace render::opengl
 		glGenTextures(1, &result.ID.data);
 		result.bind();
 
-		result.size = textureFormat.size;
+		result.textureFormat = textureFormat;
 
 		void* ptr = nullptr;
 

@@ -103,7 +103,7 @@ namespace render::opengl
 		auto result = [&]() -> std::optional<std::variant<Opengl2DTexture, Opengl2DArrayTexture>> {
 			if (Target == GL_TEXTURE_2D) {
 				auto result = Opengl2DTexture(openglContext);
-				result.size = size;
+				result.textureFormat.size = size;
 				glGenTextures(1, &result.ID.data);
 				result.bind();
 				return result;
