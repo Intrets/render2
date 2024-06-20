@@ -110,8 +110,13 @@ namespace render::opengl
 
 		te::enum_array<BufferTarget::Type, Qualified<GLuint>> boundBuffers{};
 		te::enum_array<TextureTarget::Type, Qualified<GLuint>> boundTextures{};
-		std::vector<Qualified<GLuint>> boundSamplerUnits{};
-		int32_t activeUnit = 0;
+		struct SamplerUnitInfo
+		{
+			Qualified<GLuint> texture{};
+			TextureTarget type{};
+		};
+		std::vector<SamplerUnitInfo> boundSamplerUnits{};
+		integer_t activeUnit = 0;
 
 		glm::ivec4 viewport{};
 
@@ -162,7 +167,9 @@ namespace render::opengl
 
 		void bind(OpenglVAO& openglVAO);
 		void bind(OpenglVBO& openglVBO, BufferTarget target = {});
+		void bindTextureUnit(integer_t unit);
 		void use(Program& program);
+		void bind(Qualified<GLuint> ID, TextureTarget target, int32_t unit);
 		void bind(Opengl2DTexture const& texture);
 		void bind(Opengl2DTexture const& texture, int32_t unit);
 		void bind(Opengl2DArrayTexture const& texture);

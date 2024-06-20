@@ -195,6 +195,13 @@ namespace render::opengl
 		}
 	}
 
+	void OpenglContext::bindTextureUnit(integer_t unit) {
+		if (this->activeUnit != unit) {
+			glActiveTexture(static_cast<GLenum>(GL_TEXTURE0 + unit));
+			this->activeUnit = unit;
+		}
+	}
+
 	void OpenglContext::use(Program& program) {
 		if (this->usedProgram != program.ID) {
 			this->tallySwitchProgram();
@@ -203,63 +210,46 @@ namespace render::opengl
 		}
 	}
 
-	void OpenglContext::bind(Opengl2DTexture const& opengl2DTexture) {
-		if (this->boundTextures[TextureTarget::Type::TEXTURE_2D] != opengl2DTexture.ID) {
-			glBindTexture(TextureTarget(TextureTarget::Type::TEXTURE_2D).get(), opengl2DTexture.ID.data);
-			this->boundSamplerUnits[this->activeUnit] = opengl2DTexture.ID;
-			this->boundTextures[TextureTarget::Type::TEXTURE_2D] = opengl2DTexture.ID;
+	void OpenglContext::bind(Qualified<GLuint> ID, TextureTarget target, int32_t unit) {
+		auto& samplerUnitInfo = this->boundSamplerUnits[unit];
+
+		if (samplerUnitInfo.type != target) {
+			this->bindTextureUnit(unit);
+			glBindTexture(samplerUnitInfo.type.get(), 0);
+			samplerUnitInfo.texture = {};
 		}
+
+		if (samplerUnitInfo.texture != ID) {
+			this->bindTextureUnit(unit);
+			glBindTexture(target.get(), ID.data);
+		}
+
+		samplerUnitInfo.texture = ID;
+		samplerUnitInfo.type = target;
+	}
+
+	void OpenglContext::bind(Opengl2DTexture const& opengl2DTexture) {
+		this->bind(opengl2DTexture, 0);
 	}
 
 	void OpenglContext::bind(Opengl2DTexture const& texture, int32_t unit) {
-		if (unit < 0 || unit >= this->boundSamplerUnits.size()) {
-			return;
-		}
-
-		if (this->boundSamplerUnits[unit] != texture.ID) {
-			glActiveTexture(GL_TEXTURE0 + unit);
-			this->activeUnit = unit;
-			this->bind(texture);
-		}
+		this->bind(texture.ID, TextureTarget::Type::TEXTURE_2D, unit);
 	}
 
 	void OpenglContext::bind(Opengl2DArrayTexture const& texture) {
-		if (this->boundTextures[TextureTarget::Type::TEXTURE_2D_ARRAY] != texture.ID) {
-			glBindTexture(TextureTarget(TextureTarget::Type::TEXTURE_2D_ARRAY).get(), texture.ID.data);
-			this->boundSamplerUnits[this->activeUnit] = texture.ID;
-			this->boundTextures[TextureTarget::Type::TEXTURE_2D_ARRAY] = texture.ID;
-		}
+		this->bind(texture, 0);
 	}
 
 	void OpenglContext::bind(Opengl2DArrayTexture const& texture, int32_t unit) {
-		if (unit < 0 || unit >= this->boundSamplerUnits.size()) {
-			return;
-		}
-
-		if (this->boundSamplerUnits[unit] != texture.ID) {
-			glActiveTexture(GL_TEXTURE0 + unit);
-			this->activeUnit = unit;
-			this->bind(texture);
-		}
+		this->bind(texture.ID, TextureTarget::Type::TEXTURE_2D_ARRAY, unit);
 	}
 
 	void OpenglContext::bind(OpenglBufferTexture const& texture) {
-		if (this->boundTextures[TextureTarget::Type::TEXTURE_BUFFER] != texture.ID) {
-			this->boundTextures[TextureTarget::Type::TEXTURE_BUFFER] = texture.ID;
-			glBindTexture(TextureTarget(TextureTarget::Type::TEXTURE_BUFFER).get(), texture.ID.data);
-		}
+		this->bind(texture, 0);
 	}
 
 	void OpenglContext::bind(OpenglBufferTexture const& texture, int32_t unit) {
-		if (unit < 0 || unit >= this->boundSamplerUnits.size()) {
-			return;
-		}
-
-		if (this->boundSamplerUnits[unit] != texture.ID) {
-			glActiveTexture(GL_TEXTURE0 + unit);
-			this->activeUnit = unit;
-			this->bind(texture);
-		}
+		this->bind(texture.ID, TextureTarget::Type::TEXTURE_BUFFER, unit);
 	}
 
 	void OpenglContext::bind(OpenglFramebuffer& framebuffer) {
@@ -284,8 +274,24 @@ namespace render::opengl
 	void OpenglContext::reset() {
 		this->usedProgram = {};
 		this->boundVAO = {};
+		this->boundFramebuffer = {};
 		this->boundBuffers.fill({});
 		this->configuration = {};
+		this->boundTextures.fill({});
+
+		for (auto&& [unit, samplerUnitInfo] : std::views::enumerate(this->boundSamplerUnits)) {
+			if (samplerUnitInfo.texture.data != 0) {
+				this->bindTextureUnit(unit);
+				glBindTexture(samplerUnitInfo.type.get(), 0);
+			}
+
+			samplerUnitInfo = {};
+		}
+
+		this->activeUnit = 0;
+		glActiveTexture(GL_TEXTURE0);
+
+		viewport = {};
 	}
 
 	void OpenglContext::registerProgram(Program& program) {
