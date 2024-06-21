@@ -40,7 +40,7 @@ namespace render
 			return isize(this->data);
 		}
 
-		void clear() {
+		virtual void clear() {
 			this->data.clear();
 		}
 	};

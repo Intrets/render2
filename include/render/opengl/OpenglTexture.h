@@ -82,6 +82,10 @@ namespace render::opengl
 
 		void bind();
 
+		void setWrapping(TextureFormat::Wrapping x, TextureFormat::Wrapping y);
+
+		void generateMipmap();
+
 		Opengl2DTexture(OpenglContext& openglContext);
 		explicit Opengl2DTexture(OpenglContext& openglContext, GLuint ID);
 

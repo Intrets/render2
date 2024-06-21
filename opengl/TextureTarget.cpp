@@ -6,6 +6,7 @@ namespace render::opengl
 {
 	GLenum TextureTarget::get() const {
 		static constexpr te::enum_array<Type, GLenum> lookup{
+			{ Type::UNBOUND, -1 },
 			{ Type::TEXTURE_2D, GL_TEXTURE_2D },
 			{ Type::TEXTURE_3D, GL_TEXTURE_3D },
 			{ Type::TEXTURE_2D_ARRAY, GL_TEXTURE_2D_ARRAY },
@@ -29,6 +30,10 @@ namespace render::opengl
 		auto result = lookup[this->type];
 		assert(result != -1);
 		return result;
+	}
+
+	bool TextureTarget::unbound() const {
+		return this->type == Type::UNBOUND;
 	}
 
 	TextureTarget::TextureTarget(TextureTarget::Type type_)

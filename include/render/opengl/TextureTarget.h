@@ -8,6 +8,7 @@ namespace render::opengl
 	{
 		enum class Type
 		{
+			UNBOUND,
 			TEXTURE_1D,
 			TEXTURE_2D,
 			TEXTURE_3D,
@@ -21,6 +22,8 @@ namespace render::opengl
 			TEXTURE_2D_MULTISAMPLE_ARRAY,
 			MAX
 		} type{};
+
+		bool unbound() const;
 
 		TextureTarget() = default;
 		TextureTarget(TextureTarget::Type type_);

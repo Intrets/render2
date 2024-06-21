@@ -113,6 +113,21 @@ namespace render::opengl
 		this->openglContext.bind(*this);
 	}
 
+	void Opengl2DTexture::setWrapping(TextureFormat::Wrapping x, TextureFormat::Wrapping y) {
+		if (this->textureFormat.wrappingX != x || this->textureFormat.wrappingY != y) {
+			this->bind();
+			this->textureFormat.wrappingX = x;
+			this->textureFormat.wrappingY = y;
+			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, this->textureFormat.getWrappingX());
+			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, this->textureFormat.getWrappingY());
+		}
+	}
+
+	void Opengl2DTexture::generateMipmap() {
+		this->bind();
+		glGenerateMipmap(GL_TEXTURE_2D);
+	}
+
 	Opengl2DTexture::Opengl2DTexture(OpenglContext& openglContext_)
 	    : openglContext(openglContext_) {
 		this->ID.qualifier = this->openglContext.getQualifier();

@@ -213,7 +213,7 @@ namespace render::opengl
 	void OpenglContext::bind(Qualified<GLuint> ID, TextureTarget target, int32_t unit) {
 		auto& samplerUnitInfo = this->boundSamplerUnits[unit];
 
-		if (samplerUnitInfo.type != target) {
+		if (!samplerUnitInfo.type.unbound() && samplerUnitInfo.type != target) {
 			this->bindTextureUnit(unit);
 			glBindTexture(samplerUnitInfo.type.get(), 0);
 			samplerUnitInfo.texture = {};
