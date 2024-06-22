@@ -47,6 +47,14 @@ namespace render::opengl
 		this->program->openglContext.bind(texture, this->unit + static_cast<GLint>(index));
 	}
 
+	void OpenglSampler2D::set(Qualified<GLuint> ID, integer_t index) {
+		assert(index < this->count);
+		assert(this->program);
+
+		this->program->use();
+		this->program->openglContext.bind(ID, TextureTarget::Type::TEXTURE_2D, this->unit + static_cast<GLint>(index));
+	}
+
 	void OpenglSampler3D::initialize(te::cstring_view name, Program& program_) {
 		this->program = &program_;
 		this->location = glGetUniformLocation(this->program->ID.data, name.getData());

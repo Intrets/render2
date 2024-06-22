@@ -164,6 +164,7 @@ namespace render::opengl
 
 		void set(Opengl2DTexture const& texture);
 		void set(Opengl2DTexture const& texture, integer_t index);
+		void set(Qualified<GLuint> ID, integer_t index);
 	};
 
 	struct OpenglSampler3D
