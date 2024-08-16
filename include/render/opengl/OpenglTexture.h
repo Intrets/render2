@@ -20,6 +20,8 @@ namespace render::opengl
 			RGBA,
 			R,
 			R16F,
+			R16,
+			RGB16,
 			MAX
 		} pixelFormat{};
 
@@ -96,7 +98,7 @@ namespace render::opengl
 		Opengl2DTexture() = delete;
 		~Opengl2DTexture();
 
-		static std::optional<Opengl2DTexture> make(OpenglContext& openglContext, TextureFormat const& textureFormat, std::optional<std::span<std::byte>> data);
+		static std::optional<Opengl2DTexture> make(OpenglContext& openglContext, TextureFormat const& textureFormat, std::optional<std::span<std::byte const>> data);
 	};
 
 	struct Opengl2DArrayTexture

@@ -10,6 +10,8 @@ namespace render::opengl
 		constexpr te::enum_array<PixelFormat, GLint> lookup{
 			{ PixelFormat::R, GL_R8 },
 			{ PixelFormat::R16F, GL_R16F },
+			{ PixelFormat::R16, GL_R16 },
+			{ PixelFormat::RGB16, GL_RGB16 },
 			{ PixelFormat::RGBA, GL_RGBA8 },
 		};
 
@@ -20,6 +22,8 @@ namespace render::opengl
 		constexpr te::enum_array<PixelFormat, GLenum> lookup{
 			{ PixelFormat::R, GL_RED },
 			{ PixelFormat::R16F, GL_RED },
+			{ PixelFormat::R16, GL_RED },
+			{ PixelFormat::RGB16, GL_RGB },
 			{ PixelFormat::RGBA, GL_RGBA },
 		};
 
@@ -30,6 +34,8 @@ namespace render::opengl
 		constexpr te::enum_array<PixelFormat, GLenum> lookup{
 			{ PixelFormat::R, GL_UNSIGNED_BYTE },
 			{ PixelFormat::R16F, GL_HALF_FLOAT },
+			{ PixelFormat::R16, GL_UNSIGNED_SHORT },
+			{ PixelFormat::RGB16, GL_UNSIGNED_SHORT },
 			{ PixelFormat::RGBA, GL_UNSIGNED_BYTE },
 		};
 
@@ -103,6 +109,9 @@ namespace render::opengl
 
 		constexpr te::enum_array<PixelFormat, integer_t> lookup{
 			{ PixelFormat::R, 4 * 1 },
+			{ PixelFormat::R16F, 2 * 1 },
+			{ PixelFormat::R16, 2 * 1 },
+			{ PixelFormat::RGB16, 2 * 3 },
 			{ PixelFormat::RGBA, 4 * 4 },
 		};
 
@@ -157,7 +166,7 @@ namespace render::opengl
 		glDeleteTextures(1, &this->ID.data);
 	}
 
-	std::optional<Opengl2DTexture> Opengl2DTexture::make(OpenglContext& openglContext, TextureFormat const& textureFormat, std::optional<std::span<std::byte>> data) {
+	std::optional<Opengl2DTexture> Opengl2DTexture::make(OpenglContext& openglContext, TextureFormat const& textureFormat, std::optional<std::span<std::byte const>> data) {
 		int32_t maxSize = 0;
 		glGetIntegerv(GL_MAX_TEXTURE_SIZE, &maxSize);
 
@@ -172,7 +181,7 @@ namespace render::opengl
 
 		result.textureFormat = textureFormat;
 
-		void* ptr = nullptr;
+		void const* ptr = nullptr;
 
 		if (data.has_value() && !data->empty()) {
 			if (std::cmp_not_equal(textureFormat.getByteSize(), data->size())) {
