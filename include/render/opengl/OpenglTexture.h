@@ -17,9 +17,9 @@ namespace render::opengl
 	{
 		enum class PixelFormat
 		{
-			RGBA,
-			R,
 			R16F,
+			R32F,
+			RGB32F,
 			R16,
 			RGB16,
 			MAX
