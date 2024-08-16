@@ -210,7 +210,7 @@ namespace render::opengl
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, textureFormat.getWrappingX());
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, textureFormat.getWrappingY());
 
-		glGenerateMipmap(GL_TEXTURE_2D);
+		result.generateMipmap();
 
 		return result;
 	}
