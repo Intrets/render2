@@ -22,6 +22,7 @@ namespace render::opengl
 			RGB32F,
 			R16,
 			RGB16,
+			RGB8,
 			MAX
 		} pixelFormat{};
 

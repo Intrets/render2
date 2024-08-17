@@ -13,6 +13,7 @@ namespace render::opengl
 			{ PixelFormat::RGB32F, GL_RGB32F },
 			{ PixelFormat::R16, GL_R16 },
 			{ PixelFormat::RGB16, GL_RGB16 },
+			{ PixelFormat::RGB8, GL_RGB8 },
 		};
 
 		return lookup[this->pixelFormat];
@@ -25,6 +26,7 @@ namespace render::opengl
 			{ PixelFormat::RGB32F, GL_RGB },
 			{ PixelFormat::R16, GL_RED },
 			{ PixelFormat::RGB16, GL_RGB },
+			{ PixelFormat::RGB8, GL_RGB },
 		};
 
 		return lookup[this->pixelFormat];
@@ -37,6 +39,7 @@ namespace render::opengl
 			{ PixelFormat::RGB32F, GL_FLOAT },
 			{ PixelFormat::R16, GL_UNSIGNED_SHORT },
 			{ PixelFormat::RGB16, GL_UNSIGNED_SHORT },
+			{ PixelFormat::RGB8, GL_UNSIGNED_BYTE },
 		};
 
 		return lookup[this->pixelFormat];
@@ -113,6 +116,7 @@ namespace render::opengl
 			{ PixelFormat::RGB32F, 4 * 3 },
 			{ PixelFormat::R16, 2 * 1 },
 			{ PixelFormat::RGB16, 2 * 3 },
+			{ PixelFormat::RGB8, 1 * 3 },
 		};
 
 		return pixelCount * lookup[this->pixelFormat];
@@ -210,7 +214,9 @@ namespace render::opengl
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, textureFormat.getWrappingX());
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, textureFormat.getWrappingY());
 
-		result.generateMipmap();
+		if (textureFormat.mipmapLevels > 1) {
+			result.generateMipmap();
+		}
 
 		return result;
 	}
