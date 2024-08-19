@@ -9,6 +9,10 @@ namespace render::opengl
 		this->openglContext.bind(*this);
 	}
 
+	void OpenglFramebuffer::attach(Opengl2DTexture const& texture) {
+		this->attach({ Attachment::Type::color0 }, texture, 0);
+	}
+
 	void OpenglFramebuffer::attach(Attachment attachment, Opengl2DTexture const& texture, GLint mipmap) {
 		this->bind();
 

@@ -41,6 +41,7 @@ namespace render::opengl
 		};
 
 		void bind();
+		void attach(Opengl2DTexture const& texture);
 		void attach(Attachment attachment, Opengl2DTexture const& texture, GLint mipmap);
 		void attach(Attachment attachment, Opengl2DArrayTexture const& texture, int32_t layer, GLint mipmap);
 
