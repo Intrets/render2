@@ -76,6 +76,14 @@ namespace render::opengl
 		}
 	};
 
+	template<>
+	struct SetUniform<int32_t>
+	{
+		static void apply(GLuint location, std::span<int32_t const> values) {
+			glUniform1iv(location, auto_safety(values.size()), &values[0]);
+		}
+	};
+
 	template<class T>
 	struct Uniform
 	{
