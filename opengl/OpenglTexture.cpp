@@ -122,6 +122,19 @@ namespace render::opengl
 		return pixelCount * lookup[this->pixelFormat];
 	}
 
+	integer_t TextureFormat::channelCount() const {
+		constexpr te::enum_array<PixelFormat, integer_t> lookup{
+			{ PixelFormat::R16F, 1 },
+			{ PixelFormat::R32F, 1 },
+			{ PixelFormat::RGB32F, 3 },
+			{ PixelFormat::R16, 1 },
+			{ PixelFormat::RGB16, 3 },
+			{ PixelFormat::RGB8, 3 },
+		};
+
+		return lookup[this->pixelFormat];
+	}
+
 	void Opengl2DTexture::bind() {
 		this->openglContext.bind(*this);
 	}

@@ -71,6 +71,7 @@ namespace render::opengl
 		GLenum getWrappingY() const;
 
 		integer_t getByteSize() const;
+		integer_t channelCount() const;
 	};
 
 	struct OpenglContext;
