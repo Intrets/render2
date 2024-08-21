@@ -18,6 +18,7 @@ make_module(
 		opengl/OpenglFramebuffer
 		opengl/OpenglVAO
 		opengl/OpenglVBO
+		opengl/OpenglPBO
 		opengl/OpenglTexture
 		opengl/OpenglBufferTexture
 		opengl/BufferUsageHint

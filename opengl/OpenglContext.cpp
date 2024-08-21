@@ -2,6 +2,7 @@
 
 #include "render/opengl/OpenglBufferTexture.h"
 #include "render/opengl/OpenglFramebuffer.h"
+#include "render/opengl/OpenglPBO.h"
 #include "render/opengl/OpenglTexture.h"
 #include "render/opengl/OpenglVAO.h"
 #include "render/opengl/OpenglVBO.h"
@@ -188,6 +189,13 @@ namespace render::opengl
 		}
 	}
 
+	void OpenglContext::bind(OpenglPBO& openglPBO) {
+		if (this->boundPBO != openglPBO.ID) {
+			glBindBuffer(GL_PIXEL_PACK_BUFFER, openglPBO.ID.data);
+			this->boundPBO = openglPBO.ID;
+		}
+	}
+
 	void OpenglContext::bind(OpenglVBO& openglVBO, BufferTarget bufferTarget) {
 		if (this->boundBuffers[bufferTarget] != openglVBO.ID) {
 			glBindBuffer(bufferTarget.get(), openglVBO.ID.data);
@@ -274,6 +282,7 @@ namespace render::opengl
 	void OpenglContext::reset() {
 		this->usedProgram = {};
 		this->boundVAO = {};
+		this->boundPBO = {};
 		this->boundFramebuffer = {};
 		this->boundBuffers.fill({});
 		this->configuration = {};
