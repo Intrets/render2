@@ -189,10 +189,31 @@ namespace render::opengl
 		}
 	}
 
-	void OpenglContext::bind(OpenglPBO& openglPBO) {
-		if (this->boundPBO != openglPBO.ID) {
+	void OpenglContext::bindPack(OpenglPBO& openglPBO) {
+		if (this->boundPackPBO != openglPBO.ID) {
 			glBindBuffer(GL_PIXEL_PACK_BUFFER, openglPBO.ID.data);
-			this->boundPBO = openglPBO.ID;
+			this->boundPackPBO = openglPBO.ID;
+		}
+	}
+
+	void OpenglContext::bindUnpack(OpenglPBO& openglPBO) {
+		if (this->boundUnpackPBO != openglPBO.ID) {
+			glBindBuffer(GL_PIXEL_UNPACK_BUFFER, openglPBO.ID.data);
+			this->boundUnpackPBO = openglPBO.ID;
+		}
+	}
+
+	void OpenglContext::unbindPack() {
+		if (this->boundPackPBO) {
+			glBindBuffer(GL_PIXEL_PACK_BUFFER, 0);
+			this->boundPackPBO = {};
+		}
+	}
+
+	void OpenglContext::unbindUnpack() {
+		if (this->boundUnpackPBO) {
+			glBindBuffer(GL_PIXEL_UNPACK_BUFFER, 0);
+			this->boundUnpackPBO = {};
 		}
 	}
 
@@ -282,7 +303,14 @@ namespace render::opengl
 	void OpenglContext::reset() {
 		this->usedProgram = {};
 		this->boundVAO = {};
-		this->boundPBO = {};
+		if (this->boundPackPBO) {
+			glBindFramebuffer(GL_PIXEL_PACK_BUFFER, 0);
+		}
+		this->boundPackPBO = {};
+		if (this->boundUnpackPBO) {
+			glBindFramebuffer(GL_PIXEL_UNPACK_BUFFER, 0);
+		}
+		this->boundUnpackPBO = {};
 		this->boundFramebuffer = {};
 		this->boundBuffers.fill({});
 		this->configuration = {};

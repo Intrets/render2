@@ -106,7 +106,8 @@ namespace render::opengl
 		qualifier_t qualifierCounter{};
 
 		Qualified<GLuint> boundVAO{};
-		Qualified<GLuint> boundPBO{};
+		Qualified<GLuint> boundPackPBO{};
+		Qualified<GLuint> boundUnpackPBO{};
 		Qualified<GLuint> usedProgram{};
 		Qualified<GLuint> boundFramebuffer{};
 
@@ -168,7 +169,10 @@ namespace render::opengl
 		void setSRGBMode(SRGBMode mode);
 
 		void bind(OpenglVAO& openglVAO);
-		void bind(OpenglPBO& openglPBO);
+		void bindPack(OpenglPBO& openglPBO);
+		void bindUnpack(OpenglPBO& openglPBO);
+		void unbindPack();
+		void unbindUnpack();
 		void bind(OpenglVBO& openglVBO, BufferTarget target = {});
 		void bindTextureUnit(integer_t unit);
 		void use(Program& program);

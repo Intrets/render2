@@ -107,8 +107,12 @@ namespace render::opengl
 		return getWrapping(this->wrappingY);
 	}
 
+	integer_t TextureFormat::getPixelCount() const {
+		return static_cast<integer_t>(this->size.x) * this->size.y;
+	}
+
 	integer_t TextureFormat::getByteSize() const {
-		integer_t pixelCount = static_cast<integer_t>(this->size.x) * this->size.y;
+		auto pixelCount = this->getPixelCount();
 
 		constexpr te::enum_array<PixelFormat, integer_t> lookup{
 			{ PixelFormat::R16F, 2 * 1 },
@@ -133,6 +137,15 @@ namespace render::opengl
 		};
 
 		return lookup[this->pixelFormat];
+	}
+
+	void Opengl2DTexture::swap(Opengl2DTexture& other) {
+		assert(&this->openglContext == &other.openglContext);
+
+		std::swap(this->ID, other.ID);
+		std::swap(this->textureFormat, other.textureFormat);
+		std::swap(this->flippedUV, other.flippedUV);
+		std::swap(this->source, other.source);
 	}
 
 	void Opengl2DTexture::bind() {

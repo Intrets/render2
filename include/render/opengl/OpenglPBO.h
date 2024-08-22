@@ -30,17 +30,35 @@ namespace render::opengl
 		~OpenglPBOMappedRead();
 	};
 
+	template<class T>
+	struct OpenglPBOMappedWrite
+	{
+		OpenglPBO* pbo;
+		std::span<T> data;
+
+		NO_COPY(OpenglPBOMappedWrite);
+		DEFAULT_MOVE(OpenglPBOMappedWrite);
+
+		OpenglPBOMappedWrite() = delete;
+		OpenglPBOMappedWrite(OpenglPBO& pbo, std::span<T> data_);
+		~OpenglPBOMappedWrite();
+	};
+
 	struct OpenglPBO
 	{
 		OpenglContext* openglContext;
 		Qualified<GLuint> ID{};
 		bool bufferMapped = false;
 		std::optional<integer_t> downloadSize{};
+		std::optional<TextureFormat> uploadFormat{};
 
 		NO_COPY(OpenglPBO);
 		DEFAULT_MOVE(OpenglPBO);
 
-		void bind();
+		void bindPack();
+		void bindUnpack();
+		void unbindPack();
+		void unbindUnpack();
 
 		void download(
 		    Opengl2DTexture& texture,
@@ -52,10 +70,22 @@ namespace render::opengl
 		std::optional<OpenglPBOMappedRead<T>> getDownload();
 
 		template<class T>
+		OpenglPBOMappedWrite<T> getUpload(
+		    Opengl2DTexture& texture,
+		    integer_t level,
+		    TextureFormat::PixelFormat pixelFormat
+		);
+
+		void upload(
+		    integer_t level,
+		    Opengl2DTexture& texture
+		);
+
+		template<class T>
 		friend struct OpenglPBOMappedRead;
 
 	private:
-		void unmapDownload();
+		void unmapPBO();
 
 	public:
 		OpenglPBO(OpenglContext& openglContext);
@@ -74,8 +104,9 @@ namespace render::opengl
 			return std::nullopt;
 		}
 
-		this->bind();
+		this->bindPack();
 		auto data = glMapBuffer(GL_PIXEL_PACK_BUFFER, GL_READ_ONLY);
+		this->unbindPack();
 
 		if (data == nullptr) {
 			assert(0);
@@ -90,6 +121,25 @@ namespace render::opengl
 	}
 
 	template<class T>
+	inline OpenglPBOMappedWrite<T> OpenglPBO::getUpload(Opengl2DTexture& texture, integer_t level, TextureFormat::PixelFormat pixelFormat) {
+		this->bindUnpack();
+
+		auto dummy = texture.textureFormat;
+		dummy.pixelFormat = pixelFormat;
+
+		this->uploadFormat = dummy;
+
+		integer_t bufferSize = dummy.getPixelCount() * sizeof(T);
+		glBufferData(GL_PIXEL_UNPACK_BUFFER, bufferSize, nullptr, GL_STREAM_READ);
+		auto ptr = glMapBuffer(GL_PIXEL_UNPACK_BUFFER, GL_WRITE_ONLY);
+
+		auto span = std::span<T>(reinterpret_cast<T*>(ptr), texture.textureFormat.getPixelCount());
+
+		this->unbindUnpack();
+		return OpenglPBOMappedWrite<T>(*this, span);
+	}
+
+	template<class T>
 	inline OpenglPBOMappedRead<T>::OpenglPBOMappedRead(OpenglPBO& pbo_, std::span<T const> data_)
 	    : pbo(&pbo_),
 	      data(data_) {
@@ -97,6 +147,16 @@ namespace render::opengl
 
 	template<class T>
 	inline OpenglPBOMappedRead<T>::~OpenglPBOMappedRead() {
-		this->pbo->unmapDownload();
+		this->pbo->unmapPBO();
+	}
+
+	template<class T>
+	inline OpenglPBOMappedWrite<T>::OpenglPBOMappedWrite(OpenglPBO& pbo_, std::span<T> data_)
+	    : pbo(&pbo_),
+	      data(data_) {
+	}
+
+	template<class T>
+	inline OpenglPBOMappedWrite<T>::~OpenglPBOMappedWrite() {
 	}
 }

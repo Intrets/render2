@@ -70,6 +70,7 @@ namespace render::opengl
 		GLenum getWrappingX() const;
 		GLenum getWrappingY() const;
 
+		integer_t getPixelCount() const;
 		integer_t getByteSize() const;
 		integer_t channelCount() const;
 	};
@@ -83,6 +84,8 @@ namespace render::opengl
 		TextureFormat textureFormat{};
 		bool flippedUV = false;
 		std::filesystem::path source{};
+
+		void swap(Opengl2DTexture& other);
 
 		void bind();
 

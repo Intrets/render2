@@ -5,8 +5,20 @@
 
 namespace render::opengl
 {
-	void OpenglPBO::bind() {
-		this->openglContext->bind(*this);
+	void OpenglPBO::bindPack() {
+		this->openglContext->bindPack(*this);
+	}
+
+	void OpenglPBO::bindUnpack() {
+		this->openglContext->bindUnpack(*this);
+	}
+
+	void OpenglPBO::unbindPack() {
+		this->openglContext->unbindPack();
+	}
+
+	void OpenglPBO::unbindUnpack() {
+		this->openglContext->unbindUnpack();
 	}
 
 	void OpenglPBO::download(Opengl2DTexture& texture, integer_t level, TextureFormat::PixelFormat pixelFormat) {
@@ -18,7 +30,7 @@ namespace render::opengl
 		auto dummy = texture.textureFormat;
 		dummy.pixelFormat = pixelFormat;
 
-		this->bind();
+		this->bindPack();
 		glBufferData(
 		    GL_PIXEL_PACK_BUFFER,
 		    dummy.getByteSize(),
@@ -35,12 +47,46 @@ namespace render::opengl
 		    dummy.getPixelDataType(),
 		    nullptr
 		);
+		this->unbindPack();
 	}
 
-	void OpenglPBO::unmapDownload() {
-		this->bind();
+	void OpenglPBO::upload(
+	    integer_t level,
+	    Opengl2DTexture& texture
+	) {
+		this->bindUnpack();
+		glUnmapBuffer(GL_PIXEL_UNPACK_BUFFER);
+		texture.bind();
+
+		auto& textureFormat = this->uploadFormat.value();
+
+		glTexImage2D(
+		    GL_TEXTURE_2D,
+		    static_cast<GLint>(level),
+		    textureFormat.getInternalFormat(),
+		    textureFormat.size.x,
+		    textureFormat.size.y,
+		    0,
+		    textureFormat.getPixelDataFormat(),
+		    textureFormat.getPixelDataType(),
+		    nullptr
+		);
+
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, textureFormat.getMagFilter());
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, textureFormat.getMinFilter());
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, textureFormat.getWrappingX());
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, textureFormat.getWrappingY());
+
+		if (textureFormat.mipmapLevels > 1) {
+			glGenerateMipmap(GL_TEXTURE_2D);
+		}
+	}
+
+	void OpenglPBO::unmapPBO() {
+		this->bindPack();
 		glUnmapBuffer(GL_PIXEL_PACK_BUFFER);
 		this->bufferMapped = false;
+		this->unbindPack();
 	}
 
 	OpenglPBO::OpenglPBO(OpenglContext& openglContext_)
