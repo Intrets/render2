@@ -54,6 +54,7 @@ namespace render::opengl
 	void OpenglContext::setConfiguration(Configuration const& configuration_) {
 		setBlend(configuration_.blend);
 		setBlendFunc(configuration_.blendFunc);
+		setBlendEquation(configuration_.blendEquation);
 		setDepthTest(configuration_.depthTest);
 		setDepthFunc(configuration_.depthFunc);
 		setDepthMask(configuration_.depthMask);
@@ -100,6 +101,35 @@ namespace render::opengl
 					break;
 				case BlendFunc::ONE__ONE:
 					glBlendFunc(GL_ONE, GL_ONE);
+					break;
+				case BlendFunc::DST_COLOR__ZERO:
+					glBlendFunc(GL_DST_COLOR, GL_ZERO);
+					break;
+				default:
+					assert(0);
+					break;
+			}
+		}
+	}
+
+	void OpenglContext::setBlendEquation(BlendEquation equation) {
+		if (this->configuration.blendEquation != equation) {
+			this->configuration.blendEquation = equation;
+			switch (equation) {
+				case BlendEquation::FUNC_MAX:
+					glBlendEquation(GL_MAX);
+					break;
+				case BlendEquation::FUNC_MIN:
+					glBlendEquation(GL_MIN);
+					break;
+				case BlendEquation::FUNC_ADD:
+					glBlendEquation(GL_FUNC_ADD);
+					break;
+				case BlendEquation::FUNC_REVERSE_SUBTRACT:
+					glBlendEquation(GL_FUNC_REVERSE_SUBTRACT);
+					break;
+				case BlendEquation::FUNC_SUBTRACT:
+					glBlendEquation(GL_FUNC_SUBTRACT);
 					break;
 				default:
 					assert(0);
@@ -393,6 +423,7 @@ namespace render::opengl
 		return Configuration{
 			.blend = Blend::ENABLED,
 			.blendFunc = BlendFunc::SRC_ALPHA__ONE_MINUS_SRC_ALPHA,
+			.blendEquation = BlendEquation::FUNC_ADD,
 			.depthTest = DepthTest::DISABLED,
 			.depthFunc = DepthFunc::LESS,
 			.pointSize = 1.0f,

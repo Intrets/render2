@@ -51,7 +51,19 @@ namespace render::opengl
 		ONE__ZERO,
 		ZERO__ONE,
 		ONE__ONE,
+		DST_COLOR__ZERO,
 		MAX,
+	};
+
+	enum class BlendEquation
+	{
+		UNSET,
+		FUNC_ADD,
+		FUNC_SUBTRACT,
+		FUNC_REVERSE_SUBTRACT,
+		FUNC_MIN,
+		FUNC_MAX,
+		MAX
 	};
 
 	enum class DepthTest
@@ -92,6 +104,7 @@ namespace render::opengl
 	{
 		Blend blend = Blend::UNSET;
 		BlendFunc blendFunc = BlendFunc::UNSET;
+		BlendEquation blendEquation = BlendEquation::UNSET;
 		DepthTest depthTest = DepthTest::UNSET;
 		DepthFunc depthFunc = DepthFunc::UNSET;
 		float pointSize = 0.0f;
@@ -163,6 +176,7 @@ namespace render::opengl
 
 		void setBlend(Blend b);
 		void setBlendFunc(BlendFunc func);
+		void setBlendEquation(BlendEquation equation);
 		void setDepthTest(DepthTest test);
 		void setDepthFunc(DepthFunc func);
 		void setDepthMask(DepthMask b);
