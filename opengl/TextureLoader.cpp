@@ -26,6 +26,8 @@
 #include "render/opengl/OpenglContext.h"
 #include "render/opengl/OpenglTexture.h"
 
+#include <tepp/safety_cast.h>
+
 namespace render::opengl
 {
 	Opengl2DTexture load2DTexture(OpenglContext& openglContext, std::span<char const> buffer, bool SRGB) {
@@ -93,7 +95,7 @@ namespace render::opengl
 		GLenum Target = GL.translate(Texture.target());
 
 		glm::tvec3<GLsizei> const Extent1(Texture.extent());
-		GLsizei const FaceTotal = static_cast<GLsizei>(Texture.layers() * Texture.faces());
+		GLsizei const FaceTotal = te::safety_cast<GLsizei>(Texture.layers() * Texture.faces());
 
 		glm::ivec2 size{};
 
@@ -111,7 +113,7 @@ namespace render::opengl
 			else if (Target == GL_TEXTURE_2D_ARRAY) {
 				auto result = Opengl2DArrayTexture(openglContext);
 				result.size = size;
-				result.layers = static_cast<int32_t>(Texture.layers());
+				result.layers = te::safety_cast<int32_t>(Texture.layers());
 				glGenTextures(1, &result.ID.data);
 				result.bind();
 				return result;
@@ -126,7 +128,7 @@ namespace render::opengl
 		}
 
 		glTexParameteri(Target, GL_TEXTURE_BASE_LEVEL, 0);
-		glTexParameteri(Target, GL_TEXTURE_MAX_LEVEL, static_cast<GLint>(Texture.levels() - 1));
+		glTexParameteri(Target, GL_TEXTURE_MAX_LEVEL, te::safety_cast<GLint>(Texture.levels() - 1));
 		glTexParameteri(Target, GL_TEXTURE_SWIZZLE_R, Format.Swizzles[0]);
 		glTexParameteri(Target, GL_TEXTURE_SWIZZLE_G, Format.Swizzles[1]);
 		glTexParameteri(Target, GL_TEXTURE_SWIZZLE_B, Format.Swizzles[2]);
@@ -141,14 +143,14 @@ namespace render::opengl
 			case gli::TARGET_2D:
 			case gli::TARGET_CUBE:
 				glTexStorage2D(
-				    Target, static_cast<GLint>(Texture.levels()), internalFormat,
+				    Target, te::safety_cast<GLint>(Texture.levels()), internalFormat,
 				    Extent1.x, Texture.target() == gli::TARGET_2D ? Extent1.y : FaceTotal
 				);
 				break;
 			case gli::TARGET_2D_ARRAY:
 				glTexStorage3D(
-				    Target, static_cast<GLint>(Texture.levels()), internalFormat,
-				    Extent1.x, Extent1.y, static_cast<GLsizei>(Texture.layers())
+				    Target, te::safety_cast<GLint>(Texture.levels()), internalFormat,
+				    Extent1.x, Extent1.y, te::safety_cast<GLsizei>(Texture.layers())
 				);
 				break;
 			case gli::TARGET_1D:
@@ -166,7 +168,7 @@ namespace render::opengl
 		for (std::size_t Layer = 0; Layer < layers; ++Layer) {
 			for (std::size_t Face = 0; Face < faces; ++Face) {
 				for (std::size_t Level = 0; Level < levels; ++Level) {
-					GLsizei const LayerGL = static_cast<GLsizei>(Layer);
+					GLsizei const LayerGL = te::safety_cast<GLsizei>(Layer);
 					glm::tvec3<GLsizei> Extent(Texture.extent(Level));
 					Target = gli::is_target_cube(Texture.target())
 					             ? static_cast<GLenum>(GL_TEXTURE_CUBE_MAP_POSITIVE_X + Face)
@@ -179,17 +181,17 @@ namespace render::opengl
 						{
 							if (gli::is_compressed(Texture.format())) {
 								glCompressedTexSubImage2D(
-								    Target, static_cast<GLint>(Level),
+								    Target, te::safety_cast<GLint>(Level),
 								    0, 0,
 								    Extent.x, Extent.y,
 								    internalFormat,
-								    static_cast<GLsizei>(Texture.size(Level)),
+								    te::safety_cast<GLsizei>(Texture.size(Level)),
 								    Texture.data(Layer, Face, Level)
 								);
 							}
 							else {
 								glTexSubImage2D(
-								    Target, static_cast<GLint>(Level),
+								    Target, te::safety_cast<GLint>(Level),
 								    0, 0,
 								    Extent.x,
 								    Texture.target() == gli::TARGET_1D_ARRAY ? LayerGL : Extent.y,
@@ -202,18 +204,18 @@ namespace render::opengl
 						{
 							if (gli::is_compressed(Texture.format())) {
 								glCompressedTexSubImage3D(
-								    Target, static_cast<GLint>(Level),
-								    0, 0, static_cast<GLint>(Layer),
+								    Target, te::safety_cast<GLint>(Level),
+								    0, 0, te::safety_cast<GLint>(Layer),
 								    Extent.x, Extent.y, 1,
 								    internalFormat,
-								    static_cast<GLsizei>(Texture.size(Level)),
+								    te::safety_cast<GLsizei>(Texture.size(Level)),
 								    Texture.data(Layer, Face, Level)
 								);
 							}
 							else {
 								glTexSubImage3D(
-								    Target, static_cast<GLint>(Level),
-								    0, 0, static_cast<GLint>(Layer),
+								    Target, te::safety_cast<GLint>(Level),
+								    0, 0, te::safety_cast<GLint>(Layer),
 								    Extent.x, Texture.target() == gli::TARGET_1D_ARRAY ? LayerGL : Extent.y, 1,
 								    externalFormat, Format.Type,
 								    Texture.data(Layer, Face, Level)

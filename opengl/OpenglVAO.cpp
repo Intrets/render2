@@ -6,6 +6,8 @@
 
 #include <wrangled_gl/wrangled_gl.h>
 
+#include <tepp/safety_cast.h>
+
 namespace render::opengl
 {
 	Descriptor& OpenglVAO::newDescriptor(std::string_view name_, integer_t divisor) {
@@ -49,7 +51,7 @@ namespace render::opengl
 	    : openglContext(&openglContext_) {
 		this->ID.qualifier = this->openglContext->getQualifier();
 #ifdef WRANGLE_GLESv3
-        glGenVertexArrays(1, &this->ID.data);
+		glGenVertexArrays(1, &this->ID.data);
 #else
 		glCreateVertexArrays(1, &this->ID.data);
 #endif
@@ -200,6 +202,6 @@ namespace render::opengl
 	}
 
 	GLuint Descriptor::getDivisor() const {
-		return static_cast<GLuint>(this->divisor);
+		return te::safety_cast<GLuint>(this->divisor);
 	}
 }

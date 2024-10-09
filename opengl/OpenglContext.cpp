@@ -8,6 +8,8 @@
 #include "render/opengl/OpenglVBO.h"
 #include "render/opengl/Program.h"
 
+#include <tepp/safety_cast.h>
+
 namespace render::opengl
 {
 	te::cstring_view OpenglContext::getShaderPrefix() const {
@@ -44,8 +46,8 @@ namespace render::opengl
 		};
 
 		std::array<GLint, 2> sizes{
-			static_cast<GLint>(shaderSource[0].size()),
-			static_cast<GLint>(shaderSource[1].size()),
+			te::safety_cast<GLint>(shaderSource[0].size()),
+			te::safety_cast<GLint>(shaderSource[1].size()),
 		};
 
 		glShaderSource(ID, static_cast<GLsizei>(shaderSource.size()), pointers.data(), sizes.data());

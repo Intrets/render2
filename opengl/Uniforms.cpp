@@ -2,6 +2,8 @@
 
 #include "render/opengl/OpenglContext.h"
 
+#include <tepp/safety_cast.h>
+
 namespace render::opengl
 {
 	void OpenglSampler2D::initialize(te::cstring_view name, Program& program_) {
@@ -44,7 +46,7 @@ namespace render::opengl
 		assert(this->program);
 
 		this->program->use();
-		this->program->openglContext.bind(texture, this->unit + static_cast<GLint>(index));
+		this->program->openglContext.bind(texture, this->unit + te::safety_cast<GLint>(index));
 	}
 
 	void OpenglSampler2D::set(Qualified<GLuint> ID, integer_t index) {
@@ -52,7 +54,7 @@ namespace render::opengl
 		assert(this->program);
 
 		this->program->use();
-		this->program->openglContext.bind(ID, TextureTarget::Type::TEXTURE_2D, this->unit + static_cast<GLint>(index));
+		this->program->openglContext.bind(ID, TextureTarget::Type::TEXTURE_2D, this->unit + te::safety_cast<GLint>(index));
 	}
 
 	void OpenglSampler3D::initialize(te::cstring_view name, Program& program_) {
