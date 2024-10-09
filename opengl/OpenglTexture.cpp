@@ -14,6 +14,7 @@ namespace render::opengl
 			{ PixelFormat::R16, GL_R16 },
 			{ PixelFormat::RGB16, GL_RGB16 },
 			{ PixelFormat::RGB8, GL_RGB8 },
+			{ PixelFormat::RGBA8, GL_RGBA8 },
 		};
 
 		return lookup[this->pixelFormat];
@@ -27,6 +28,7 @@ namespace render::opengl
 			{ PixelFormat::R16, GL_RED },
 			{ PixelFormat::RGB16, GL_RGB },
 			{ PixelFormat::RGB8, GL_RGB },
+			{ PixelFormat::RGBA8, GL_RGBA },
 		};
 
 		return lookup[this->pixelFormat];
@@ -40,6 +42,7 @@ namespace render::opengl
 			{ PixelFormat::R16, GL_UNSIGNED_SHORT },
 			{ PixelFormat::RGB16, GL_UNSIGNED_SHORT },
 			{ PixelFormat::RGB8, GL_UNSIGNED_BYTE },
+			{ PixelFormat::RGBA8, GL_UNSIGNED_BYTE },
 		};
 
 		return lookup[this->pixelFormat];
@@ -121,6 +124,7 @@ namespace render::opengl
 			{ PixelFormat::R16, 2 * 1 },
 			{ PixelFormat::RGB16, 2 * 3 },
 			{ PixelFormat::RGB8, 1 * 3 },
+			{ PixelFormat::RGBA8, 1 * 4 },
 		};
 
 		return pixelCount * lookup[this->pixelFormat];
@@ -134,6 +138,7 @@ namespace render::opengl
 			{ PixelFormat::R16, 1 },
 			{ PixelFormat::RGB16, 3 },
 			{ PixelFormat::RGB8, 3 },
+			{ PixelFormat::RGBA8, 4 },
 		};
 
 		return lookup[this->pixelFormat];
