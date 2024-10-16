@@ -17,13 +17,13 @@ namespace render::opengl
 	{
 		enum class PixelFormat
 		{
+			RGBA8,
 			R16F,
 			R32F,
 			RGB32F,
 			R16,
 			RGB16,
 			RGB8,
-			RGBA8,
 			MAX
 		} pixelFormat{};
 
