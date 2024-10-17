@@ -115,8 +115,10 @@ namespace render::opengl
 	}
 
 	integer_t TextureFormat::getByteSize() const {
-		auto pixelCount = this->getPixelCount();
+		return this->getPixelCount() * this->getPixelSize();
+	}
 
+	integer_t TextureFormat::getPixelSize() const {
 		constexpr te::enum_array<PixelFormat, integer_t> lookup{
 			{ PixelFormat::R16F, 2 * 1 },
 			{ PixelFormat::R32F, 4 * 1 },
@@ -127,7 +129,7 @@ namespace render::opengl
 			{ PixelFormat::RGBA8, 1 * 4 },
 		};
 
-		return pixelCount * lookup[this->pixelFormat];
+		return lookup[this->pixelFormat];
 	}
 
 	integer_t TextureFormat::channelCount() const {

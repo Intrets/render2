@@ -94,6 +94,7 @@ namespace render::opengl
 
 		integer_t getPixelCount() const;
 		integer_t getByteSize() const;
+		integer_t getPixelSize() const;
 		integer_t channelCount() const;
 	};
 
