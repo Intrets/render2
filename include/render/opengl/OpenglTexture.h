@@ -8,24 +8,50 @@
 
 #include <render/opengl/Qualifier.h>
 
-#include <span>
 #include <filesystem>
+#include <span>
 
 namespace render::opengl
 {
+#define COMMA(X) X,
+#define SETTER(X) \
+	void X() { \
+		this->data = enum_name::X; \
+	}
+
+#define MAKE_CHOICE_ENUM_STRUCT(TYPE, NAME, L) \
+	struct TYPE##_struct \
+	{ \
+		enum class TYPE##_enum{ \
+			L(COMMA) MAX \
+		} data{}; \
+		using enum_name = TYPE##_enum; \
+		L(SETTER) \
+		enum_name get() const { \
+			return data; \
+		} \
+		operator enum_name() const { \
+			return data; \
+		} \
+		TYPE##_struct& operator=(enum_name v) { \
+			this->data = v; \
+			return *this; \
+		} \
+	} NAME{}; \
+	using TYPE = TYPE##_struct::TYPE##_enum;
+
 	struct TextureFormat
 	{
-		enum class PixelFormat
-		{
-			RGBA8,
-			R16F,
-			R32F,
-			RGB32F,
-			R16,
-			RGB16,
-			RGB8,
-			MAX
-		} pixelFormat{};
+#define LIST(X) \
+	X(RGBA8) \
+	X(R16F) \
+	X(R32F) \
+	X(RGB32F) \
+	X(R16) \
+	X(RGB16) \
+	X(RGB8)
+
+		MAKE_CHOICE_ENUM_STRUCT(PixelFormat, pixelFormat, LIST)
 
 		GLint getInternalFormat() const;
 
@@ -35,36 +61,31 @@ namespace render::opengl
 		GLenum getPixelDataFormat() const;
 		GLenum getPixelDataType() const;
 
-		enum class Filtering
-		{
-			NEAREST,
-			LINEAR,
-			MAX
-		} filtering{};
+#undef LIST
+#define LIST(X) \
+	X(NEAREST) \
+	X(LINEAR)
+		MAKE_CHOICE_ENUM_STRUCT(Filtering, filtering, LIST)
 
 		GLenum getMinFilter() const;
 		GLenum getMagFilter() const;
 
 		int32_t mipmapLevels = 1;
 
-		enum class MipmapFiltering
-		{
-			NEAREST,
-			LINEAR,
-			MAX
-		} mipmapFiltering{};
+#undef LIST
+#define LIST(X) \
+	X(NEAREST) \
+	X(LINEAR)
+		MAKE_CHOICE_ENUM_STRUCT(MipmapFiltering, mipmapFiltering, LIST)
 
-		enum class Wrapping
-		{
-			REPEAT,
-			MIRRORED_REPEAT,
-			CLAMP_TO_EDGE,
-			CLAMP_TO_BORDER,
-			MAX
-		};
-
-		Wrapping wrappingX{};
-		Wrapping wrappingY{};
+#undef LIST
+#define LIST(X) \
+	X(REPEAT) \
+	X(MIRRORED_REPEAT) \
+	X(CLAMP_TO_EDGE) \
+	X(CLAMP_TO_BORDER)
+		MAKE_CHOICE_ENUM_STRUCT(Wrapping, wrappingX, LIST)
+		Wrapping_struct wrappingY{};
 
 		static GLenum getWrapping(Wrapping wrapping);
 
@@ -93,6 +114,8 @@ namespace render::opengl
 		void setWrapping(TextureFormat::Wrapping x, TextureFormat::Wrapping y);
 
 		void generateMipmap();
+
+		std::vector<std::byte> download(TextureFormat& targetFormat);
 
 		Opengl2DTexture(OpenglContext& openglContext);
 		explicit Opengl2DTexture(OpenglContext& openglContext, GLuint ID);

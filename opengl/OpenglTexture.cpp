@@ -172,6 +172,26 @@ namespace render::opengl
 		glGenerateMipmap(GL_TEXTURE_2D);
 	}
 
+	std::vector<std::byte> Opengl2DTexture::download(TextureFormat& targetFormat) {
+		this->bind();
+
+		targetFormat.size = this->textureFormat.size;
+		targetFormat.layers = 0;
+
+		std::vector<std::byte> result{};
+		result.resize(targetFormat.getByteSize());
+
+		glGetTexImage(
+		    GL_TEXTURE_2D,
+		    0,
+		    targetFormat.getPixelDataFormat(),
+		    targetFormat.getPixelDataType(),
+		    result.data()
+		);
+
+		return result;
+	}
+
 	Opengl2DTexture::Opengl2DTexture(OpenglContext& openglContext_)
 	    : openglContext(openglContext_) {
 		this->ID.qualifier = this->openglContext.getQualifier();
