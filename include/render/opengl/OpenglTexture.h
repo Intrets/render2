@@ -115,6 +115,7 @@ namespace render::opengl
 		void setWrapping(TextureFormat::Wrapping x, TextureFormat::Wrapping y);
 
 		void generateMipmap();
+		void refreshFiltering();
 
 		std::vector<std::byte> download(TextureFormat& targetFormat);
 

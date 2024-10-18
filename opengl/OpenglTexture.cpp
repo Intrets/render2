@@ -174,6 +174,14 @@ namespace render::opengl
 		glGenerateMipmap(GL_TEXTURE_2D);
 	}
 
+	void Opengl2DTexture::refreshFiltering() {
+		this->bind();
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, textureFormat.getMagFilter());
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, textureFormat.getMinFilter());
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, textureFormat.getWrappingX());
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, textureFormat.getWrappingY());
+	}
+
 	std::vector<std::byte> Opengl2DTexture::download(TextureFormat& targetFormat) {
 		this->bind();
 
