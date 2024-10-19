@@ -6,25 +6,29 @@ namespace render::opengl
 {
 	void ProgramRegistry::registerProgram(Program& program) {
 		if (program.ID.data != 0) {
-			assert(!this->programs.contains(program.ID.data));
 			this->programs[program.ID.data].program = &program;
 		}
 	}
 
-	void ProgramRegistry::unRegisterProgram(Program& program) {
+	void ProgramRegistry::registerProgram(Program& program, ProgramDescription description_) {
 		if (program.ID.data != 0) {
-			assert(this->programs.contains(program.ID.data));
-			assert(this->programs[program.ID.data].program == &program);
-			this->programs.erase(program.ID.data);
+			auto& description = this->programs[program.ID.data];
+
+			description = description_;
+			description.program = &program;
 		}
 	}
 
-	void ProgramRegistry::moveProgram(Program& from, Program& to) {
-		this->unRegisterProgram(from);
-		if (to.ID.data != 0) {
-			assert(this->programs.contains(to.ID.data));
-			assert(this->programs[to.ID.data].program == &from);
-			this->programs[to.ID.data].program = &to;
+	std::optional<ProgramDescription> ProgramRegistry::unRegisterProgram(Program& program) {
+		auto it = this->programs.find(program.ID.data);
+		if (it != this->programs.end()) {
+			auto description = it->second;
+			description.program = nullptr;
+			this->programs.erase(it);
+			return description;
+		}
+		else {
+			return std::nullopt;
 		}
 	}
 

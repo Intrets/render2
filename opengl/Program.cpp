@@ -103,15 +103,22 @@ namespace render::opengl
 
 		this->shaderSourceGenerators = std::move(other.shaderSourceGenerators);
 
-		this->openglContext.moveProgram(other, *this);
+		this->openglContext.registerProgram(*this);
 	}
 
 	Program& Program::operator=(Program&& other) {
 		assert(this->ID != other.ID);
-		if (this->ID.data != 0) {
-			this->openglContext.unRegisterProgram(*this);
-			glDeleteProgram(this->ID.data);
-		}
+
+		auto description = std::invoke([&]() -> std::optional<ProgramDescription> {
+			if (this->ID.data != 0) {
+				auto result = this->openglContext.unRegisterProgram(*this);
+				glDeleteProgram(this->ID.data);
+				return result;
+			}
+			else {
+				return std::nullopt;
+			}
+		});
 
 		this->ID = other.ID;
 		other.ID = {};
@@ -120,7 +127,12 @@ namespace render::opengl
 
 		this->shaderSourceGenerators = std::move(other.shaderSourceGenerators);
 
-		this->openglContext.moveProgram(other, *this);
+		if (description.has_value()) {
+			this->openglContext.registerProgram(*this, description.value());
+		}
+		else {
+			this->openglContext.registerProgram(*this);
+		}
 
 		return *this;
 	}

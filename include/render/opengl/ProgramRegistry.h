@@ -13,6 +13,7 @@ namespace render::opengl
 	struct ProgramDescription
 	{
 		Program* program;
+		bool autoReload = false;
 	};
 
 	struct ProgramRegistry
@@ -20,8 +21,8 @@ namespace render::opengl
 		std::unordered_map<GLuint, ProgramDescription> programs{};
 
 		void registerProgram(Program& program);
-		void unRegisterProgram(Program& program);
-		void moveProgram(Program& from, Program& to);
+		void registerProgram(Program& program, ProgramDescription description);
+		std::optional<ProgramDescription> unRegisterProgram(Program& program);
 
 		te::optional_ref<Program> lookup(GLuint ID);
 	};

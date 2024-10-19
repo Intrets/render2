@@ -367,12 +367,12 @@ namespace render::opengl
 		this->programRegistry.registerProgram(program);
 	}
 
-	void OpenglContext::unRegisterProgram(Program& program) {
-		this->programRegistry.unRegisterProgram(program);
+	void OpenglContext::registerProgram(Program& program, ProgramDescription description) {
+		this->programRegistry.registerProgram(program, description);
 	}
 
-	void OpenglContext::moveProgram(Program& from, Program& to) {
-		this->programRegistry.moveProgram(from, to);
+	std::optional<ProgramDescription> OpenglContext::unRegisterProgram(Program& program) {
+		return this->programRegistry.unRegisterProgram(program);
 	}
 
 	qualifier_t OpenglContext::getQualifier() {

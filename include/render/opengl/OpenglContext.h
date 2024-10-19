@@ -204,8 +204,8 @@ namespace render::opengl
 		void reset();
 
 		void registerProgram(Program& program);
-		void unRegisterProgram(Program& program);
-		void moveProgram(Program& from, Program& to);
+		void registerProgram(Program& program, ProgramDescription description);
+		std::optional<ProgramDescription> unRegisterProgram(Program& program);
 
 		qualifier_t getQualifier();
 		qualifier_t getScreenFramebufferQualifier() const;
