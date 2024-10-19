@@ -93,18 +93,28 @@ namespace render::opengl
 
 		Uniform() = default;
 		void initialize(te::cstring_view name, Program& program_) {
+			auto refresh = this->program != nullptr;
 			this->program = &program_;
 			this->program->use();
 			this->location = glGetUniformLocation(this->program->ID.data, name.getData());
-			this->current.reset();
+			if (refresh) {
+				if (this->current.has_value()) {
+					te::visit(this->current.value(), [&](auto& v) {
+						this->set(v, true);
+					});
+				}
+			}
+			else {
+				this->current.reset();
+			}
 		}
 		DEFAULT_COPY_MOVE(Uniform);
 		~Uniform() = default;
 
-		void set(T const& value) {
+		void set(T const& value, bool force = false) {
 			assert(this->program);
 
-			if (this->current.has_value()) {
+			if (!force && this->current.has_value()) {
 				assert(std::holds_alternative<T>(this->current.value()));
 
 				if (auto currentValue = std::get_if<T>(&this->current.value())) {
@@ -122,10 +132,10 @@ namespace render::opengl
 			SetUniform<T>::apply(this->location, std::span<T const>(&value, 1));
 		}
 
-		void set(std::span<T> values) {
+		void set(std::span<T> values, bool force = false) {
 			assert(this->program);
 
-			if (this->current.has_value()) {
+			if (!force && this->current.has_value()) {
 				assert(std::holds_alternative<std::vector<T>>(this->current.value()));
 
 				auto done = te::visit(
@@ -153,13 +163,18 @@ namespace render::opengl
 
 			this->program->openglContext.tallyUniformBytesTransferred(values.size_bytes());
 			SetUniform<T>::apply(this->location, values);
+			auto c = std::vector<T>();
+			c.resize(values.size());
+			std::ranges::copy(values, c.begin());
+			this->current = std::move(c);
+
 		}
 	};
 
 	struct OpenglSampler2D
 	{
-		GLint unit{};
-		integer_t count = 1;
+		std::vector<GLint> units{};
+		//integer_t count = 1;
 		Program* program{};
 		GLuint location{};
 

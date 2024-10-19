@@ -101,6 +101,8 @@ namespace render::opengl
 		this->name = other.name;
 		other.name = {};
 
+		this->shaderSourceGenerators = std::move(other.shaderSourceGenerators);
+
 		this->openglContext.moveProgram(other, *this);
 	}
 
@@ -115,6 +117,8 @@ namespace render::opengl
 		other.ID = {};
 		this->name = other.name;
 		other.name = {};
+
+		this->shaderSourceGenerators = std::move(other.shaderSourceGenerators);
 
 		this->openglContext.moveProgram(other, *this);
 
@@ -219,6 +223,37 @@ namespace render::opengl
 		auto fragmentDataSpan = fragmentData.value()->get();
 
 		return Program::load(openglContext, vertexDataSpan, fragmentDataSpan);
+	}
+
+	std::optional<Program> Program::load(OpenglContext& openglContext, BufferGenerator vertexSourceGenerator, BufferGenerator fragmentSourceGenerator) {
+		auto vertexSource = vertexSourceGenerator();
+		auto fragmentSource = fragmentSourceGenerator();
+
+		if (!vertexSource.has_value() || !fragmentSource.has_value()) {
+			return std::nullopt;
+		}
+		else {
+			if (auto program = Program::load(openglContext, vertexSource->get()->getSpan<char>(), fragmentSource->get()->getSpan<char>())) {
+				program->shaderSourceGenerators = BufferGenerators{
+					.vertexGenerator = std::move(vertexSourceGenerator),
+					.fragmentGenerator = std::move(fragmentSourceGenerator),
+				};
+
+				return std::move(program.value());
+			}
+		}
+
+		return std::nullopt;
+	}
+
+	void Program::reload(Program& program) {
+		if (program.shaderSourceGenerators.has_value()) {
+			auto newProgram = Program::load(program.openglContext, program.shaderSourceGenerators->vertexGenerator, program.shaderSourceGenerators->fragmentGenerator);
+			if (newProgram.has_value()) {
+				newProgram->name = program.name;
+				program = std::move(newProgram.value());
+			}
+		}
 	}
 
 	Shader::Shader(Shader&& other) {

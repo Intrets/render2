@@ -11,6 +11,8 @@
 
 #include <tepp/cstring_view.h>
 
+#include <resource_data/ResourceData.h>
+
 namespace render::opengl
 {
 	struct OpenglContext;
@@ -94,11 +96,19 @@ namespace render::opengl
 		static Shader makeFragmentShader();
 	};
 
+	struct BufferGenerators
+	{
+		BufferGenerator vertexGenerator{};
+		BufferGenerator fragmentGenerator{};
+	};
+
 	struct Program
 	{
 		te::cstring_view name{};
 		OpenglContext& openglContext;
 		Qualified<GLuint> ID{};
+
+		std::optional<BufferGenerators> shaderSourceGenerators{};
 
 		int32_t samplerCount = 0;
 
@@ -128,5 +138,13 @@ namespace render::opengl
 		    std::unique_ptr<DataSource> vertexSource,
 		    std::unique_ptr<DataSource> fragmentSource
 		);
+
+		static std::optional<Program> load(
+		    OpenglContext& openglContext,
+		    BufferGenerator vertexSourceGenerator,
+		    BufferGenerator fragmentSourceGenerator
+		);
+
+		static void reload(Program& program);
 	};
 }

@@ -37,4 +37,5 @@ make_module(
 		misc
 		WGLM
 		gli
+		resource_data
 )
