@@ -28,9 +28,23 @@ namespace render::opengl
 	struct Opengl2DArrayTexture;
 	struct OpenglBufferTexture;
 
+	struct UniformBase
+	{
+		Program* program{};
+		GLuint location{};
+		std::string name{};
+
+		virtual te::cstring_view getValueType() = 0;
+		te::cstring_view getName() const;
+	};
+
 	template<>
 	struct SetUniform<float>
 	{
+		static te::cstring_view name() {
+			return "float";
+		}
+
 		static void apply(GLuint location, std::span<float const> values) {
 			glUniform1fv(location, auto_safety(values.size()), values.data());
 		}
@@ -39,6 +53,10 @@ namespace render::opengl
 	template<>
 	struct SetUniform<glm::ivec2>
 	{
+		static te::cstring_view name() {
+			return "ivec2";
+		}
+
 		static void apply(GLuint location, std::span<glm::ivec2 const> values) {
 			glUniform2iv(location, auto_safety(values.size()), &values[0][0]);
 		}
@@ -47,6 +65,10 @@ namespace render::opengl
 	template<>
 	struct SetUniform<glm::vec2>
 	{
+		static te::cstring_view name() {
+			return "vec2";
+		}
+
 		static void apply(GLuint location, std::span<glm::vec2 const> values) {
 			glUniform2fv(location, auto_safety(values.size()), &values[0][0]);
 		}
@@ -55,6 +77,10 @@ namespace render::opengl
 	template<>
 	struct SetUniform<glm::vec3>
 	{
+		static te::cstring_view name() {
+			return "vec3";
+		}
+
 		static void apply(GLuint location, std::span<glm::vec3 const> values) {
 			glUniform3fv(location, auto_safety(values.size()), &values[0][0]);
 		}
@@ -63,6 +89,10 @@ namespace render::opengl
 	template<>
 	struct SetUniform<glm::vec4>
 	{
+		static te::cstring_view name() {
+			return "vec4";
+		}
+
 		static void apply(GLuint location, std::span<glm::vec4 const> values) {
 			glUniform4fv(location, auto_safety(values.size()), &values[0][0]);
 		}
@@ -71,6 +101,10 @@ namespace render::opengl
 	template<>
 	struct SetUniform<glm::mat4>
 	{
+		static te::cstring_view name() {
+			return "mat4";
+		}
+
 		static void apply(GLuint location, std::span<glm::mat4 const> values) {
 			glUniformMatrix4fv(location, auto_safety(values.size()), GL_FALSE, &values[0][0][0]);
 		}
@@ -79,25 +113,33 @@ namespace render::opengl
 	template<>
 	struct SetUniform<int32_t>
 	{
+		static te::cstring_view name() {
+			return "int32";
+		}
+
 		static void apply(GLuint location, std::span<int32_t const> values) {
 			glUniform1iv(location, auto_safety(values.size()), &values[0]);
 		}
 	};
 
 	template<class T>
-	struct Uniform
+	struct Uniform : UniformBase
 	{
 		std::optional<std::variant<T, std::vector<T>>> current{};
-		Program* program{};
-		GLuint location{};
+
+		te::cstring_view getValueType() override {
+			return SetUniform<T>::name();
+		}
 
 		Uniform() = default;
-		void initialize(te::cstring_view name, Program& program_) {
+		void initialize(te::cstring_view name_, Program& program_) {
 			auto refresh = this->program != nullptr;
+
 			this->program = &program_;
 			this->program->use();
-			this->location = glGetUniformLocation(this->program->ID.data, name.getData());
+			this->location = glGetUniformLocation(this->program->ID.data, name_.getData());
 			if (refresh) {
+				tassert(this->name == name_);
 				if (this->current.has_value()) {
 					te::visit(this->current.value(), [&](auto& v) {
 						this->set(v, true);
@@ -105,6 +147,8 @@ namespace render::opengl
 				}
 			}
 			else {
+				this->name = name_;
+				this->program->registerUniform(*this);
 				this->current.reset();
 			}
 		}
@@ -167,16 +211,14 @@ namespace render::opengl
 			c.resize(values.size());
 			std::ranges::copy(values, c.begin());
 			this->current = std::move(c);
-
 		}
 	};
 
-	struct OpenglSampler2D
+	struct OpenglSampler2D : UniformBase
 	{
 		std::vector<GLint> units{};
-		//integer_t count = 1;
-		Program* program{};
-		GLuint location{};
+
+		te::cstring_view getValueType() override;
 
 		OpenglSampler2D() = default;
 		void initialize(te::cstring_view name, Program& program);
@@ -190,11 +232,11 @@ namespace render::opengl
 		void set(Qualified<GLuint> ID, integer_t index);
 	};
 
-	struct OpenglSampler3D
+	struct OpenglSampler3D : UniformBase
 	{
 		int32_t unit{};
-		Program* program{};
-		GLuint location{};
+
+		te::cstring_view getValueType() override;
 
 		OpenglSampler3D() = default;
 		void initialize(te::cstring_view name, Program& program);
@@ -205,11 +247,11 @@ namespace render::opengl
 		void set(Opengl2DArrayTexture const& texture);
 	};
 
-	struct OpenglSamplerBufferTexture
+	struct OpenglSamplerBufferTexture : UniformBase
 	{
 		int32_t unit{};
-		Program* program{};
-		GLuint location{};
+
+		te::cstring_view getValueType() override;
 
 		OpenglSamplerBufferTexture() = default;
 		void initialize(te::cstring_view name, Program& program);

@@ -1,6 +1,7 @@
 #include "render/opengl/Program.h"
 
 #include "render/opengl/OpenglContext.h"
+#include "render/opengl/Uniforms.h"
 
 #include <fstream>
 
@@ -79,6 +80,27 @@ namespace render::opengl
 		return this->samplerCount++;
 	}
 
+	void Program::registerUniform(UniformBase& uniform) {
+		auto refresh = this->uniformReferences.contains(uniform.getName());
+		this->uniformReferences[std::string(uniform.getName())] = &uniform;
+
+		if (!refresh) {
+			this->sortedUniforms = false;
+			this->uniformList.push_back(&uniform);
+		}
+	}
+
+	std::span<UniformBase*> Program::getUniformsSorted() const {
+		if (!this->sortedUniforms) {
+			std::ranges::sort(this->uniformList, [](UniformBase* left, UniformBase* right) {
+				return left->location < right->location;
+			});
+			this->sortedUniforms = true;
+		}
+
+		return this->uniformList;
+	}
+
 	void Program::use() {
 		this->openglContext.use(*this);
 	}
@@ -100,6 +122,8 @@ namespace render::opengl
 		other.ID = {};
 		this->name = other.name;
 		other.name = {};
+
+		this->vertexInfos = std::move(other.vertexInfos);
 
 		this->shaderSourceGenerators = std::move(other.shaderSourceGenerators);
 
@@ -124,6 +148,8 @@ namespace render::opengl
 		other.ID = {};
 		this->name = other.name;
 		other.name = {};
+
+		this->vertexInfos = std::move(other.vertexInfos);
 
 		this->shaderSourceGenerators = std::move(other.shaderSourceGenerators);
 
@@ -208,7 +234,45 @@ namespace render::opengl
 
 		openglContext.logInfo("Program ID: {}\n", ProgramID);
 
-		return Program(openglContext, ProgramID);
+		auto result = Program(openglContext, ProgramID);
+
+		GLint vertexCount = 0;
+		glGetProgramiv(result.ID.data, GL_ACTIVE_ATTRIBUTES, &vertexCount);
+
+		GLint nameLength = 0;
+		glGetProgramiv(result.ID.data, GL_ACTIVE_ATTRIBUTE_MAX_LENGTH, &nameLength);
+
+		std::string vertexNameBuffer{};
+		vertexNameBuffer.resize(nameLength);
+
+		for (integer_t i = 0; i < static_cast<integer_t>(vertexCount); i++) {
+			GLsizei actualNameLength = 0;
+			GLint size = 0;
+			GLenum type = 0;
+			glGetActiveAttrib(result.ID.data, static_cast<GLuint>(i), nameLength, &actualNameLength, &size, &type, vertexNameBuffer.data());
+
+			std::string_view vertexName = std::string_view(vertexNameBuffer.data(), actualNameLength);
+
+			auto& info = result.vertexInfos.emplace_back();
+			info.index = i;
+			info.name = vertexName;
+
+#define TYPE_LIST(X) X(GL_FLOAT) X(GL_FLOAT_VEC2) X(GL_FLOAT_VEC3) X(GL_FLOAT_VEC4) X(GL_FLOAT_MAT2) X(GL_FLOAT_MAT3) X(GL_FLOAT_MAT4) X(GL_FLOAT_MAT2x3) X(GL_FLOAT_MAT2x4) X(GL_FLOAT_MAT3x2) X(GL_FLOAT_MAT3x4) X(GL_FLOAT_MAT4x2) X(GL_FLOAT_MAT4x3) X(GL_INT) X(GL_INT_VEC2) X(GL_INT_VEC3) X(GL_INT_VEC4) X(GL_UNSIGNED_INT) X(GL_UNSIGNED_INT_VEC2) X(GL_UNSIGNED_INT_VEC3) X(GL_UNSIGNED_INT_VEC4) X(GL_DOUBLE) X(GL_DOUBLE_VEC2) X(GL_DOUBLE_VEC3) X(GL_DOUBLE_VEC4) X(GL_DOUBLE_MAT2) X(GL_DOUBLE_MAT3) X(GL_DOUBLE_MAT4) X(GL_DOUBLE_MAT2x3) X(GL_DOUBLE_MAT2x4) X(GL_DOUBLE_MAT3x2) X(GL_DOUBLE_MAT3x4) X(GL_DOUBLE_MAT4x2) X(GL_DOUBLE_MAT4x3)
+
+#define DO_CASE(NAME) \
+	case NAME: \
+		return #NAME;
+
+			info.type = std::invoke([&] {
+				switch (type) {
+					TYPE_LIST(DO_CASE)
+					default:
+						return "";
+				}
+			});
+		}
+
+		return result;
 	}
 
 	std::optional<Program> Program::load(

@@ -10,6 +10,7 @@
 #include "render/opengl/Qualifier.h"
 
 #include <tepp/cstring_view.h>
+#include <tepp/string_key_unordered_map.h>
 
 #include <resource_data/ResourceData.h>
 
@@ -102,6 +103,15 @@ namespace render::opengl
 		BufferGenerator fragmentGenerator{};
 	};
 
+	struct UniformBase;
+
+	struct VertexInfo
+	{
+		integer_t index{};
+		std::string name{};
+		std::string type{};
+	};
+
 	struct Program
 	{
 		te::cstring_view name{};
@@ -110,9 +120,18 @@ namespace render::opengl
 
 		std::optional<BufferGenerators> shaderSourceGenerators{};
 
+		te::string_key_unordered_map<UniformBase*> uniformReferences{};
+		mutable bool sortedUniforms = true;
+		mutable std::vector<UniformBase*> uniformList{};
+
+		std::vector<VertexInfo> vertexInfos{};
+
 		int32_t samplerCount = 0;
 
 		int32_t getNextSampler();
+
+		void registerUniform(UniformBase& uniform);
+		std::span<UniformBase*> getUniformsSorted() const;
 
 		void use();
 

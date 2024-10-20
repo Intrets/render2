@@ -6,22 +6,31 @@
 
 namespace render::opengl
 {
-	void OpenglSampler2D::initialize(te::cstring_view name, Program& program_) {
-		this->initialize(name, 1, program_);
+	te::cstring_view OpenglSampler2D::getValueType() {
+		return "sampler2D";
 	}
 
-	void OpenglSampler2D::initialize(te::cstring_view name, integer_t count, Program& program_) {
+	void OpenglSampler2D::initialize(te::cstring_view name_, Program& program_) {
+		this->initialize(name_, 1, program_);
+	}
+
+	void OpenglSampler2D::initialize(te::cstring_view name_, integer_t count, Program& program_) {
 		auto refresh = this->program != nullptr;
 
 		this->program = &program_;
 		this->program->use();
-		this->location = glGetUniformLocation(this->program->ID.data, name.getData());
+		this->location = glGetUniformLocation(this->program->ID.data, name_.getData());
 
 		if (!refresh) {
 			tassert(this->units.empty());
+			this->name = name_;
+			this->program->registerUniform(*this);
 			for (int i = 0; i < count; i++) {
 				this->units.push_back(this->program->getNextSampler());
 			}
+		}
+		else {
+			tassert(this->name == name_);
 		}
 
 		tassert(isize(this->units) == count);
@@ -62,17 +71,26 @@ namespace render::opengl
 		this->program->openglContext.bind(ID, TextureTarget::Type::TEXTURE_2D, this->units[index]);
 	}
 
-	void OpenglSampler3D::initialize(te::cstring_view name, Program& program_) {
+	te::cstring_view OpenglSampler3D::getValueType() {
+		return "sampler3D";
+	}
+
+	void OpenglSampler3D::initialize(te::cstring_view name_, Program& program_) {
 		auto refresh = this->program != nullptr;
 
 		this->program = &program_;
-		this->location = glGetUniformLocation(this->program->ID.data, name.getData());
+		this->location = glGetUniformLocation(this->program->ID.data, name_.getData());
 		this->unit = this->program->getNextSampler();
 
 		this->program->use();
 
 		if (!refresh) {
+			this->name = name_;
+			this->program->registerUniform(*this);
 			this->unit = this->program->getNextSampler();
+		}
+		else {
+			tassert(this->name == name_);
 		}
 
 		this->program->openglContext.tallyUniformBytesTransferred(sizeof(this->unit));
@@ -86,12 +104,26 @@ namespace render::opengl
 		this->program->openglContext.bind(texture, this->unit);
 	}
 
-	void OpenglSamplerBufferTexture::initialize(te::cstring_view name, Program& program_) {
+	te::cstring_view OpenglSamplerBufferTexture::getValueType() {
+		return "buffer texture";
+	}
+
+	void OpenglSamplerBufferTexture::initialize(te::cstring_view name_, Program& program_) {
+		auto refresh = this->program != nullptr;
+
 		this->program = &program_;
-		this->location = glGetUniformLocation(this->program->ID.data, name.getData());
-		this->unit = this->program->getNextSampler();
+		this->location = glGetUniformLocation(this->program->ID.data, name_.getData());
 
 		this->program->use();
+
+		if (!refresh) {
+			this->name = name_;
+			this->program->registerUniform(*this);
+			this->unit = this->program->getNextSampler();
+		}
+		else {
+			tassert(this->name == name_);
+		}
 
 		this->program->openglContext.tallyUniformBytesTransferred(sizeof(this->unit));
 		glUniform1i(this->location, this->unit);
@@ -102,5 +134,9 @@ namespace render::opengl
 
 		this->program->use();
 		this->program->openglContext.bind(texture, this->unit);
+	}
+
+	te::cstring_view UniformBase::getName() const {
+		return this->name;
 	}
 }

@@ -14,6 +14,7 @@ namespace render::opengl
 	{
 		Program* program;
 		bool autoReload = false;
+		bool uiOpen = false;
 	};
 
 	struct ProgramRegistry
