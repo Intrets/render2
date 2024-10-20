@@ -257,7 +257,7 @@ namespace render::opengl
 			info.index = i;
 			info.name = vertexName;
 
-#define TYPE_LIST(X) X(GL_FLOAT) X(GL_FLOAT_VEC2) X(GL_FLOAT_VEC3) X(GL_FLOAT_VEC4) X(GL_FLOAT_MAT2) X(GL_FLOAT_MAT3) X(GL_FLOAT_MAT4) X(GL_FLOAT_MAT2x3) X(GL_FLOAT_MAT2x4) X(GL_FLOAT_MAT3x2) X(GL_FLOAT_MAT3x4) X(GL_FLOAT_MAT4x2) X(GL_FLOAT_MAT4x3) X(GL_INT) X(GL_INT_VEC2) X(GL_INT_VEC3) X(GL_INT_VEC4) X(GL_UNSIGNED_INT) X(GL_UNSIGNED_INT_VEC2) X(GL_UNSIGNED_INT_VEC3) X(GL_UNSIGNED_INT_VEC4) X(GL_DOUBLE) X(GL_DOUBLE_VEC2) X(GL_DOUBLE_VEC3) X(GL_DOUBLE_VEC4) X(GL_DOUBLE_MAT2) X(GL_DOUBLE_MAT3) X(GL_DOUBLE_MAT4) X(GL_DOUBLE_MAT2x3) X(GL_DOUBLE_MAT2x4) X(GL_DOUBLE_MAT3x2) X(GL_DOUBLE_MAT3x4) X(GL_DOUBLE_MAT4x2) X(GL_DOUBLE_MAT4x3)
+#define TYPE_LIST(X) X(GL_FLOAT_MAT2x3) X(GL_FLOAT_MAT2x4) X(GL_FLOAT_MAT3x2) X(GL_FLOAT_MAT3x4) X(GL_FLOAT_MAT4x2) X(GL_FLOAT_MAT4x3) X(GL_UNSIGNED_INT_VEC2) X(GL_UNSIGNED_INT_VEC3) X(GL_UNSIGNED_INT_VEC4) X(GL_DOUBLE) X(GL_DOUBLE_VEC2) X(GL_DOUBLE_VEC3) X(GL_DOUBLE_VEC4) X(GL_DOUBLE_MAT2) X(GL_DOUBLE_MAT3) X(GL_DOUBLE_MAT4) X(GL_DOUBLE_MAT2x3) X(GL_DOUBLE_MAT2x4) X(GL_DOUBLE_MAT3x2) X(GL_DOUBLE_MAT3x4) X(GL_DOUBLE_MAT4x2) X(GL_DOUBLE_MAT4x3)
 
 #define DO_CASE(NAME) \
 	case NAME: \
@@ -266,7 +266,32 @@ namespace render::opengl
 			info.type = std::invoke([&] {
 				switch (type) {
 					TYPE_LIST(DO_CASE)
+					case GL_FLOAT:
+						return "float";
+					case GL_FLOAT_VEC2:
+						return "vec2";
+					case GL_FLOAT_VEC3:
+						return "vec3";
+					case GL_FLOAT_VEC4:
+						return "vec4";
+					case GL_FLOAT_MAT2:
+						return "mat2";
+					case GL_FLOAT_MAT3:
+						return "mat3";
+					case GL_FLOAT_MAT4:
+						return "mat4";
+					case GL_INT:
+						return "int";
+					case GL_INT_VEC2:
+						return "ivec2";
+					case GL_INT_VEC3:
+						return "ivec3";
+					case GL_INT_VEC4:
+						return "ivec4";
+					case GL_UNSIGNED_INT:
+						return "uint";
 					default:
+						tassert(0);
 						return "";
 				}
 			});
