@@ -153,3 +153,6 @@ namespace render::opengl
 		static std::optional<Opengl2DArrayTexture> make(OpenglContext& openglContext, TextureFormat const& textureFormat);
 	};
 }
+
+#undef COMMA
+#undef SETTER
