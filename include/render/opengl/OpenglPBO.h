@@ -105,7 +105,7 @@ namespace render::opengl
 		}
 
 		this->bindPack();
-		auto data = glMapBuffer(GL_PIXEL_PACK_BUFFER, GL_READ_ONLY);
+		auto data = glMapBufferRange(GL_PIXEL_PACK_BUFFER, 0, static_cast<GLsizeiptr>(this->downloadSize.value()), GL_READ_ONLY);
 		this->unbindPack();
 
 		if (data == nullptr) {
@@ -131,7 +131,7 @@ namespace render::opengl
 
 		integer_t bufferSize = dummy.getPixelCount() * sizeof(T);
 		glBufferData(GL_PIXEL_UNPACK_BUFFER, bufferSize, nullptr, GL_STREAM_READ);
-		auto ptr = glMapBuffer(GL_PIXEL_UNPACK_BUFFER, GL_WRITE_ONLY);
+		auto ptr = glMapBufferRange(GL_PIXEL_UNPACK_BUFFER, 0, static_cast<GLsizeiptr>(bufferSize), GL_WRITE_ONLY);
 
 		auto span = std::span<T>(reinterpret_cast<T*>(ptr), texture.textureFormat.getPixelCount());
 

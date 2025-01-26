@@ -11,8 +11,10 @@ namespace render::opengl
 			{ PixelFormat::R16F, GL_R16F },
 			{ PixelFormat::R32F, GL_R32F },
 			{ PixelFormat::RGB32F, GL_RGB32F },
+#ifndef WRANGLE_GLESv3
 			{ PixelFormat::R16, GL_R16 },
 			{ PixelFormat::RGB16, GL_RGB16 },
+#endif
 			{ PixelFormat::RGB8, GL_RGB8 },
 			{ PixelFormat::RGBA8, GL_RGBA8 },
 		};
@@ -191,6 +193,7 @@ namespace render::opengl
 		std::vector<std::byte> result{};
 		result.resize(targetFormat.getByteSize());
 
+#ifndef WRANGLE_GLESv3
 		glGetTexImage(
 		    GL_TEXTURE_2D,
 		    0,
@@ -198,6 +201,9 @@ namespace render::opengl
 		    targetFormat.getPixelDataType(),
 		    result.data()
 		);
+#else
+		assert(0);
+#endif
 
 		return result;
 	}

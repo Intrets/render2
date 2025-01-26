@@ -40,6 +40,7 @@ namespace render::opengl
 		this->downloadSize = dummy.getByteSize();
 
 		texture.bind();
+#ifndef WRANGLE_GLESv3
 		glGetTexImage(
 		    GL_TEXTURE_2D,
 		    0,
@@ -47,6 +48,9 @@ namespace render::opengl
 		    dummy.getPixelDataType(),
 		    nullptr
 		);
+#else
+		assert(0);
+#endif
 		this->unbindPack();
 	}
 

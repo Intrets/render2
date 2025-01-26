@@ -10,6 +10,9 @@
 
 #include <tepp/safety_cast.h>
 
+#include <ranges>
+#include <algorithm>
+
 namespace render::opengl
 {
 	te::cstring_view OpenglContext::getShaderPrefix() const {
@@ -348,13 +351,18 @@ namespace render::opengl
 		this->configuration = {};
 		this->boundTextures.fill({});
 
-		for (auto&& [unit, samplerUnitInfo] : std::views::enumerate(this->boundSamplerUnits)) {
-			if (samplerUnitInfo.texture.data != 0) {
-				this->bindTextureUnit(unit);
-				glBindTexture(samplerUnitInfo.type.get(), 0);
+		{
+			integer_t unit = 0;
+			for (auto& samplerUnitInfo : this->boundSamplerUnits) {
+				if (samplerUnitInfo.texture.data != 0) {
+					this->bindTextureUnit(unit);
+					glBindTexture(samplerUnitInfo.type.get(), 0);
+				}
+
+				samplerUnitInfo = {};
 			}
 
-			samplerUnitInfo = {};
+			unit++;
 		}
 
 		this->activeUnit = 0;
