@@ -56,6 +56,10 @@ namespace render::opengl
 		GLint getInternalFormat() const;
 
 		glm::ivec2 size{};
+
+		GLsizei getWidth() const;
+		GLsizei getHeight() const;
+
 		int32_t layers{};
 
 		GLenum getPixelDataFormat() const;

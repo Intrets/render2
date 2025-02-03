@@ -3,6 +3,7 @@
 #include <tepp/enum_array.h>
 
 #include "render/opengl/OpenglContext.h"
+#include "render/opengl/OpenglFramebuffer.h"
 
 namespace render::opengl
 {
@@ -20,6 +21,14 @@ namespace render::opengl
 		};
 
 		return lookup[this->pixelFormat];
+	}
+
+	GLsizei TextureFormat::getWidth() const {
+		return static_cast<GLsizei>(this->size.x);
+	}
+
+	GLsizei TextureFormat::getHeight() const {
+		return static_cast<GLsizei>(this->size.y);
 	}
 
 	GLenum TextureFormat::getPixelDataFormat() const {
@@ -185,8 +194,6 @@ namespace render::opengl
 	}
 
 	std::vector<std::byte> Opengl2DTexture::download(TextureFormat& targetFormat) {
-		this->bind();
-
 		targetFormat.size = this->textureFormat.size;
 		targetFormat.layers = 0;
 
@@ -194,6 +201,7 @@ namespace render::opengl
 		result.resize(targetFormat.getByteSize());
 
 #ifndef WRANGLE_GLESv3
+		this->bind();
 		glGetTexImage(
 		    GL_TEXTURE_2D,
 		    0,
@@ -202,7 +210,19 @@ namespace render::opengl
 		    result.data()
 		);
 #else
-		assert(0);
+		auto frameBuffer = OpenglFramebuffer(this->openglContext);
+		frameBuffer.attach(*this);
+		frameBuffer.bind();
+
+		glReadPixels(
+		    0,
+		    0,
+		    targetFormat.getWidth(),
+		    targetFormat.getHeight(),
+		    targetFormat.getPixelDataFormat(),
+		    targetFormat.getPixelDataType(),
+		    result.data()
+		);
 #endif
 
 		return result;
