@@ -43,5 +43,8 @@ namespace render
 		virtual void clear() {
 			this->data.clear();
 		}
+
+		RenderInfoBase() = default;
+		virtual ~RenderInfoBase() = default;
 	};
 }
