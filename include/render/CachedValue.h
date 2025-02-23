@@ -239,9 +239,9 @@ namespace render
 
 		template<auto ptr, class T>
 		CachedValueInitializer<Info>& init(CachedValues<ptr, T>& value) {
-			assert(value.info == nullptr || value.info == &this->info);
+			tassert(value.info == nullptr || value.info == &this->info);
 			value.info = &this->info;
-			assert(value.valid == &detail::dummyValue || value.valid == this->valid);
+			tassert(value.valid == &detail::dummyValue || value.valid == this->valid);
 			value.valid = this->valid;
 
 			value.indices.push_back(this->index);

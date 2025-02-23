@@ -79,7 +79,7 @@ namespace render::opengl
 					glDisable(GL_BLEND);
 					break;
 				default:
-					assert(0);
+					tassert(0);
 					break;
 			}
 		}
@@ -111,7 +111,7 @@ namespace render::opengl
 					glBlendFunc(GL_DST_COLOR, GL_ZERO);
 					break;
 				default:
-					assert(0);
+					tassert(0);
 					break;
 			}
 		}
@@ -137,7 +137,7 @@ namespace render::opengl
 					glBlendEquation(GL_FUNC_SUBTRACT);
 					break;
 				default:
-					assert(0);
+					tassert(0);
 					break;
 			}
 		}
@@ -154,7 +154,7 @@ namespace render::opengl
 					glDisable(GL_DEPTH_TEST);
 					break;
 				default:
-					assert(0);
+					tassert(0);
 					break;
 			}
 		}
@@ -174,7 +174,7 @@ namespace render::opengl
 					glDepthFunc(GL_ALWAYS);
 					break;
 				default:
-					assert(0);
+					tassert(0);
 					break;
 			}
 		}
@@ -191,7 +191,7 @@ namespace render::opengl
 					glDepthMask(GL_TRUE);
 					break;
 				default:
-					assert(0);
+					tassert(0);
 					break;
 			}
 		}
@@ -209,7 +209,7 @@ namespace render::opengl
 					glDisable(GL_FRAMEBUFFER_SRGB);
 					break;
 				default:
-					assert(0);
+					tassert(0);
 					break;
 			}
 		}

@@ -28,7 +28,7 @@ namespace render::opengl
 		};
 
 		auto result = lookup[this->type];
-		assert(result != -1);
+		tassert(result != -1);
 		return result;
 	}
 

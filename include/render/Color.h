@@ -2,7 +2,6 @@
 
 #include <array>
 #include <bit>
-#include <cassert>
 #include <concepts>
 #include <string>
 
@@ -253,13 +252,13 @@ namespace render
 	}
 
 	constexpr Color alpha(Color c, std::integral auto val) {
-		assert(0 <= val && val < 256);
+		tassert(0 <= val && val < 256);
 
 		return { c.c & (0x00FFFFFF | (static_cast<uint32_t>(val) << 24)) };
 	}
 
 	constexpr Color alpha(Color c, std::floating_point auto val) {
-		assert(0.0 <= val && val < 1.0);
+		tassert(0.0 <= val && val < 1.0);
 
 		return alpha(c, static_cast<int32_t>(255 * val));
 	}

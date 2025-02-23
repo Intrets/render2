@@ -156,10 +156,10 @@ namespace render::opengl
 		~Uniform() = default;
 
 		void set(T const& value, bool force = false) {
-			assert(this->program);
+			tassert(this->program);
 
 			if (!force && this->current.has_value()) {
-				assert(std::holds_alternative<T>(this->current.value()));
+				tassert(std::holds_alternative<T>(this->current.value()));
 
 				if (auto currentValue = std::get_if<T>(&this->current.value())) {
 					if (*currentValue == value) {
@@ -177,10 +177,10 @@ namespace render::opengl
 		}
 
 		void set(std::span<T> values, bool force = false) {
-			assert(this->program);
+			tassert(this->program);
 
 			if (!force && this->current.has_value()) {
-				assert(std::holds_alternative<std::vector<T>>(this->current.value()));
+				tassert(std::holds_alternative<std::vector<T>>(this->current.value()));
 
 				auto done = te::visit(
 				    this->current.value(),

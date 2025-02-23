@@ -158,7 +158,7 @@ namespace render::opengl
 	}
 
 	void Opengl2DTexture::swap(Opengl2DTexture& other) {
-		assert(&this->openglContext == &other.openglContext);
+		tassert(&this->openglContext == &other.openglContext);
 
 		std::swap(this->ID, other.ID);
 		std::swap(this->textureFormat, other.textureFormat);
@@ -240,7 +240,7 @@ namespace render::opengl
 	}
 
 	Opengl2DTexture& Opengl2DTexture::operator=(Opengl2DTexture&& other) {
-		assert(&this->openglContext == &other.openglContext);
+		tassert(&this->openglContext == &other.openglContext);
 
 		glDeleteTextures(1, &this->ID.data);
 

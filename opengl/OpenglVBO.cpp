@@ -47,7 +47,7 @@ namespace render::opengl
 	GLsizei OpenglVBO::BufferSizeInformation::getGLElementCount() const {
 		auto max = std::numeric_limits<GLsizei>::max();
 		if (std::cmp_greater(this->elementCount, max)) {
-			assert(0);
+			tassert(0);
 			return max;
 		}
 		else {

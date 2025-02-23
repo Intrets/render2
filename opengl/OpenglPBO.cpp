@@ -23,7 +23,7 @@ namespace render::opengl
 
 	void OpenglPBO::download(Opengl2DTexture& texture, integer_t level, TextureFormat::PixelFormat pixelFormat) {
 		if (this->bufferMapped) {
-			assert(0);
+			tassert(0);
 			return;
 		}
 
@@ -49,7 +49,7 @@ namespace render::opengl
 		    nullptr
 		);
 #else
-		assert(0);
+		tassert(0);
 #endif
 		this->unbindPack();
 	}
@@ -102,7 +102,7 @@ namespace render::opengl
 
 	OpenglPBO::~OpenglPBO() {
 		if (this->bufferMapped) {
-			assert(0);
+			tassert(0);
 			std::abort();
 		}
 

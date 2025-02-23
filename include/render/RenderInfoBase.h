@@ -1,6 +1,5 @@
 #pragma once
 
-#include <cassert>
 #include <span>
 #include <vector>
 
@@ -14,11 +13,11 @@ namespace render
 		std::vector<T> data{};
 
 		std::span<T const> getSubSpan(integer_t begin, integer_t end) const {
-			assert(begin >= 0);
-			assert(end >= 0);
-			assert(begin <= isize(this->data));
-			assert(end <= isize(this->data));
-			assert(begin <= end);
+			tassert(begin >= 0);
+			tassert(end >= 0);
+			tassert(begin <= isize(this->data));
+			tassert(end <= isize(this->data));
+			tassert(begin <= end);
 
 			begin = std::min(isize(this->data), begin);
 			end = std::min(isize(this->data), end);

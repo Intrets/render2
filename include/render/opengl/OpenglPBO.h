@@ -95,12 +95,12 @@ namespace render::opengl
 	template<class T>
 	inline std::optional<OpenglPBOMappedRead<T>> OpenglPBO::getDownload() {
 		if (!this->downloadSize.has_value()) {
-			assert(0);
+			tassert(0);
 			return std::nullopt;
 		}
 
 		if (this->bufferMapped) {
-			assert(0);
+			tassert(0);
 			return std::nullopt;
 		}
 
@@ -109,7 +109,7 @@ namespace render::opengl
 		this->unbindPack();
 
 		if (data == nullptr) {
-			assert(0);
+			tassert(0);
 			return std::nullopt;
 		}
 

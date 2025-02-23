@@ -131,7 +131,7 @@ namespace render::opengl
 	}
 
 	Program& Program::operator=(Program&& other) {
-		assert(this->ID != other.ID);
+		tassert(this->ID != other.ID);
 
 		auto description = std::invoke([&]() -> std::optional<ProgramDescription> {
 			if (this->ID.data != 0) {

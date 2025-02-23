@@ -13,7 +13,7 @@ namespace render::opengl
 	Descriptor& OpenglVAO::newDescriptor(std::string_view name_, integer_t divisor) {
 		auto name = std::string(name_);
 		if (this->descriptors.contains(name)) {
-			assert(0);
+			tassert(0);
 		}
 
 		auto [it, b] = this->descriptors.emplace(name, Descriptor{ .VAO = *this, .divisor = divisor });
@@ -195,7 +195,7 @@ namespace render::opengl
 				case DataType::mat4x2:
 				case DataType::mat3x4:
 				case DataType::mat4x3:
-					assert(0);
+					tassert(0);
 					break;
 			}
 		}
