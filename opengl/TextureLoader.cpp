@@ -8,6 +8,7 @@
 #pragma clang diagnostic ignored "-Wdeprecated-anon-enum-enum-conversion"
 #pragma clang diagnostic ignored "-Wdeprecated-declarations"
 #pragma clang diagnostic ignored "-Wunused-variable"
+#pragma clang diagnostic ignored "-Wmissing-template-arg-list-after-template-kw"
 #elif defined(COMPILER_MSVC)
 #pragma warning(push, 0)
 #pragma warning(disable : 4201; disable : 4324; disable : 4310)

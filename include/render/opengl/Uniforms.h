@@ -10,6 +10,7 @@
 #include <wglm/vec3.hpp>
 #include <wglm/vec4.hpp>
 
+#include <render/opengl/OpenglContext.h>
 #include <render/opengl/Program.h>
 
 #include <tepp/cstring_view.h>
