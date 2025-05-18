@@ -239,6 +239,15 @@ namespace render::opengl
 		this->ID.data = ID_;
 	}
 
+	Opengl2DTexture::Opengl2DTexture(Opengl2DTexture&& other)
+	    : openglContext(other.openglContext) {
+		this->ID = other.ID;
+		other.ID.clear();
+
+		this->textureFormat = other.textureFormat;
+		this->flippedUV = other.flippedUV;
+	}
+
 	Opengl2DTexture& Opengl2DTexture::operator=(Opengl2DTexture&& other) {
 		tassert(&this->openglContext == &other.openglContext);
 
