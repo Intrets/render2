@@ -7,6 +7,7 @@
 
 #include <optional>
 
+#include <tepp/assert.h>
 #include <tepp/integers.h>
 
 namespace render::opengl

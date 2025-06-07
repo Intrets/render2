@@ -5,6 +5,8 @@
 
 #include <misc/Misc.h>
 
+#include <tepp/assert.h>
+
 namespace render
 {
 	template<class T>
