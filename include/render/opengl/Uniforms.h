@@ -156,28 +156,7 @@ namespace render::opengl
 		DEFAULT_COPY_MOVE(Uniform);
 		~Uniform() = default;
 
-		void set(T const& value, bool force = false) {
-			tassert(this->program);
-
-			if (!force && this->current.has_value()) {
-				tassert(std::holds_alternative<T>(this->current.value()));
-
-				if (auto currentValue = std::get_if<T>(&this->current.value())) {
-					if (*currentValue == value) {
-						return;
-					}
-				}
-			}
-
-			this->current = value;
-
-			this->program->use();
-
-			this->program->openglContext.tallyUniformBytesTransferred(sizeof(T));
-			SetUniform<T>::apply(this->location, std::span<T const>(&value, 1));
-		}
-
-		void set(std::span<T> values, bool force = false) {
+		void set(std::span<T const> values, bool force = false) {
 			tassert(this->program);
 
 			if (!force && this->current.has_value()) {
@@ -212,6 +191,27 @@ namespace render::opengl
 			c.resize(values.size());
 			std::ranges::copy(values, c.begin());
 			this->current = std::move(c);
+		}
+
+		void set(T const& value, bool force = false) {
+			tassert(this->program);
+
+			if (!force && this->current.has_value()) {
+				tassert(std::holds_alternative<T>(this->current.value()));
+
+				if (auto currentValue = std::get_if<T>(&this->current.value())) {
+					if (*currentValue == value) {
+						return;
+					}
+				}
+			}
+
+			this->current = value;
+
+			this->program->use();
+
+			this->program->openglContext.tallyUniformBytesTransferred(sizeof(T));
+			SetUniform<T>::apply(this->location, std::span<T const>(&value, 1));
 		}
 	};
 
