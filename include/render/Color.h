@@ -11,6 +11,7 @@
 
 #include <wglm/glm.hpp>
 
+#include "tepp/assert.h"
 #include <tepp/integers.h>
 
 namespace render
