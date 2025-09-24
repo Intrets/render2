@@ -1,5 +1,6 @@
 #include "render/opengl/OpenglContext.h"
 
+#include "misc/Logger.h"
 #include "render/opengl/OpenglBufferTexture.h"
 #include "render/opengl/OpenglFramebuffer.h"
 #include "render/opengl/OpenglPBO.h"
@@ -10,8 +11,8 @@
 
 #include <tepp/safety_cast.h>
 
-#include <ranges>
 #include <algorithm>
+#include <ranges>
 
 namespace render::opengl
 {
@@ -275,6 +276,11 @@ namespace render::opengl
 	}
 
 	void OpenglContext::bind(Qualified<GLuint> ID, TextureTarget target, int32_t unit) {
+		if (isize(this->boundSamplerUnits) <= unit) {
+			LOGWARNING("Trying to bind texture {} to sampler unit {}, but only {} sampler units available", ID.data, unit, isize(this->boundSamplerUnits));
+			return;
+		}
+
 		auto& samplerUnitInfo = this->boundSamplerUnits[unit];
 
 		if (!samplerUnitInfo.type.unbound() && samplerUnitInfo.type != target) {
