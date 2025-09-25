@@ -51,8 +51,7 @@ namespace render::opengl
 		OpenglFramebuffer(OpenglContext& openglContext);
 		explicit OpenglFramebuffer(OpenglContext& openglContext, GLuint ID);
 
-		NO_COPY(OpenglFramebuffer);
-		DEFAULT_MOVE(OpenglFramebuffer);
+		NO_COPY_MOVE(OpenglFramebuffer);
 
 		~OpenglFramebuffer();
 
