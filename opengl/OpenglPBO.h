@@ -9,6 +9,7 @@
 
 #include <tepp/assert.h>
 #include <tepp/integers.h>
+#include <tepp/span.h>
 
 namespace render::opengl
 {
@@ -21,13 +22,13 @@ namespace render::opengl
 	struct OpenglPBOMappedRead
 	{
 		OpenglPBO* pbo;
-		std::span<T const> data;
+		te::span<T const> data;
 
 		NO_COPY(OpenglPBOMappedRead);
 		DEFAULT_MOVE(OpenglPBOMappedRead);
 
 		OpenglPBOMappedRead() = delete;
-		OpenglPBOMappedRead(OpenglPBO& pbo, std::span<T const> data_);
+		OpenglPBOMappedRead(OpenglPBO& pbo, te::span<T const> data_);
 		~OpenglPBOMappedRead();
 	};
 
@@ -35,13 +36,13 @@ namespace render::opengl
 	struct OpenglPBOMappedWrite
 	{
 		OpenglPBO* pbo;
-		std::span<T> data;
+		te::span<T> data;
 
 		NO_COPY(OpenglPBOMappedWrite);
 		DEFAULT_MOVE(OpenglPBOMappedWrite);
 
 		OpenglPBOMappedWrite() = delete;
-		OpenglPBOMappedWrite(OpenglPBO& pbo, std::span<T> data_);
+		OpenglPBOMappedWrite(OpenglPBO& pbo, te::span<T> data_);
 		~OpenglPBOMappedWrite();
 	};
 
@@ -114,7 +115,7 @@ namespace render::opengl
 			return std::nullopt;
 		}
 
-		auto span = std::span<T const>(reinterpret_cast<T*>(data), this->downloadSize.value() / sizeof(T));
+		auto span = te::span<T const>(reinterpret_cast<T*>(data), this->downloadSize.value() / sizeof(T));
 
 		this->downloadSize.reset();
 
@@ -134,14 +135,14 @@ namespace render::opengl
 		glBufferData(GL_PIXEL_UNPACK_BUFFER, bufferSize, nullptr, GL_STREAM_READ);
 		auto ptr = glMapBufferRange(GL_PIXEL_UNPACK_BUFFER, 0, static_cast<GLsizeiptr>(bufferSize), GL_WRITE_ONLY);
 
-		auto span = std::span<T>(reinterpret_cast<T*>(ptr), texture.textureFormat.getPixelCount());
+		auto span = te::span<T>(reinterpret_cast<T*>(ptr), texture.textureFormat.getPixelCount());
 
 		this->unbindUnpack();
 		return OpenglPBOMappedWrite<T>(*this, span);
 	}
 
 	template<class T>
-	inline OpenglPBOMappedRead<T>::OpenglPBOMappedRead(OpenglPBO& pbo_, std::span<T const> data_)
+	inline OpenglPBOMappedRead<T>::OpenglPBOMappedRead(OpenglPBO& pbo_, te::span<T const> data_)
 	    : pbo(&pbo_),
 	      data(data_) {
 	}
@@ -152,7 +153,7 @@ namespace render::opengl
 	}
 
 	template<class T>
-	inline OpenglPBOMappedWrite<T>::OpenglPBOMappedWrite(OpenglPBO& pbo_, std::span<T> data_)
+	inline OpenglPBOMappedWrite<T>::OpenglPBOMappedWrite(OpenglPBO& pbo_, te::span<T> data_)
 	    : pbo(&pbo_),
 	      data(data_) {
 	}

@@ -9,7 +9,8 @@
 #include <render/opengl/Qualifier.h>
 
 #include <filesystem>
-#include <span>
+
+#include <tepp/span.h>
 
 namespace render::opengl
 {
@@ -133,7 +134,7 @@ namespace render::opengl
 		Opengl2DTexture() = delete;
 		~Opengl2DTexture();
 
-		static std::optional<Opengl2DTexture> make(OpenglContext& openglContext, TextureFormat const& textureFormat, std::optional<std::span<std::byte const>> data);
+		static std::optional<Opengl2DTexture> make(OpenglContext& openglContext, TextureFormat const& textureFormat, std::optional<te::span<std::byte const>> data);
 	};
 
 	struct Opengl2DArrayTexture

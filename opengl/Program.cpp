@@ -7,11 +7,11 @@
 
 namespace render::opengl
 {
-	std::span<char const> DynamicData::get() const {
-		return std::span(this->data.data(), this->data.size());
+	te::span<char const> DynamicData::get() const {
+		return te::span(this->data);
 	}
 
-	std::span<char const> ReferenceData::get() const {
+	te::span<char const> ReferenceData::get() const {
 		return this->data;
 	}
 
@@ -90,7 +90,7 @@ namespace render::opengl
 		}
 	}
 
-	std::span<UniformBase*> Program::getUniformsSorted() const {
+	te::span<UniformBase*> Program::getUniformsSorted() const {
 		if (!this->sortedUniforms) {
 			std::ranges::sort(this->uniformList, [](UniformBase* left, UniformBase* right) {
 				return left->location < right->location;
@@ -169,7 +169,7 @@ namespace render::opengl
 		this->ID = {};
 	}
 
-	std::optional<Program> Program::load(OpenglContext& openglContext, std::span<char const> vertexDataSpan, std::span<char const> fragmentDataSpan) {
+	std::optional<Program> Program::load(OpenglContext& openglContext, te::span<char const> vertexDataSpan, te::span<char const> fragmentDataSpan) {
 		auto vertexShader = Shader::makeVertexShader();
 		auto fragmentShader = Shader::makeFragmentShader();
 

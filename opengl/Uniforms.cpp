@@ -35,7 +35,7 @@ namespace render::opengl
 
 		tassert(isize(this->units) == count);
 
-		this->program->openglContext.tallyUniformBytesTransferred(std::span(this->units).size_bytes());
+		this->program->openglContext.tallyUniformBytesTransferred(te::span(this->units).size_bytes());
 		glUniform1iv(this->location, static_cast<GLsizei>(count), units.data());
 	}
 

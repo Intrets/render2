@@ -1,11 +1,11 @@
 #pragma once
 
-#include <span>
 #include <vector>
 
 #include <misc/Misc.h>
 
 #include <tepp/assert.h>
+#include <tepp/span.h>
 
 namespace render
 {
@@ -14,7 +14,7 @@ namespace render
 	{
 		std::vector<T> data{};
 
-		std::span<T const> getSubSpan(integer_t begin, integer_t end) const {
+		te::span<T const> getSubSpan(integer_t begin, integer_t end) const {
 			tassert(begin >= 0);
 			tassert(end >= 0);
 			tassert(begin <= isize(this->data));
@@ -24,7 +24,7 @@ namespace render
 			begin = std::min(isize(this->data), begin);
 			end = std::min(isize(this->data), end);
 			auto d = std::max(0_i, end - begin);
-			auto everything = std::span(this->data);
+			auto everything = te::span(this->data);
 
 			return everything.subspan(begin, d);
 		}

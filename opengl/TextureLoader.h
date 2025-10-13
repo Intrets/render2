@@ -2,9 +2,10 @@
 
 #include <wrangled_gl/wrangled_gl.h>
 
-#include <span>
 #include <variant>
 #include <optional>
+
+#include <tepp/span.h>
 
 namespace gli
 {
@@ -17,9 +18,9 @@ namespace render::opengl
 	struct Opengl2DArrayTexture;
 	struct OpenglContext;
 
-	Opengl2DTexture load2DTexture(OpenglContext& openglContext, std::span<char const> buffer, bool SRGB = true);
+	Opengl2DTexture load2DTexture(OpenglContext& openglContext, te::span<char const> buffer, bool SRGB = true);
 
-	Opengl2DArrayTexture load2DArrayTexture(OpenglContext& openglContext, std::span<char const> buffer, bool SRGB = true);
+	Opengl2DArrayTexture load2DArrayTexture(OpenglContext& openglContext, te::span<char const> buffer, bool SRGB = true);
 
 	namespace impl
 	{

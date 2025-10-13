@@ -266,7 +266,7 @@ namespace render::opengl
 		glDeleteTextures(1, &this->ID.data);
 	}
 
-	std::optional<Opengl2DTexture> Opengl2DTexture::make(OpenglContext& openglContext, TextureFormat const& textureFormat, std::optional<std::span<std::byte const>> data) {
+	std::optional<Opengl2DTexture> Opengl2DTexture::make(OpenglContext& openglContext, TextureFormat const& textureFormat, std::optional<te::span<std::byte const>> data) {
 		int32_t maxSize = 0;
 		glGetIntegerv(GL_MAX_TEXTURE_SIZE, &maxSize);
 

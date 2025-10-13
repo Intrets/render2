@@ -7,6 +7,7 @@
 #include <wrangled_gl/wrangled_gl.h>
 
 #include <tepp/safety_cast.h>
+#include <tepp/span.h>
 
 namespace render::opengl
 {
@@ -36,7 +37,7 @@ namespace render::opengl
 			{ 0, 1 },
 		} };
 
-		VBO.set(std::span(quadVertices.begin(), 6), BufferUsageHint::Type::STATIC_DRAW);
+		VBO.set(te::span(quadVertices), BufferUsageHint::Type::STATIC_DRAW);
 	}
 
 	void OpenglVAO::addIndicesBuffer(OpenglVBO& VBO) {

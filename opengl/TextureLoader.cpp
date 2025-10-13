@@ -31,7 +31,7 @@
 
 namespace render::opengl
 {
-	Opengl2DTexture load2DTexture(OpenglContext& openglContext, std::span<char const> buffer, bool SRGB) {
+	Opengl2DTexture load2DTexture(OpenglContext& openglContext, te::span<char const> buffer, bool SRGB) {
 		gli::texture Texture = gli::load_dds(buffer.data(), buffer.size());
 
 		if (Texture.target() == gli::texture::target_type::TARGET_2D) {
@@ -45,7 +45,7 @@ namespace render::opengl
 		return Opengl2DTexture(openglContext);
 	}
 
-	Opengl2DArrayTexture load2DArrayTexture(OpenglContext& openglContext, std::span<char const> buffer, bool SRGB) {
+	Opengl2DArrayTexture load2DArrayTexture(OpenglContext& openglContext, te::span<char const> buffer, bool SRGB) {
 		gli::texture Texture = gli::load_dds(buffer.data(), buffer.size());
 
 		if (Texture.target() == gli::texture::target_type::TARGET_2D_ARRAY) {

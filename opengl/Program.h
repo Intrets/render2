@@ -2,7 +2,6 @@
 
 #include <filesystem>
 #include <optional>
-#include <span>
 #include <vector>
 
 #include <wrangled_gl/wrangled_gl.h>
@@ -10,6 +9,7 @@
 #include "render/opengl/Qualifier.h"
 
 #include <tepp/cstring_view.h>
+#include <tepp/span.h>
 #include <tepp/string_key_unordered_map.h>
 
 #include <resource_data/ResourceData.h>
@@ -20,7 +20,7 @@ namespace render::opengl
 
 	struct Data
 	{
-		virtual std::span<char const> get() const = 0;
+		virtual te::span<char const> get() const = 0;
 
 		Data() = default;
 		virtual ~Data() = default;
@@ -28,16 +28,16 @@ namespace render::opengl
 
 	struct ReferenceData : Data
 	{
-		std::span<char const> data{};
+		te::span<char const> data{};
 
-		virtual std::span<char const> get() const override;
+		virtual te::span<char const> get() const override;
 	};
 
 	struct DynamicData : Data
 	{
 		std::vector<char> data{};
 
-		virtual std::span<char const> get() const override;
+		virtual te::span<char const> get() const override;
 	};
 
 	using DataSourceType = std::unique_ptr<Data>;
@@ -131,7 +131,7 @@ namespace render::opengl
 		int32_t getNextSampler();
 
 		void registerUniform(UniformBase& uniform);
-		std::span<UniformBase*> getUniformsSorted() const;
+		te::span<UniformBase*> getUniformsSorted() const;
 
 		void use();
 
@@ -148,8 +148,8 @@ namespace render::opengl
 
 		static std::optional<Program> load(
 		    OpenglContext& openglContext,
-		    std::span<char const> vertexSource,
-		    std::span<char const> fragmentSource
+		    te::span<char const> vertexSource,
+		    te::span<char const> fragmentSource
 		);
 
 		static std::optional<Program> load(

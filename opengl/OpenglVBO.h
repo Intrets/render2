@@ -2,11 +2,12 @@
 
 #include <array>
 #include <limits>
-#include <span>
 #include <utility>
 #include <vector>
 
 #include <wrangled_gl/wrangled_gl.h>
+
+#include <tepp/span.h>
 
 #include <misc/LimitChecks.h>
 
@@ -37,19 +38,19 @@ namespace render::opengl
 
 		struct TypeErasedBuffer
 		{
-			std::span<std::byte const> data{};
+			te::span<std::byte const> data{};
 			BufferSizeInformation bufferSizeInformation{};
 
 			template<class T>
-			TypeErasedBuffer(std::span<T> data) {
-				this->data = std::as_bytes(data);
+			TypeErasedBuffer(te::span<T> data) {
+				this->data = te::as_bytes(data);
 				this->bufferSizeInformation.elementByteSize = sizeof(T);
 				this->bufferSizeInformation.elementCount = isize(data);
 			}
 
 			template<class T>
 			TypeErasedBuffer(std::vector<T> const& data) {
-				this->data = std::as_bytes(std::span(data));
+				this->data = te::as_bytes(te::span(data));
 				this->bufferSizeInformation.elementByteSize = sizeof(T);
 				this->bufferSizeInformation.elementCount = isize(data);
 			}
@@ -60,7 +61,7 @@ namespace render::opengl
 
 	public:
 		template<class T>
-		void set(std::span<T const> data, BufferUsageHint bufferUsageHint = BufferUsageHint::Type::STATIC_DRAW, BufferTarget bufferTarget = BufferTarget::Type::ARRAY_BUFFER);
+		void set(te::span<T const> data, BufferUsageHint bufferUsageHint = BufferUsageHint::Type::STATIC_DRAW, BufferTarget bufferTarget = BufferTarget::Type::ARRAY_BUFFER);
 
 		template<class T>
 		void set(std::vector<T> const& data, BufferUsageHint bufferUsageHint = BufferUsageHint::Type::STATIC_DRAW);
@@ -79,7 +80,7 @@ namespace render::opengl
 	};
 
 	template<class T>
-	inline void OpenglVBO::set(std::span<T const> data, BufferUsageHint bufferUsageHint, BufferTarget bufferTarget) {
+	inline void OpenglVBO::set(te::span<T const> data, BufferUsageHint bufferUsageHint, BufferTarget bufferTarget) {
 		misc::abortAssign(this->bufferSizeInformation.elementByteSize, sizeof(T));
 		misc::abortAssign(this->bufferSizeInformation.elementCount, isize(data));
 
