@@ -3,6 +3,7 @@
 #include <concepts>
 
 #include <tepp/angle.h>
+#include <tepp/in_range.h>
 #include <tepp/integers.h>
 
 #include "render/RenderInfoBase.h"
@@ -16,14 +17,12 @@ namespace render
 		template<auto ptr>
 		struct AccessesValue;
 
-		template<class Info, class ValueType, ValueType Info::*ptr>
+		template<class Info, class ValueType, ValueType Info::* ptr>
 		struct AccessesValue<ptr>
 		{
 			using type = ValueType;
 			using base = Info;
 		};
-
-		inline static bool const dummyValue = false;
 	}
 
 	template<auto ptr, class StorageType = typename detail::template AccessesValue<ptr>::type, class I = typename detail::template AccessesValue<ptr>::base>
@@ -33,8 +32,7 @@ namespace render
 		using Info = typename detail::template AccessesValue<ptr>::base;
 
 		StorageType value{};
-
-		bool const* valid = &detail::dummyValue;
+		qualifier_t qualifier{ -1 };
 		render::RenderInfoBase<Info>* info = nullptr;
 
 		integer_t index = 0;
@@ -85,28 +83,13 @@ namespace render
 
 		DEFAULT_COPY_MOVE(CachedValue);
 
-		bool isValid() const {
-			return *this->valid;
-		}
-
-		void send() {
-			if (this->isValid()) {
+		void send(qualifier_t qualifier, StorageType s) {
+			if (this->qualifier == qualifier && this->value != s && te::in_range(this->index, this->info->getData())) {
 				if constexpr (std::same_as<te::angle<float>, StorageType>) {
-					this->info->data[this->index].*ptr = this->value.get();
+					this->info->get(this->index).*ptr = s.get();
 				}
 				else {
-					this->info->data[this->index].*ptr = this->value;
-				}
-			}
-		}
-
-		void send(StorageType s) {
-			if (this->value != s && this->isValid()) {
-				if constexpr (std::same_as<te::angle<float>, StorageType>) {
-					this->info->data[this->index].*ptr = s.get();
-				}
-				else {
-					this->info->data[this->index].*ptr = s;
+					this->info->get(this->index).*ptr = s;
 				}
 			}
 
@@ -114,7 +97,6 @@ namespace render
 		}
 
 		void clear() {
-			this->valid = &detail::dummyValue;
 		}
 	};
 
@@ -126,7 +108,7 @@ namespace render
 
 		StorageType value{};
 
-		bool const* valid = &detail::dummyValue;
+		qualifier_t qualifier{ -1 };
 		render::RenderInfoBase<Info>* info = nullptr;
 
 		std::vector<integer_t> indices{};
@@ -157,7 +139,6 @@ namespace render
 
 		void clear(StorageType const& v) {
 			this->indices.clear();
-			this->valid = &detail::dummyValue;
 			this->info = nullptr;
 			this->value = v;
 		}
@@ -185,34 +166,19 @@ namespace render
 		DEFAULT_COPY_MOVE(CachedValues);
 
 		bool isValid() const {
-			return *this->valid;
+			return true;
 		}
 
-		void send() {
-			if (this->isValid()) {
+		void send(qualifier_t qualifier, StorageType s) {
+			if (this->qualifier == qualifier && this->value != s && this->isValid()) {
 				if constexpr (std::same_as<te::angle<float>, StorageType>) {
 					for (auto index : this->indices) {
-						this->info->data[index].*ptr = this->value.get();
+						this->info->get(index).*ptr = s.get();
 					}
 				}
 				else {
 					for (auto index : this->indices) {
-						this->info->data[index].*ptr = this->value;
-					}
-				}
-			}
-		}
-
-		void send(StorageType s) {
-			if (this->value != s && this->isValid()) {
-				if constexpr (std::same_as<te::angle<float>, StorageType>) {
-					for (auto index : this->indices) {
-						this->info->data[index].*ptr = s.get();
-					}
-				}
-				else {
-					for (auto index : this->indices) {
-						this->info->data[index].*ptr = s;
+						this->info->get(index).*ptr = s;
 					}
 				}
 			}
@@ -225,13 +191,13 @@ namespace render
 	struct CachedValueInitializer
 	{
 		render::RenderInfoBase<Info>& info;
-		bool* valid;
+		qualifier_t qualifier;
 		integer_t index;
 
 		template<auto ptr, class T>
 		CachedValueInitializer<Info>& init(CachedValue<ptr, T>& value) {
 			value.info = &this->info;
-			value.valid = this->valid;
+			value.qualifier = this->qualifier;
 			value.index = this->index;
 
 			return *this;
@@ -241,9 +207,7 @@ namespace render
 		CachedValueInitializer<Info>& init(CachedValues<ptr, T>& value) {
 			tassert(value.info == nullptr || value.info == &this->info);
 			value.info = &this->info;
-			tassert(value.valid == &detail::dummyValue || value.valid == this->valid);
-			value.valid = this->valid;
-
+			value.qualifier = this->qualifier;
 			value.indices.push_back(this->index);
 
 			return *this;
