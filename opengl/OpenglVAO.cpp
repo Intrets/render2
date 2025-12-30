@@ -51,11 +51,7 @@ namespace render::opengl
 	OpenglVAO::OpenglVAO(OpenglContext& openglContext_)
 	    : openglContext(&openglContext_) {
 		this->ID.qualifier = this->openglContext->getQualifier();
-#ifdef WRANGLE_GLESv3
 		glGenVertexArrays(1, &this->ID.data);
-#else
-		glCreateVertexArrays(1, &this->ID.data);
-#endif
 	}
 
 	OpenglVAO::~OpenglVAO() {
