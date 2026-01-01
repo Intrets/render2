@@ -42,7 +42,7 @@ namespace render::opengl
 		}
 
 		this->openglContext.bind(*this);
-		glTexBuffer(GL_TEXTURE_BUFFER, this->getInternalFormat(), VBO.ID.data);
+//		glTexBuffer(GL_TEXTURE_BUFFER, this->getInternalFormat(), VBO.ID.data);
 		this->boundVBO = VBO.ID;
 	}
 

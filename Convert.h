@@ -1,5 +1,6 @@
 #pragma once
 
+#include <cstdlib>
 #include <utility>
 
 namespace render
@@ -32,7 +33,7 @@ namespace render
 	template<class To, class From>
 	To safety_cast(From const& from) {
 		if (!std::in_range<To>(from)) {
-			abort();
+			std::abort();
 		}
 
 		return static_cast<To>(from);
