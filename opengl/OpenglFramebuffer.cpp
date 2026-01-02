@@ -16,13 +16,13 @@ namespace render::opengl
 	void OpenglFramebuffer::attach(Attachment attachment, Opengl2DTexture const& texture, GLint mipmap) {
 		this->bind();
 
-		// glFramebufferTexture(GL_FRAMEBUFFER, attachment.get(), texture.ID.data, mipmap);
+		glFramebufferTexture(GL_FRAMEBUFFER, attachment.get(), texture.ID.data, mipmap);
 	}
 
 	void OpenglFramebuffer::attach(Attachment attachment, Opengl2DArrayTexture const& texture, int32_t layer, GLint mipmap) {
 		this->bind();
 
-		// glFramebufferTextureLayer(GL_FRAMEBUFFER, attachment.get(), texture.ID.data, mipmap, layer);
+		glFramebufferTextureLayer(GL_FRAMEBUFFER, attachment.get(), texture.ID.data, mipmap, layer);
 	}
 
 	void OpenglFramebuffer::clear(glm::vec4 color, bool depth) {
