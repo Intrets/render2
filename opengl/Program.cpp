@@ -188,9 +188,10 @@ namespace render::opengl
 		glGetShaderiv(vertexShader.ID, GL_COMPILE_STATUS, &Result);
 		glGetShaderiv(vertexShader.ID, GL_INFO_LOG_LENGTH, &InfoLogLength);
 		if (InfoLogLength > 0) {
-			std::vector<char> VertexShaderErrorMessage(InfoLogLength + 1);
-			glGetShaderInfoLog(vertexShader.ID, InfoLogLength, NULL, &VertexShaderErrorMessage[0]);
-			openglContext.logError("Vertex shader error:\n{}\n", &VertexShaderErrorMessage[0]);
+			std::string VertexShaderErrorMessage;
+			VertexShaderErrorMessage.resize(InfoLogLength + 1);
+			glGetShaderInfoLog(vertexShader.ID, InfoLogLength, NULL, VertexShaderErrorMessage.data());
+			openglContext.logError("Vertex shader error:\n{}\n", VertexShaderErrorMessage.data());
 			return std::nullopt;
 		}
 
@@ -206,9 +207,10 @@ namespace render::opengl
 		glGetShaderiv(fragmentShader.ID, GL_COMPILE_STATUS, &Result);
 		glGetShaderiv(fragmentShader.ID, GL_INFO_LOG_LENGTH, &InfoLogLength);
 		if (InfoLogLength > 0) {
-			std::vector<char> FragmentShaderErrorMessage(InfoLogLength + 1);
-			glGetShaderInfoLog(fragmentShader.ID, InfoLogLength, NULL, &FragmentShaderErrorMessage[0]);
-			openglContext.logError("Fragment shader error:\n{}\n", &FragmentShaderErrorMessage[0]);
+			std::string FragmentShaderErrorMessage;
+			FragmentShaderErrorMessage.resize(InfoLogLength + 1);
+			glGetShaderInfoLog(fragmentShader.ID, InfoLogLength, NULL, FragmentShaderErrorMessage.data());
+			openglContext.logError("Fragment shader error:\n{}\n", FragmentShaderErrorMessage.data());
 			return std::nullopt;
 		}
 
