@@ -259,8 +259,8 @@ namespace render
 	}
 
 	constexpr Color alpha(Color c, std::floating_point auto val) {
-		tassert(0.0 <= val && val < 1.0);
+		tassert(0.0 <= val && val <= 1.0);
 
-		return alpha(c, static_cast<int32_t>(255 * val));
+		return alpha(c, std::clamp(static_cast<int32_t>(255 * val), 0, 255));
 	}
 }
