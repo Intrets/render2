@@ -10,4 +10,12 @@ namespace render
 		    static_cast<uint32_t>(vec.a * 255.0f)
 		);
 	}
+
+	glm::vec3 toLinear(glm::vec3 v) {
+		return {
+			::toLinear(v.x),
+			::toLinear(v.y),
+			::toLinear(v.z),
+		};
+	}
 }

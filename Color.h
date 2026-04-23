@@ -16,6 +16,8 @@
 
 namespace render
 {
+	glm::vec3 toLinear(glm::vec3 v);
+
 	struct Color
 	{
 		uint32_t c;
