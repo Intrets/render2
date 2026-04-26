@@ -127,6 +127,7 @@ namespace render
 	static constexpr Color dark_sky = converter({ 0xFFBA9264 });
 	static constexpr Color lighter_dlue = converter({ 0xFF2F2708 });
 	static constexpr Color nice_blue = converter({ 0xFFFFAC00 });
+	static constexpr Color nice_light_blue = converter({ 0xFFFFD783 });
 	static constexpr Color nice_darkblue = converter({ 0xFFFF6900 });
 	static constexpr Color nice_green = converter({ 0xFF00CA1D });
 	static constexpr Color nice_red = converter({ 0xFF2525E5 });
