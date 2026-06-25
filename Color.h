@@ -1,10 +1,6 @@
 #pragma once
 
-#include <algorithm>
-#include <array>
 #include <bit>
-#include <concepts>
-#include <string>
 
 #include "SRGBConversion.h"
 
@@ -23,26 +19,12 @@ namespace render
 	{
 		uint32_t c;
 
-		constexpr float redNormalized() const {
-			return (this->c & 0xFF) / 255.0f;
-		}
+		float redNormalized() const;
+		float greenNormalized() const;
+		float blueNormalized() const;
+		float alphaNormalized() const;
 
-		constexpr float greenNormalized() const {
-			return ((this->c >> 8) & 0xFF) / 255.0f;
-		}
-
-		constexpr float blueNormalized() const {
-			return ((this->c >> 16) & 0xFF) / 255.0f;
-		}
-
-		constexpr float alphaNormalized() const {
-			return ((this->c >> 24) & 0xFF) / 255.0f;
-		}
-
-		void setAlpha(float v) {
-			this->c &= 0xFFFFFF;
-			this->c |= (static_cast<uint8_t>(v * 255) << 24);
-		}
+		void setAlpha(float v);
 
 		bool operator==(Color other) {
 			return this->c == other.c;
@@ -52,20 +34,11 @@ namespace render
 			return this->c != other.c;
 		}
 
-		glm::vec4 toVec4() const {
-			return {
-				this->redNormalized(),
-				this->greenNormalized(),
-				this->blueNormalized(),
-				this->alphaNormalized(),
-			};
-		}
+		glm::vec4 toVec4() const;
 
 		static Color fromVec4(glm::vec4 vec);
 
-		Color mix(Color other, float factor) const {
-			return fromVec4(glm::mix(this->toVec4(), other.toVec4(), factor));
-		}
+		Color mix(Color other, float factor) const;
 	};
 
 	template<class T>
@@ -154,101 +127,22 @@ namespace render
 
 	static constexpr Color max_signal_color = rgb(0, 115, 247);
 
-	static constexpr std::array<Color, 5> nice_colors = {
-		nice_blue,
-		nice_darkblue,
-		nice_green,
-		nice_red,
-		orange,
-	};
-
-	static constexpr std::array<Color, 30> reds_and_purples = {
-		converter(rgb(205, 92, 92)),
-		converter(rgb(178, 34, 34)),
-		converter(rgb(165, 42, 42)),
-		converter(rgb(233, 150, 122)),
-		converter(rgb(250, 128, 114)),
-		converter(rgb(255, 160, 122)),
-		converter(rgb(255, 127, 80)),
-		converter(rgb(240, 128, 128)),
-		converter(rgb(255, 99, 71)),
-		converter(rgb(255, 69, 0)),
-		converter(rgb(255, 0, 0)),
-		converter(rgb(255, 105, 180)),
-		converter(rgb(255, 20, 147)),
-		converter(rgb(255, 192, 203)),
-		converter(rgb(255, 182, 193)),
-		converter(rgb(219, 112, 147)),
-		converter(rgb(176, 48, 96)),
-		converter(rgb(199, 21, 133)),
-		converter(rgb(208, 32, 144)),
-		converter(rgb(255, 0, 255)),
-		converter(rgb(238, 130, 238)),
-		converter(rgb(221, 160, 221)),
-		converter(rgb(218, 112, 214)),
-		converter(rgb(186, 85, 211)),
-		converter(rgb(153, 50, 204)),
-		converter(rgb(148, 0, 211)),
-		converter(rgb(138, 43, 226)),
-		converter(rgb(160, 32, 240)),
-		converter(rgb(147, 112, 219)),
-		converter(rgb(216, 191, 216)),
-	};
-
-	static constexpr std::array<Color, 24> twocolors{
-		converter(rgb(192, 50, 50)),
-		converter(rgb(192, 86, 50)),
-		converter(rgb(192, 121, 50)),
-		converter(rgb(192, 156, 50)),
-		converter(rgb(192, 192, 50)),
-		converter(rgb(156, 192, 50)),
-		converter(rgb(121, 192, 50)),
-		converter(rgb(86, 192, 50)),
-		converter(rgb(50, 192, 50)),
-		converter(rgb(50, 192, 86)),
-		converter(rgb(50, 192, 121)),
-		converter(rgb(50, 192, 156)),
-		converter(rgb(50, 192, 192)),
-		converter(rgb(50, 156, 192)),
-		converter(rgb(50, 121, 192)),
-		converter(rgb(50, 86, 192)),
-		converter(rgb(50, 50, 192)),
-		converter(rgb(86, 50, 192)),
-		converter(rgb(121, 50, 192)),
-		converter(rgb(156, 50, 192)),
-		converter(rgb(192, 50, 192)),
-		converter(rgb(192, 50, 156)),
-		converter(rgb(192, 50, 121)),
-		converter(rgb(192, 50, 86)),
-	};
+	Color getNiceColor(integer_t i);
+	Color getRandomNiceColor(std::minstd_rand& rng);
 
 	struct twocolor
 	{
-		static twocolor red() {
-			return { 0 };
-		}
-
-		static twocolor green() {
-			return { 8 };
-		}
-
-		static twocolor blue() {
-			return { 16 };
-		}
+		static twocolor red();
+		static twocolor green();
+		static twocolor blue();
+		static integer_t size();
 
 		integer_t index = 0;
 
-		twocolor operator+(integer_t i) {
-			return { (this->index + i) % isize(twocolors) };
-		}
+		twocolor operator+(integer_t i);
+		twocolor operator-(integer_t i);
 
-		twocolor operator-(integer_t i) {
-			return { (this->index - i) % isize(twocolors) };
-		}
-
-		operator Color() {
-			return twocolors[this->index];
-		}
+		operator Color();
 	};
 
 	template<class T>
@@ -256,15 +150,7 @@ namespace render
 		return { static_cast<uint32_t>(std::hash<T>{}(val)) | 0xFF000000 };
 	}
 
-	constexpr Color alpha(Color c, std::integral auto val) {
-		tassert(0 <= val && val < 256);
+	Color alpha(Color c, integer_t val);
 
-		return { c.c & (0x00FFFFFF | (static_cast<uint32_t>(val) << 24)) };
-	}
-
-	constexpr Color alpha(Color c, std::floating_point auto val) {
-		tassert(0.0 <= val && val <= 1.0);
-
-		return alpha(c, std::clamp(static_cast<int32_t>(255 * val), 0, 255));
-	}
+	Color alpha(Color c, float val);
 }
